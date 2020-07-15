@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "283819567984",
+    "firebase_url": "https://microblogger-1234a.firebaseio.com",
+    "project_id": "microblogger-1234a",
+    "storage_bucket": "microblogger-1234a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283819567984:android:f72fec018bf81ca3043db5",
+        "android_client_info": {
+          "package_name": "com.example.MicroBlogger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "283819567984-dc49ct3rrothhai2arnjqciif08ta56o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCV85mPWrRrt04wcv02VbWOzs2tkFgFm-w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "283819567984-dc49ct3rrothhai2arnjqciif08ta56o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
