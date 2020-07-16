@@ -160,122 +160,125 @@ class _HXMicroBlogState extends State<HXMicroBlog> {
             ],
           ),
         ),
-        Container(
-          padding: EdgeInsets.only(left: 5.0, bottom: 1.0),
-          decoration: BoxDecoration(
-              color: Colors.black45,
-              border: Border(
-                  left: BorderSide(width: 1.0, color: Colors.white12),
-                  right: BorderSide(width: 1.0, color: Colors.white12),
-                  bottom: BorderSide(width: 1.0, color: Colors.white12))),
-          height: 35.0,
-          child: Row(
+        ActionBar(),
+      ],
+    );
+  }
+}
+
+class ActionBar extends StatefulWidget {
+  ActionBar({Key key}) : super(key: key);
+
+  @override
+  _ActionBarState createState() => _ActionBarState();
+}
+
+class _ActionBarState extends State<ActionBar> {
+  bool _liked = false;
+  bool _reshared = false;
+  bool _bookmarked = false;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        padding: EdgeInsets.all(5.0),
+        decoration: BoxDecoration(
+            color: Colors.white12,
+            border: Border.all(width: 1.0, color: Colors.white30)),
+        height: 35.0,
+        child: Row(children: [
+          Row(
             children: [
-              Text("Likes: ",
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.white24,
-                  )),
-              Text(
-                "32,000",
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.white24,
-                ),
+              IconButton(
+                  padding: EdgeInsets.only(bottom: 2.0),
+                  icon: Icon((_liked) ? Icons.favorite : Icons.favorite_border),
+                  color: (_liked) ? Colors.pink : null,
+                  onPressed: () => setState(() {
+                        _liked = !_liked;
+                      })),
+              Text("3409"),
+              Row(
+                children: [
+                  IconButton(
+                    padding: EdgeInsets.only(bottom: 2.0),
+                    icon: Icon((_reshared) ? Icons.repeat : Icons.repeat),
+                    color: (_reshared) ? Colors.green : null,
+                    onPressed: () => setState(() {
+                      _reshared = !_reshared;
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        // content: Text(
+                        //   "Saved To Bookmarks",
+                        //   style: TextStyle(color: Colors.white),
+                        // ),
+                        content: Row(
+                          children: [
+                            RaisedButton(
+                                onPressed: () {
+                                  //reshare logic
+                                },
+                                color: Colors.white10,
+                                child: Text("Reshare",
+                                    style: TextStyle(color: Colors.white))),
+                            SizedBox(
+                              width: 5.0,
+                            ),
+                            RaisedButton(
+                              onPressed: () {
+                                Navigator.of(context).pushNamed(
+                                    '/MB_ReshareComposer',
+                                    arguments: {"MB"});
+                              },
+                              color: Colors.white10,
+                              child: Text("Reshare with Comment",
+                                  style: TextStyle(color: Colors.white)),
+                            ),
+                          ],
+                        ),
+                        backgroundColor: Colors.black,
+                        // duration: Duration(seconds: 1),
+                      ));
+                    }),
+                  ),
+                ],
               ),
-              SizedBox(
-                width: 15.0,
+              Text("3409"),
+              Row(
+                children: [
+                  IconButton(
+                    padding: EdgeInsets.only(bottom: 2.0),
+                    icon: Icon(Icons.chat_bubble_outline),
+                    onPressed: () => print("Open Comments"),
+                  ),
+                  Text(
+                    "200",
+                    style: TextStyle(color: Colors.white60),
+                  )
+                ],
               ),
-              Text(
-                "Reshares: ",
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.white24,
-                ),
-              ),
-              Text(
-                "2000",
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.white24,
-                ),
+              Row(
+                children: [
+                  IconButton(
+                    padding: EdgeInsets.only(bottom: 2.0),
+                    icon: Icon(
+                        (_bookmarked) ? Icons.bookmark : Icons.bookmark_border),
+                    color: (_bookmarked) ? Colors.green : null,
+                    onPressed: () {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                          "Saved To Bookmarks",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.black,
+                        duration: Duration(seconds: 1),
+                      ));
+                      setState(() {
+                        _bookmarked = !_bookmarked;
+                      });
+                    },
+                  )
+                ],
               ),
             ],
           ),
-        ),
-        Container(
-            padding: EdgeInsets.only(left: 5.0),
-            decoration: BoxDecoration(
-                color: Colors.black45,
-                border: Border(
-                    left: BorderSide(width: 1.0, color: Colors.white12),
-                    right: BorderSide(width: 1.0, color: Colors.white12),
-                    bottom: BorderSide(width: 1.0, color: Colors.white12))),
-            height: 35.0,
-            child: Row(
-              children: [
-                Row(
-                  children: [
-                    IconButton(
-                      padding: EdgeInsets.only(bottom: 2.0),
-                      icon: Icon(
-                          (_liked) ? Icons.favorite : Icons.favorite_border),
-                      color: (_liked) ? Colors.pink : null,
-                      onPressed: () => setState(() {
-                        _liked = !_liked;
-                      }),
-                    ),
-                  ],
-                ),
-                //comment
-                Row(
-                  children: [
-                    IconButton(
-                      padding: EdgeInsets.only(bottom: 2.0),
-                      icon: Icon((_reshared) ? Icons.repeat : Icons.repeat),
-                      color: (_reshared) ? Colors.green : null,
-                      onPressed: () => setState(() {
-                        _reshared = !_reshared;
-                      }),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      padding: EdgeInsets.only(bottom: 2.0),
-                      icon: Icon(Icons.chat_bubble_outline),
-                      onPressed: () => print("Open Comments"),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      padding: EdgeInsets.only(bottom: 2.0),
-                      icon: Icon((_bookmarked)
-                          ? Icons.bookmark
-                          : Icons.bookmark_border),
-                      color: (_bookmarked) ? Colors.green : null,
-                      onPressed: () {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                            "Saved To Bookmarks",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          backgroundColor: Colors.black,
-                          duration: Duration(seconds: 1),
-                        ));
-                        setState(() {
-                          _bookmarked = !_bookmarked;
-                        });
-                      },
-                    )
-                  ],
-                ),
-              ],
-            )),
-      ],
-    );
+        ]));
   }
 }

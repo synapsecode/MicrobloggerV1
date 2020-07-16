@@ -5,13 +5,15 @@ import 'package:MicroBlogger/Composers/pollComposer.dart';
 import 'package:MicroBlogger/Composers/reshareComposer.dart';
 import 'package:MicroBlogger/Composers/shareableComposer.dart';
 import 'package:MicroBlogger/Composers/timelineComposer.dart';
+import 'package:MicroBlogger/PostViewers/blogViewer.dart';
+import 'package:MicroBlogger/PostViewers/timelineViewer.dart';
 import 'package:MicroBlogger/Screens/chatscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'Screens/login.dart';
 import 'Screens/register.dart';
 import 'Screens/homepage.dart';
-import 'Screens/MicroBlogViewer.dart';
+import 'PostViewers/MicroBlogViewer.dart';
 
 import 'Screens/about.dart';
 import 'Screens/bookmarks.dart';
@@ -47,7 +49,6 @@ class MyApp extends StatelessWidget {
         '/Login': (BuildContext context) => new LoginPage(),
         '/Register': (BuildContext context) => new RegisterPage(),
         '/HomePage': (BuildContext context) => new HomePage(),
-        '/MicroBlogPost': (BuildContext context) => new MicroBlogViewer(),
         '/About': (BuildContext context) => new AboutPage(),
         '/Bookmarks': (BuildContext context) => new BookmarksPage(),
         '/DM': (BuildContext context) => new DirectMessagePage(),
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
         '/Settings': (BuildContext context) => new SettingsPage(),
         '/Trending': (BuildContext context) => new TrendingPage(),
         '/Chat': (BuildContext context) => new ChatScreen(),
+
         //Composers
         '/MicroBlogComposer': (BuildContext context) => new MicroBlogComposer(),
         '/ShareableComposer': (BuildContext context) => new ShareableComposer(),
@@ -67,6 +69,12 @@ class MyApp extends StatelessWidget {
 
         '/MB_ReshareComposer': (BuildContext context) =>
             new MicroBlogReshareComposer(),
+
+        //Viewers
+        '/MicroBlogViewer': (BuildContext context) => new MicroBlogViewer(),
+        '/ReshareViewer': (BuildContext context) => new MicroBlogViewer(),
+        '/BlogViewer': (BuildContext context) => new BlogViewer(),
+        '/TimelineViewer': (BuildContext context) => new TimelineViewer(),
       },
     );
   }

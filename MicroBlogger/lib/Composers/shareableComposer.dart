@@ -10,6 +10,7 @@ class ShareableComposer extends StatefulWidget {
 class _ShareableComposerState extends State<ShareableComposer> {
   String content = "";
   String link = "";
+  String name = "";
 
   void updateComment(x) {
     setState(() {
@@ -20,6 +21,12 @@ class _ShareableComposerState extends State<ShareableComposer> {
   void updateLink(x) {
     setState(() {
       link = x;
+    });
+  }
+
+  void updateName(x) {
+    setState(() {
+      name = x;
     });
   }
 
@@ -38,7 +45,9 @@ class _ShareableComposerState extends State<ShareableComposer> {
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
               onPressed: () {
-                print("TEXT: $content");
+                print(name);
+                print(link);
+                print(content);
                 //upload
               },
               child: Text("Publish"),
@@ -47,14 +56,21 @@ class _ShareableComposerState extends State<ShareableComposer> {
           )
         ],
       ),
-      body: ComposerComponent(contentUpdater: updateComment),
+      body: ComposerComponent(
+        contentUpdater: updateComment,
+        linkUpdater: updateLink,
+        nameUpdater: updateName,
+      ),
     );
   }
 }
 
 class ComposerComponent extends StatefulWidget {
   final contentUpdater;
-  const ComposerComponent({this.contentUpdater});
+  final linkUpdater;
+  final nameUpdater;
+  const ComposerComponent(
+      {this.contentUpdater, this.linkUpdater, this.nameUpdater});
 
   @override
   _ComposerComponentState createState() => _ComposerComponentState();
@@ -66,21 +82,33 @@ class _ComposerComponentState extends State<ComposerComponent> {
     return Column(children: [
       Container(
         padding: EdgeInsets.all(10.0),
-        child: TextFormField(
-          decoration: InputDecoration(labelText: 'Enter Name'),
+        child: TextField(
+          onChanged: (x) {
+            widget.nameUpdater(x);
+          },
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Shareable Name',
+          ),
         ),
       ),
       Container(
         padding: EdgeInsets.all(10.0),
-        child: TextFormField(
-          decoration: InputDecoration(labelText: 'Shareable Link'),
+        child: TextField(
+          onChanged: (x) {
+            widget.linkUpdater(x);
+          },
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Shareable Link',
+          ),
         ),
       ),
       Expanded(
         child: Card(
             color: Colors.black12,
             child: Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(12.0),
               child: TextField(
                 onChanged: (x) {
                   widget.contentUpdater("$x");

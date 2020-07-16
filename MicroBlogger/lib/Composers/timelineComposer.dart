@@ -8,19 +8,47 @@ class TimelineComposer extends StatefulWidget {
 }
 
 class _TimelineComposerState extends State<TimelineComposer> {
-  String content = "";
+  String eventText = "";
+  String eventName = "";
+  String eventTiming = "";
+  String timelineTitle = "";
   List events = [];
 
-  void updateEvent(x) {
+  void updateEvent(tn, tx, et) {
+    Map x = {'eventName': tn, 'eventText': tx, 'eventTiming': et};
     setState(() {
       events.add(x);
+    });
+  }
+
+  void updateDesc(x) {
+    setState(() {
+      eventText = "$x";
+    });
+  }
+
+  void updateEventName(x) {
+    setState(() {
+      eventName = "$x";
+    });
+  }
+
+  void updateEventTiming(x) {
+    setState(() {
+      eventTiming = "$x";
+    });
+  }
+
+  void updateTimelineTitle(x) {
+    setState(() {
+      timelineTitle = "$x";
     });
   }
 
   void deleteEvent(x) {
     var y = [];
     events.forEach((e) {
-      if (e != x) y.add(e);
+      if (e['eventText'] != x) y.add(e);
     });
     setState(() {
       events = y;
@@ -29,9 +57,9 @@ class _TimelineComposerState extends State<TimelineComposer> {
 
   @override
   Widget build(BuildContext context) {
-    String currentEventText;
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 60.0,
         leading: IconButton(
             icon: Icon(
               Icons.clear,
@@ -40,11 +68,24 @@ class _TimelineComposerState extends State<TimelineComposer> {
             onPressed: () => Navigator.of(context).pop()),
         actions: [
           Container(
-            margin: EdgeInsets.all(10.0),
+              width: 220.0,
+              height: 100.0,
+              padding: EdgeInsets.all(10.0),
+              child: TextField(
+                decoration: InputDecoration(hintText: "Timeline Name"),
+                onChanged: (x) {
+                  setState(() {
+                    timelineTitle = x;
+                  });
+                },
+              )),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
             child: RaisedButton(
               onPressed: () {
-                print("TEXT: $content");
+                print(timelineTitle);
                 print(events);
+
                 //upload
               },
               child: Text("Publish"),
@@ -59,10 +100,15 @@ class _TimelineComposerState extends State<TimelineComposer> {
             Icons.add,
             color: Colors.white,
           ),
-          onPressed: () {}),
+          onPressed: () {
+            print("ff");
+            updateEvent(eventName, eventText, eventTiming);
+          }),
       body: ComposerComponent(
-        eventUpdater: updateEvent,
-        eventDeleter: deleteEvent,
+        eventTextUpdater: updateDesc,
+        eventNameUpdater: updateEventName,
+        eventTimingUpdater: updateEventTiming,
+        deleteEvent: deleteEvent,
         events: events,
       ),
     );
@@ -70,10 +116,17 @@ class _TimelineComposerState extends State<TimelineComposer> {
 }
 
 class ComposerComponent extends StatefulWidget {
-  final eventUpdater;
-  final eventDeleter;
+  final eventTextUpdater;
+  final eventNameUpdater;
+  final eventTimingUpdater;
+  final deleteEvent;
   final events;
-  const ComposerComponent({this.eventUpdater, this.eventDeleter, this.events});
+  const ComposerComponent(
+      {this.eventTextUpdater,
+      this.eventNameUpdater,
+      this.eventTimingUpdater,
+      this.deleteEvent,
+      this.events});
 
   @override
   _ComposerComponentState createState() => _ComposerComponentState();
@@ -83,7 +136,48 @@ class _ComposerComponentState extends State<ComposerComponent> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      Expanded(
+      Container(
+        padding: EdgeInsets.all(10.0),
+        child: TextField(
+          onChanged: (x) {
+            widget.eventNameUpdater(x);
+          },
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Event Name',
+          ),
+        ),
+      ),
+      Container(
+        padding: EdgeInsets.all(10.0),
+        child: TextField(
+          onChanged: (x) {
+            widget.eventTimingUpdater(x);
+          },
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Event Timing (DD/MM/YYYY)',
+          ),
+        ),
+      ),
+      Flexible(
+        flex: 1,
+        child: Card(
+            color: Colors.black12,
+            child: Padding(
+              padding: EdgeInsets.all(12.0),
+              child: TextField(
+                onChanged: (x) {
+                  widget.eventTextUpdater(x);
+                },
+                maxLines: 45,
+                decoration: InputDecoration.collapsed(
+                    hintText: "Start Describing the Event!"),
+              ),
+            )),
+      ),
+      Flexible(
+        flex: 1,
         child: Card(
             color: Colors.black12,
             child: Column(
@@ -103,19 +197,42 @@ class _ComposerComponentState extends State<ComposerComponent> {
                                   color: Colors.black12,
                                   child: Container(
                                     padding: EdgeInsets.all(12.0),
-                                    child: TextField(
-                                      onChanged: (x) {
-                                        widget.events[index] = x;
-                                      },
-                                      maxLines: 5,
-                                      decoration: InputDecoration.collapsed(
-                                          hintText: "Event Description"),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${widget.events[index]['eventName']}",
+                                          style: TextStyle(fontSize: 22.0),
+                                        ),
+                                        SizedBox(
+                                          height: 10.0,
+                                        ),
+                                        TextField(
+                                          enabled: false,
+                                          maxLines: 5,
+                                          decoration: InputDecoration.collapsed(
+                                              hintText:
+                                                  "${widget.events[index]['eventText']}"),
+                                        ),
+                                        SizedBox(
+                                          height: 5.0,
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.all(4.0),
+                                          color: Colors.black12,
+                                          child: Text(
+                                              "${widget.events[index]['eventTiming']}"),
+                                        ),
+                                      ],
                                     ),
                                   )),
                               trailing: IconButton(
                                   icon: Icon(Icons.clear),
                                   onPressed: () {
                                     print("CLEAR");
+                                    widget.deleteEvent(
+                                        widget.events[index]['eventText']);
                                   }),
                             ),
                           );

@@ -4,7 +4,7 @@ class BlogPost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () => print("Clicked on Blog Post"),
+        onTap: () => Navigator.of(context).pushNamed('/BlogViewer'),
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 10.0),
           child: ClipRRect(
@@ -56,7 +56,7 @@ class BlogPost extends StatelessWidget {
                       new Positioned(
                         left: 0.0,
                         bottom: 30.0,
-                        child: new Text("Biggest Changes in MacOS",
+                        child: new Text("The story of Salvatore",
                             style: new TextStyle(
                               fontSize: 20.0,
                             )),

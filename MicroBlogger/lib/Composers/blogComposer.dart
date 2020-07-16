@@ -9,10 +9,17 @@ class BlogComposer extends StatefulWidget {
 
 class _BlogComposerState extends State<BlogComposer> {
   String content = "";
+  String blogName = "";
 
   void updateComment(x) {
     setState(() {
       content = x;
+    });
+  }
+
+  void blogNameUpdater(x) {
+    setState(() {
+      blogName = x;
     });
   }
 
@@ -31,7 +38,8 @@ class _BlogComposerState extends State<BlogComposer> {
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
               onPressed: () {
-                print("TEXT: $content");
+                print(blogName);
+                print(content);
                 //upload
               },
               child: Text("Publish"),
@@ -40,14 +48,18 @@ class _BlogComposerState extends State<BlogComposer> {
           )
         ],
       ),
-      body: ComposerComponent(contentUpdater: updateComment),
+      body: ComposerComponent(
+        contentUpdater: updateComment,
+        blogNameUpdater: blogNameUpdater,
+      ),
     );
   }
 }
 
 class ComposerComponent extends StatefulWidget {
   final contentUpdater;
-  const ComposerComponent({this.contentUpdater});
+  final blogNameUpdater;
+  const ComposerComponent({this.contentUpdater, this.blogNameUpdater});
 
   @override
   _ComposerComponentState createState() => _ComposerComponentState();
@@ -59,8 +71,14 @@ class _ComposerComponentState extends State<ComposerComponent> {
     return Column(children: [
       Container(
         padding: EdgeInsets.all(10.0),
-        child: TextFormField(
-          decoration: InputDecoration(labelText: 'Enter Name'),
+        child: TextField(
+          onChanged: (x) {
+            widget.blogNameUpdater("$x");
+          },
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Blog Name',
+          ),
         ),
       ),
       Expanded(

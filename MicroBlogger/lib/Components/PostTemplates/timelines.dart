@@ -4,7 +4,7 @@ class Timeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () => print("Clicked on Blog Post"),
+        onTap: () => Navigator.of(context).pushNamed('/TimelineViewer'),
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 10.0),
           child: ClipRRect(

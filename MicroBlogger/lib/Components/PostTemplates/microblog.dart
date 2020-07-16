@@ -16,7 +16,7 @@ class _MicroBlogPostState extends State<MicroBlogPost> {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0),
         child: InkWell(
-          onTap: () => Navigator.of(context).pushNamed('/MicroBlogPost'),
+          onTap: () => Navigator.of(context).pushNamed('/MicroBlogViewer'),
           child: Column(
             children: [
               Container(
@@ -128,6 +128,10 @@ class _MicroBlogPostState extends State<MicroBlogPost> {
                               _liked = !_liked;
                             }),
                           ),
+                          Text(
+                            "30.65K",
+                            style: TextStyle(color: Colors.white60),
+                          )
                         ],
                       ),
                       //comment
@@ -176,6 +180,10 @@ class _MicroBlogPostState extends State<MicroBlogPost> {
                               ));
                             }),
                           ),
+                          Text(
+                            "200.3K",
+                            style: TextStyle(color: Colors.white60),
+                          )
                         ],
                       ),
                       Row(

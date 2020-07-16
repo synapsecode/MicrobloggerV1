@@ -133,23 +133,23 @@ class _ReshareWithCommentState extends State<ReshareWithComment> {
                         ],
                       ),
                       //comment
-                      Row(
-                        children: [
-                          IconButton(
-                            padding: EdgeInsets.only(bottom: 2.0),
-                            icon:
-                                Icon((_reshared) ? Icons.repeat : Icons.repeat),
-                            color: (_reshared) ? Colors.green : null,
-                            onPressed: () => setState(() {
-                              _reshared = !_reshared;
-                            }),
-                          ),
-                          Text(
-                            "20.4K",
-                            style: TextStyle(color: Colors.white60),
-                          )
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     IconButton(
+                      //       padding: EdgeInsets.only(bottom: 2.0),
+                      //       icon:
+                      //           Icon((_reshared) ? Icons.repeat : Icons.repeat),
+                      //       color: (_reshared) ? Colors.green : null,
+                      //       onPressed: () => setState(() {
+                      //         _reshared = !_reshared;
+                      //       }),
+                      //     ),
+                      //     Text(
+                      //       "20.4K",
+                      //       style: TextStyle(color: Colors.white60),
+                      //     )
+                      //   ],
+                      // ),
                       Row(
                         children: [
                           IconButton(
@@ -457,7 +457,7 @@ class _ReshareState extends State<Reshare> {
                             )
                           ],
                         ),
-                        //comment
+                        // //comment
                         Row(
                           children: [
                             IconButton(

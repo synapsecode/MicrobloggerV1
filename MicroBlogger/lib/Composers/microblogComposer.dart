@@ -40,7 +40,8 @@ class _MicroBlogComposerState extends State<MicroBlogComposer> {
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
               onPressed: () {
-                print("TEXT: $content");
+                print("Fact: $isFact");
+                print(content);
                 //upload
               },
               child: Text("Publish"),
