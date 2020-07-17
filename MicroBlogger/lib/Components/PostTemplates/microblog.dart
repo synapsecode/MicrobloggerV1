@@ -1,3 +1,4 @@
+import 'package:MicroBlogger/Components/Others/UIElements.dart';
 import 'package:flutter/material.dart';
 
 class MicroBlogPost extends StatefulWidget {
@@ -104,136 +105,9 @@ class _MicroBlogPostState extends State<MicroBlogPost> {
                   ],
                 ),
               ),
-              Container(
-                  padding: EdgeInsets.only(left: 5.0),
-                  decoration: BoxDecoration(
-                      color: Colors.white12,
-                      border: Border(
-                          left: BorderSide(width: 1.0, color: Colors.white12),
-                          right: BorderSide(width: 1.0, color: Colors.white12),
-                          bottom:
-                              BorderSide(width: 1.0, color: Colors.white12))),
-                  height: 35.0,
-                  child: Row(
-                    children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            padding: EdgeInsets.only(bottom: 2.0),
-                            icon: Icon((_liked)
-                                ? Icons.favorite
-                                : Icons.favorite_border),
-                            color: (_liked) ? Colors.pink : null,
-                            onPressed: () => setState(() {
-                              _liked = !_liked;
-                            }),
-                          ),
-                          Text(
-                            "30.65K",
-                            style: TextStyle(color: Colors.white60),
-                          )
-                        ],
-                      ),
-                      //comment
-                      Row(
-                        children: [
-                          IconButton(
-                            padding: EdgeInsets.only(bottom: 2.0),
-                            icon:
-                                Icon((_reshared) ? Icons.repeat : Icons.repeat),
-                            color: (_reshared) ? Colors.green : null,
-                            onPressed: () => setState(() {
-                              _reshared = !_reshared;
-                              Scaffold.of(context).showSnackBar(SnackBar(
-                                // content: Text(
-                                //   "Saved To Bookmarks",
-                                //   style: TextStyle(color: Colors.white),
-                                // ),
-                                content: Row(
-                                  children: [
-                                    RaisedButton(
-                                        onPressed: () {
-                                          //reshare logic
-                                        },
-                                        color: Colors.white10,
-                                        child: Text("Reshare",
-                                            style: TextStyle(
-                                                color: Colors.white))),
-                                    SizedBox(
-                                      width: 5.0,
-                                    ),
-                                    RaisedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pushNamed(
-                                            '/MB_ReshareComposer',
-                                            arguments: {"MB"});
-                                      },
-                                      color: Colors.white10,
-                                      child: Text("Reshare with Comment",
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                    ),
-                                  ],
-                                ),
-                                backgroundColor: Colors.black,
-                                // duration: Duration(seconds: 1),
-                              ));
-                            }),
-                          ),
-                          Text(
-                            "200.3K",
-                            style: TextStyle(color: Colors.white60),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            padding: EdgeInsets.only(bottom: 2.0),
-                            icon: Icon(Icons.chat_bubble_outline),
-                            onPressed: () => print("Open Comments"),
-                          ),
-                          Text(
-                            "200",
-                            style: TextStyle(color: Colors.white60),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            padding: EdgeInsets.only(bottom: 2.0),
-                            icon: Icon((_bookmarked)
-                                ? Icons.bookmark
-                                : Icons.bookmark_border),
-                            color: (_bookmarked) ? Colors.green : null,
-                            onPressed: () {
-                              Scaffold.of(context).showSnackBar(SnackBar(
-                                content: Text(
-                                  "Saved To Bookmarks",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                backgroundColor: Colors.black,
-                                duration: Duration(seconds: 1),
-                              ));
-                              setState(() {
-                                _bookmarked = !_bookmarked;
-                              });
-                            },
-                          )
-                        ],
-                      ),
-                      // Row(
-                      //   children: [
-                      //     IconButton(
-                      //       padding: EdgeInsets.only(bottom: 2.0),
-                      //       icon: Icon(Icons.share),
-                      //       onPressed: () => print("Share Modal"),
-                      //     )
-                      //   ],
-                      // ),
-                    ],
-                  )),
+              ActionBar(
+                postType: "MicroBlog",
+              )
             ],
           ),
         ));

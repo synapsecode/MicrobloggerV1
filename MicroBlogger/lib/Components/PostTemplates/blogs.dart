@@ -47,49 +47,30 @@ class BlogPost extends StatelessWidget {
                           )),
                       new Positioned(
                         left: 0.0,
-                        bottom: 60.0,
-                        child: new Text("Writeup",
-                            style: new TextStyle(
-                              fontSize: 40.0,
-                            )),
-                      ),
-                      new Positioned(
-                        left: 0.0,
-                        bottom: 30.0,
-                        child: new Text("The story of Salvatore",
-                            style: new TextStyle(
-                              fontSize: 20.0,
-                            )),
+                        bottom: 20.0,
+                        child: Container(
+                          width: 300.0,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Writeup",
+                                  style: new TextStyle(
+                                    fontSize: 40.0,
+                                  )),
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              Text("The Story of Salvatore",
+                                  style: new TextStyle(
+                                    fontSize: 20.0,
+                                  )),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ))),
         ));
-  }
-}
-
-class ActionBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            IconButton(
-                icon: Icon(Icons.favorite, color: Colors.white70),
-                onPressed: null),
-            Text("50")
-          ],
-        ),
-        Row(
-          children: <Widget>[
-            IconButton(
-                icon: Icon(Icons.mode_comment, color: Colors.white70),
-                onPressed: null),
-            Text("7")
-          ],
-        ),
-      ],
-    );
   }
 }
 

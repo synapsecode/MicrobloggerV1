@@ -1,5 +1,6 @@
 import 'package:MicroBlogger/Components/PostTemplates/shareable.dart';
 import 'package:MicroBlogger/Composers/blogComposer.dart';
+import 'package:MicroBlogger/Composers/commentComposer.dart';
 import 'package:MicroBlogger/Composers/microblogComposer.dart';
 import 'package:MicroBlogger/Composers/pollComposer.dart';
 import 'package:MicroBlogger/Composers/reshareComposer.dart';

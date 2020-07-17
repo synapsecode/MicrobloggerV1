@@ -294,7 +294,10 @@ class _MyPostViewState extends State<MyPostView> {
                   shrinkWrap: true,
                   itemCount: 7,
                   itemBuilder: (context, index) {
-                    return new ReshareWithComment();
+                    return new ReshareWithComment(
+                      resharedType: "MicroBlog",
+                      postObject: {'id': "dhr48fhdj"},
+                    );
                   }),
               ListView.builder(
                   shrinkWrap: true,

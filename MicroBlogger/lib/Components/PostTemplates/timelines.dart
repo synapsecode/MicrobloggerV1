@@ -47,20 +47,25 @@ class Timeline extends StatelessWidget {
                           )),
                       new Positioned(
                         left: 0.0,
-                        bottom: 60.0,
-                        child: new Text("Timeline",
-                            style: new TextStyle(
-                              fontSize: 40.0,
-                            )),
-                      ),
-                      new Positioned(
-                        left: 0.0,
-                        bottom: 30.0,
+                        bottom: 20.0,
                         child: Container(
-                          child: new Text("The Covid-19 Pandemic in India",
-                              style: new TextStyle(
-                                fontSize: 20.0,
-                              )),
+                          width: 300.0,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Timeline",
+                                  style: new TextStyle(
+                                    fontSize: 40.0,
+                                  )),
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              Text("The Covid-19 Pandemic in India",
+                                  style: new TextStyle(
+                                    fontSize: 20.0,
+                                  )),
+                            ],
+                          ),
                         ),
                       ),
                     ],

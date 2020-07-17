@@ -73,7 +73,7 @@ class Feed extends StatelessWidget {
         child: Container(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
             child: ListView.builder(
-                itemCount: 16,
+                itemCount: 22,
                 itemBuilder: (context, index) {
                   if (index < 2)
                     return new MicroBlogPost();
@@ -86,13 +86,29 @@ class Feed extends StatelessWidget {
                   else if (index < 10)
                     return new BlogPost();
                   else if (index < 11)
-                    return new ReshareWithComment();
+                    return new ReshareWithComment(
+                      postObject: {'id': '4gf83h'},
+                      resharedType: "MicroBlog",
+                    );
                   else if (index < 12)
                     return new ResharedBlog();
                   else if (index < 14)
-                    return new ResharedBlog();
+                    return new ReshareWithComment(
+                      postObject: {'id': '4gf83h'},
+                      resharedType: "Blog",
+                    );
                   else if (index < 16)
                     return new Timeline();
+                  else if (index < 18)
+                    return new ReshareWithComment(
+                      postObject: {'id': '4gf83h'},
+                      resharedType: "Timeline",
+                    );
+                  else if (index < 20)
+                    return new ReshareWithComment(
+                      postObject: {'id': '4gf83h'},
+                      resharedType: "Shareable",
+                    );
                   else
                     return new ResharedTimeline();
                 })));
