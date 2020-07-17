@@ -1,14 +1,17 @@
 import 'package:MicroBlogger/Components/Others/UIElements.dart';
 import 'package:MicroBlogger/Components/PostTemplates/blogs.dart';
+import 'package:MicroBlogger/Components/PostTemplates/microblog.dart';
+import 'package:MicroBlogger/Components/PostTemplates/shareable.dart';
 import 'package:MicroBlogger/Components/PostTemplates/timelines.dart';
+import 'package:MicroBlogger/PostViewers/MicroBlogViewer.dart';
 import 'package:MicroBlogger/PostViewers/ReshareViewer.dart';
+import 'package:MicroBlogger/PostViewers/blogViewer.dart';
+import 'package:MicroBlogger/PostViewers/timelineViewer.dart';
 import 'package:flutter/material.dart';
 
 class ReshareWithComment extends StatefulWidget {
-  final resharedType;
   final postObject;
-  ReshareWithComment({Key key, this.resharedType, this.postObject})
-      : super(key: key);
+  ReshareWithComment({Key key, this.postObject}) : super(key: key);
 
   @override
   _ReshareWithCommentState createState() => _ReshareWithCommentState();
@@ -21,21 +24,9 @@ class _ReshareWithCommentState extends State<ReshareWithComment> {
         padding: EdgeInsets.symmetric(vertical: 10.0),
         child: InkWell(
           onTap: () {
-            print(widget.resharedType);
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return ResharedWithCommentViewer(
-                resharedType: (widget.resharedType == "MicroBlog")
-                    ? "MicroBlog"
-                    : (widget.resharedType == "Shareable")
-                        ? "Shareable"
-                        : (widget.resharedType == "Blog")
-                            ? "Blog"
-                            : (widget.resharedType == "Timeline")
-                                ? "Timeline"
-                                : "None",
-                postObject: {
-                  'id': 'ffaX3ddc',
-                },
+                postObject: widget.postObject,
               );
             }));
           },
@@ -55,7 +46,7 @@ class _ReshareWithCommentState extends State<ReshareWithComment> {
                         CircleAvatar(
                           radius: 24.0,
                           backgroundImage: NetworkImage(
-                              'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'),
+                              "${widget.postObject['author']['icon']}"),
                         ),
                         Container(
                           padding: EdgeInsets.only(left: 10.0),
@@ -63,7 +54,7 @@ class _ReshareWithCommentState extends State<ReshareWithComment> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Manas Hejmadi",
+                                "${widget.postObject['author']['name']}",
                                 style: TextStyle(fontSize: 20.0),
                               ),
                               Row(
@@ -71,7 +62,7 @@ class _ReshareWithCommentState extends State<ReshareWithComment> {
                                   InkWell(
                                     onTap: () => print("clicked user"),
                                     child: Text(
-                                      "@synapse.ai",
+                                      "@${widget.postObject['author']['username']}",
                                       style: TextStyle(color: Colors.blue),
                                     ),
                                   ),
@@ -79,14 +70,14 @@ class _ReshareWithCommentState extends State<ReshareWithComment> {
                                     width: 5,
                                   ),
                                   Text(
-                                    "12h",
+                                    "${widget.postObject['age']}",
                                     style: TextStyle(color: Colors.white30),
                                   ),
                                   SizedBox(
                                     width: 5,
                                   ),
                                   Text(
-                                    "Fact",
+                                    "${widget.postObject['category']}",
                                     style: TextStyle(color: Colors.green),
                                   ),
                                   SizedBox(
@@ -108,24 +99,53 @@ class _ReshareWithCommentState extends State<ReshareWithComment> {
                       height: 10.0,
                     ),
                     //----------------------------------------CONTENT-------------------------------------------------
-                    Text(
-                        "Thats a good move! Everybody needs a break from social media once in a while :)"),
+                    Text("${widget.postObject['content']}"),
                     SizedBox(
                       height: 10.0,
                     ),
-                    if (widget.resharedType == "MicroBlog") ...[
+                    if (widget.postObject['child']['type'] == "microblog") ...[
                       InkWell(
-                        child: HostMicroBlog(),
+                        child: HostMicroBlog(
+                          widget.postObject['child'],
+                        ),
                         onTap: () {
-                          Navigator.of(context).pushNamed('/MicroBlogViewer');
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MicroBlogViewer(
+                                        postObject: widget.postObject['child'],
+                                      )));
                         },
                       ),
-                    ] else if (widget.resharedType == "Shareable") ...[
-                      HostShareable(),
-                    ] else if (widget.resharedType == "Blog") ...[
-                      HostBlog(),
-                    ] else if (widget.resharedType == "Timeline") ...[
-                      HostTimeline(),
+                    ] else if (widget.postObject['child']['type'] ==
+                        "shareable") ...[
+                      HostShareable(widget.postObject['child']),
+                    ] else if (widget.postObject['child']['type'] ==
+                        "blog") ...[
+                      InkWell(
+                        child: HostBlog(widget.postObject['child']),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BlogViewer(
+                                        postObject: widget.postObject['child'],
+                                      )));
+                        },
+                      ),
+                    ] else if (widget.postObject['child']['type'] ==
+                        "timeline") ...[
+                      InkWell(
+                        child: HostTimeline(widget.postObject['child']),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TimelineViewer(
+                                        postObject: widget.postObject['child'],
+                                      )));
+                        },
+                      ),
                     ],
                     //---------------------------------------CONTENT-------------------------------------------------
                     //---------------------------------------SubFooter-------------------------------------------------
@@ -135,7 +155,7 @@ class _ReshareWithCommentState extends State<ReshareWithComment> {
                 ),
               ),
               ActionBar(
-                postType: "Microblog_ResharedWithComment",
+                post: widget.postObject,
               )
             ],
           ),
@@ -143,109 +163,9 @@ class _ReshareWithCommentState extends State<ReshareWithComment> {
   }
 }
 
-// class HostMicroBlog extends StatelessWidget {
-//   const HostMicroBlog({Key key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return InkWell(
-//       onTap: () {
-//         print("Redirecting to MicroBlog");
-//       },
-//       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-//         Padding(
-//             padding: EdgeInsets.symmetric(vertical: 10.0),
-//             child: Column(
-//               children: [
-//                 Container(
-//                   padding: EdgeInsets.all(10.0),
-//                   decoration: BoxDecoration(
-//                       color: Colors.black26,
-//                       border: Border.all(color: Colors.white30, width: 1.0)),
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       //----------------------------------------HEADER-------------------------------------------------
-//                       Row(
-//                         children: [
-//                           CircleAvatar(
-//                             radius: 24.0,
-//                             backgroundImage: NetworkImage(
-//                                 'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'),
-//                           ),
-//                           Container(
-//                             padding: EdgeInsets.only(left: 10.0),
-//                             child: Column(
-//                               crossAxisAlignment: CrossAxisAlignment.start,
-//                               children: [
-//                                 Text(
-//                                   "Carryminati",
-//                                   style: TextStyle(fontSize: 20.0),
-//                                 ),
-//                                 Row(
-//                                   children: [
-//                                     InkWell(
-//                                       onTap: () => print("clicked user"),
-//                                       child: Text(
-//                                         "@ajeynagar",
-//                                         style: TextStyle(color: Colors.blue),
-//                                       ),
-//                                     ),
-//                                     SizedBox(
-//                                       width: 5,
-//                                     ),
-//                                     Text(
-//                                       "22h",
-//                                       style: TextStyle(color: Colors.white30),
-//                                     ),
-//                                     SizedBox(
-//                                       width: 5,
-//                                     ),
-//                                     Text(
-//                                       "Opinion",
-//                                       style: TextStyle(color: Colors.pink),
-//                                     ),
-//                                     SizedBox(
-//                                       width: 5,
-//                                     )
-//                                   ],
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                       //----------------------------------------HEADER-------------------------------------------------
-//                       SizedBox(
-//                         height: 10.0,
-//                       ),
-//                       //----------------------------------------CONTENT-------------------------------------------------
-//                       Container(
-//                           decoration: BoxDecoration(
-//                               border: Border.all(
-//                                   color: Colors.white10, width: 0.5)),
-//                           padding: EdgeInsets.all(10.0),
-//                           child: Column(
-//                               crossAxisAlignment: CrossAxisAlignment.start,
-//                               children: [
-//                                 Text(
-//                                     "Hey Guys! How are you all? I have decided to take a short break from Youtube to focus more on my creative development. See you guys soon!"),
-//                               ])),
-//                       //---------------------------------------CONTENT-------------------------------------------------
-//                       //---------------------------------------SubFooter-------------------------------------------------
-
-//                       //---------------------------------------SubFooter-------------------------------------------------
-//                     ],
-//                   ),
-//                 ),
-//               ],
-//             ))
-//       ]),
-//     );
-//   }
-// }
-
 class HostMicroBlog extends StatelessWidget {
+  final data;
+  HostMicroBlog(this.data);
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -263,8 +183,7 @@ class HostMicroBlog extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 24.0,
-                    backgroundImage: NetworkImage(
-                        'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'),
+                    backgroundImage: NetworkImage("${data['author']['icon']}"),
                   ),
                   Container(
                     padding: EdgeInsets.only(left: 10.0),
@@ -272,7 +191,7 @@ class HostMicroBlog extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Manas Hejmadi",
+                          "${data['author']['name']}",
                           style: TextStyle(fontSize: 20.0),
                         ),
                         Row(
@@ -280,7 +199,7 @@ class HostMicroBlog extends StatelessWidget {
                             InkWell(
                               onTap: () => print("clicked user"),
                               child: Text(
-                                "@synapse.ai",
+                                "@${data['author']['username']}",
                                 style: TextStyle(color: Colors.blue),
                               ),
                             ),
@@ -288,14 +207,14 @@ class HostMicroBlog extends StatelessWidget {
                               width: 5,
                             ),
                             Text(
-                              "12h",
+                              "${data['age']}",
                               style: TextStyle(color: Colors.white30),
                             ),
                             SizedBox(
                               width: 5,
                             ),
                             Text(
-                              "Fact",
+                              "${data['category']}",
                               style: TextStyle(color: Colors.green),
                             ),
                             SizedBox(
@@ -324,8 +243,7 @@ class HostMicroBlog extends StatelessWidget {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                            "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
+                        Text("${data['content']}"),
                       ])),
               //---------------------------------------CONTENT-------------------------------------------------
               //---------------------------------------SubFooter-------------------------------------------------
@@ -340,7 +258,8 @@ class HostMicroBlog extends StatelessWidget {
 }
 
 class HostShareable extends StatelessWidget {
-  const HostShareable({Key key}) : super(key: key);
+  final data;
+  const HostShareable(this.data);
 
   @override
   Widget build(BuildContext context) {
@@ -360,8 +279,7 @@ class HostShareable extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 24.0,
-                    backgroundImage: NetworkImage(
-                        'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'),
+                    backgroundImage: NetworkImage("${data['author']['icon']}"),
                   ),
                   Container(
                     padding: EdgeInsets.only(left: 10.0),
@@ -369,7 +287,7 @@ class HostShareable extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Manas Hejmadi",
+                          "${data['author']['name']}",
                           style: TextStyle(fontSize: 20.0),
                         ),
                         SizedBox(
@@ -380,7 +298,7 @@ class HostShareable extends StatelessWidget {
                             InkWell(
                               onTap: () => print("clicked user"),
                               child: Text(
-                                "@synapse.ai",
+                                "@${data['author']['username']}",
                                 style: TextStyle(color: Colors.blue),
                               ),
                             ),
@@ -388,7 +306,7 @@ class HostShareable extends StatelessWidget {
                               width: 5,
                             ),
                             Text(
-                              "12h",
+                              "${data['age']}",
                               style: TextStyle(color: Colors.white30),
                             ),
                             SizedBox(
@@ -417,8 +335,7 @@ class HostShareable extends StatelessWidget {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                            "Hey Guys! Check out my new application called Krustel Classroom! Its releasing exclusively on Android. Check it out using the link provided below!"),
+                        Text("${data['content']}"),
                         SizedBox(
                           height: 10.0,
                         ),
@@ -427,9 +344,11 @@ class HostShareable extends StatelessWidget {
                           children: [
                             RaisedButton.icon(
                                 color: Colors.black,
-                                onPressed: () {},
+                                onPressed: () {
+                                  print("Redirected to ${data['link']}");
+                                },
                                 icon: Icon(Icons.link),
-                                label: Text("Visit Krustel Classroom"))
+                                label: Text("Visit ${data['name']}"))
                           ],
                         )
                       ])),
@@ -446,25 +365,30 @@ class HostShareable extends StatelessWidget {
 }
 
 class HostBlog extends StatelessWidget {
-  const HostBlog({Key key}) : super(key: key);
+  final data;
+  HostBlog(this.data);
 
   @override
   Widget build(BuildContext context) {
-    return BlogPost();
+    return BlogPost(
+      postObject: data,
+    );
   }
 }
 
 class HostTimeline extends StatelessWidget {
-  const HostTimeline({Key key}) : super(key: key);
+  final data;
+  HostTimeline(this.data);
 
   @override
   Widget build(BuildContext context) {
-    return Timeline();
+    return Timeline(data);
   }
 }
 
 class Reshare extends StatefulWidget {
-  Reshare({Key key}) : super(key: key);
+  final postObject;
+  Reshare({Key key, this.postObject}) : super(key: key);
 
   @override
   _ReshareState createState() => _ReshareState();
@@ -587,7 +511,7 @@ class _ReshareState extends State<Reshare> {
                     ),
                   ),
                   ActionBar(
-                    postType: "ResharedMicroblog",
+                    post: widget.postObject,
                   )
                 ],
               )),

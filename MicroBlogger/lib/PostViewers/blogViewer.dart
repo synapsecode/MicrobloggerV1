@@ -5,17 +5,14 @@ import 'package:flutter/rendering.dart';
 import '../Components/PostTemplates/comments.dart';
 
 class BlogViewer extends StatefulWidget {
-  BlogViewer({Key key}) : super(key: key);
+  final postObject;
+  BlogViewer({Key key, this.postObject}) : super(key: key);
 
   @override
   _BlogViewerState createState() => _BlogViewerState();
 }
 
 class _BlogViewerState extends State<BlogViewer> {
-  getText() {
-    return "boys in those Southern parts grow apace and in a little while he was madly in love with a pretty girl who lived on the Grande Marina.  She had eyes like forest pools and held herself like a daughter of the Caesars.  They were affianced, but they could not marry till Salvatore had done his military service, and when he left the island which he had never left in his life before, to become a sailor in the navy of King Victor Emmanuel, he wept like a child.  It was hard for one who had never been less free than the birds to be at the beck and call of others, it was harder still to live in a battleship with strangers instead of in a little white cottage among the vines; and when he was ashore, to walk in noisy, friendless cities with streets so crowded that he was frightened to cross them, when he had been used to silent paths and the mountains and the sea.  I suppose it had never struck him that Ischia, which he looked at every evening (it was like a fairy island in the sunset) to see what the weather would be like next day, or Vesuvius, pearly in the dawn, had anything to do with him at all; but when he ceased to have them before his eyes he realized in some dim fashion that they were as much part of him as his hands and his feet.  He was dreadfully homesick.  But it was hardest of all to be parted from the girl he loved with all his passionate young heart.  He wrote to her (in his childlike handwriting) long, ill-spelt letters in which he told her how constantly he thought of her and how much he longed to be back.  He was sent here and there, to Spezzia, to Venice, to Ban and finally to China.  Here he fell ill of some mysterious ailment that kept him in hospital for months.  He bore it with the mute and uncomprehending patience of a dog.  When he learnt that it was a form of rheumatism that made him unfit for further service his heart exulted, for he could go home; and he did not bother, in fact he scarcely listened, when the doctors told him that he would never again be quite well. What did he care when he was going back to the little island he loved so well and the girl who was waiting I for him? When he got into the rowing-boat that met the steamer from Naples and was rowed ashore he saw his father and mother standing on the jetty and his two brothers, big boys now, and he waved to them.  His eyes searched t among the crowd that waited there, for the girl. ";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,10 +31,6 @@ class _BlogViewerState extends State<BlogViewer> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Container(
-            //   child: BlogPost(),
-            //   padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-            // ),
             Container(
               color: Colors.white10,
               padding: EdgeInsets.all(10.0),
@@ -46,8 +39,8 @@ class _BlogViewerState extends State<BlogViewer> {
                 children: [
                   CircleAvatar(
                     radius: 24.0,
-                    backgroundImage: NetworkImage(
-                        'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'),
+                    backgroundImage:
+                        NetworkImage("${widget.postObject['author']['icon']}"),
                   ),
                   Container(
                     padding: EdgeInsets.only(left: 10.0),
@@ -55,7 +48,7 @@ class _BlogViewerState extends State<BlogViewer> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Manas Hejmadi",
+                          "${widget.postObject['author']['name']}",
                           style: TextStyle(fontSize: 20.0),
                         ),
                         Row(
@@ -63,7 +56,7 @@ class _BlogViewerState extends State<BlogViewer> {
                             InkWell(
                               onTap: () => print("clicked user"),
                               child: Text(
-                                "@synapse.ai",
+                                "@${widget.postObject['author']['username']}",
                                 style: TextStyle(color: Colors.blue),
                               ),
                             ),
@@ -71,7 +64,7 @@ class _BlogViewerState extends State<BlogViewer> {
                               width: 5,
                             ),
                             Text(
-                              "12h",
+                              "${widget.postObject['age']}",
                               style: TextStyle(color: Colors.white30),
                             ),
                             SizedBox(
@@ -93,31 +86,29 @@ class _BlogViewerState extends State<BlogViewer> {
                     Container(
                       padding: EdgeInsets.all(10.0),
                       child: Text(
-                        "The Story of Salvatore",
+                        "${widget.postObject['blog_name']}",
                         style: TextStyle(fontSize: 44.0),
                       ),
                     ),
                     Container(
                         padding: EdgeInsets.all(10.0),
                         child: Text(
-                          getText(),
+                          "${widget.postObject['content']}",
                           style:
                               TextStyle(color: Colors.white54, fontSize: 18.0),
                         )),
                   ],
                 )),
-
-            SizedBox(
-              height: 10.0,
+            ActionBar(
+              post: widget.postObject,
             ),
-            ActionBar(postType: "Blog"),
             SizedBox(
               height: 10.0,
             ),
             Padding(
               padding: EdgeInsets.only(left: 10.0),
               child: Text(
-                'Comments (4)',
+                'Comments (${widget.postObject['comments'].length})',
                 style: TextStyle(fontSize: 22.0),
               ),
             ),
@@ -129,9 +120,10 @@ class _BlogViewerState extends State<BlogViewer> {
               child: ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: 4,
+                  itemCount: widget.postObject['comments'].length,
                   itemBuilder: (c, i) {
-                    return new LevelOneComment();
+                    return new LevelOneComment(
+                        commentObject: widget.postObject['comments'][i]);
                   }),
             ),
           ],

@@ -1,10 +1,12 @@
 import 'package:MicroBlogger/Components/Others/UIElements.dart';
+import 'package:MicroBlogger/Components/PostTemplates/microblog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import '../Components/PostTemplates/comments.dart';
 
 class MicroBlogViewer extends StatefulWidget {
-  MicroBlogViewer({Key key}) : super(key: key);
+  final postObject;
+  MicroBlogViewer({Key key, this.postObject}) : super(key: key);
 
   @override
   _MicroBlogViewerState createState() => _MicroBlogViewerState();
@@ -29,14 +31,17 @@ class _MicroBlogViewerState extends State<MicroBlogViewer> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            HXMicroBlog(),
+            MicroBlogPost(
+              postObject: widget.postObject,
+              isInViewMode: true,
+            ),
             SizedBox(
               height: 10.0,
             ),
             Padding(
               padding: EdgeInsets.only(left: 10.0),
               child: Text(
-                'Comments (200)',
+                'Comments (${widget.postObject['comments'].length})',
                 style: TextStyle(fontSize: 22.0),
               ),
             ),
@@ -48,9 +53,10 @@ class _MicroBlogViewerState extends State<MicroBlogViewer> {
               child: ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: 10,
+                  itemCount: widget.postObject['comments'].length,
                   itemBuilder: (c, i) {
-                    return new LevelOneComment();
+                    return new LevelOneComment(
+                        commentObject: widget.postObject['comments'][i]);
                   }),
             ),
           ],
@@ -62,7 +68,8 @@ class _MicroBlogViewerState extends State<MicroBlogViewer> {
 }
 
 class HXMicroBlog extends StatefulWidget {
-  HXMicroBlog({Key key}) : super(key: key);
+  final postObject;
+  HXMicroBlog({Key key, this.postObject}) : super(key: key);
 
   @override
   _HXMicroBlogState createState() => _HXMicroBlogState();
@@ -160,7 +167,9 @@ class _HXMicroBlogState extends State<HXMicroBlog> {
             ],
           ),
         ),
-        ActionBar(postType: "MicroBlog"),
+        ActionBar(
+          post: widget.postObject,
+        )
       ],
     );
   }

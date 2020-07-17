@@ -1,5 +1,6 @@
 import 'package:MicroBlogger/Components/Others/UIElements.dart';
 import 'package:MicroBlogger/Components/PostTemplates/reshare.dart';
+import 'package:MicroBlogger/Data/datafetcher.dart';
 import 'package:flutter/material.dart';
 import '../Components/PostTemplates/microblog.dart';
 import '../Components/PostTemplates/blogs.dart';
@@ -264,6 +265,16 @@ class _MyPostViewState extends State<MyPostView> {
 
   @override
   Widget build(BuildContext context) {
+    final data = DataFetcher();
+    List othersFeed = [...data.shareablePosts, ...data.pollPosts];
+    List microblogFeed = [...data.microblogPosts];
+    List blogandTimelineFeed = [...data.timelinePosts, ...data.blogPosts];
+    List reshareFeed = [...data.resharesWithComment];
+    othersFeed.shuffle();
+    microblogFeed.shuffle();
+    blogandTimelineFeed.shuffle();
+    reshareFeed.shuffle();
+
     return Container(
         child: Column(
       children: <Widget>[
@@ -286,38 +297,43 @@ class _MyPostViewState extends State<MyPostView> {
             children: <Widget>[
               ListView.builder(
                   shrinkWrap: true,
-                  itemCount: 7,
+                  itemCount: microblogFeed.length,
                   itemBuilder: (context, index) {
-                    return new MicroBlogPost();
-                  }),
-              ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: 7,
-                  itemBuilder: (context, index) {
-                    return new ReshareWithComment(
-                      resharedType: "MicroBlog",
-                      postObject: {'id': "dhr48fhdj"},
+                    return new MicroBlogPost(
+                      postObject: microblogFeed[index],
                     );
                   }),
               ListView.builder(
                   shrinkWrap: true,
-                  itemCount: 8,
+                  itemCount: reshareFeed.length,
                   itemBuilder: (context, index) {
-                    if (index % 2 == 0)
-                      return new Timeline();
+                    return new ReshareWithComment(
+                      postObject: reshareFeed[index],
+                    );
+                  }),
+              ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: blogandTimelineFeed.length,
+                  itemBuilder: (context, index) {
+                    if (blogandTimelineFeed[index]['type'] == 'blog')
+                      return BlogPost(postObject: blogandTimelineFeed[index]);
                     else
-                      return new BlogPost();
+                      return Timeline(blogandTimelineFeed[index]);
                   }),
               ListView.builder(
 
                   //shareables and polls
                   shrinkWrap: true,
-                  itemCount: 8,
+                  itemCount: othersFeed.length,
                   itemBuilder: (context, index) {
-                    if (index % 2 == 0)
-                      return new Shareable();
+                    if (othersFeed[index]['type'] == 'shareable')
+                      return new Shareable(
+                        postObject: othersFeed[index],
+                      );
                     else
-                      return new PollPost();
+                      return new PollPost(
+                        postObject: othersFeed[index],
+                      );
                   }),
             ],
           ),

@@ -60,7 +60,7 @@ class MainAppDrawer extends StatelessWidget {
               child: UserAccountsDrawerHeader(
                 currentAccountPicture: CircleAvatar(
                     radius: 20,
-                    backgroundImage: NetworkImage("${currentUser['dpURL']}")),
+                    backgroundImage: NetworkImage("${currentUser['icon']}")),
                 accountName: Text("${currentUser['name']}",
                     style: TextStyle(
                       fontSize: 20.0,
@@ -69,7 +69,7 @@ class MainAppDrawer extends StatelessWidget {
                 decoration: new BoxDecoration(
                     image: new DecorationImage(
                         fit: BoxFit.cover,
-                        image: NetworkImage("${currentUser['bgURL']}")
+                        image: NetworkImage("${currentUser['background']}")
                         //NetworkImage('https://www.wallpaperup.com/uploads/wallpapers/2015/01/29/604388/cff1fdb8cae21be0110304941e33130d-700.jpg')
                         )),
               ),
@@ -238,8 +238,8 @@ class _FloatingCircleButtonState extends State<FloatingCircleButton> {
 }
 
 class ActionBar extends StatefulWidget {
-  final String postType;
-  ActionBar({Key key, this.postType}) : super(key: key);
+  final post;
+  ActionBar({Key key, this.post}) : super(key: key);
 
   @override
   _ActionBarState createState() => _ActionBarState();
@@ -250,6 +250,21 @@ class _ActionBarState extends State<ActionBar> {
   bool _reshared = false;
   bool _bookmarked = false;
   String commentText = "";
+
+  int likeCounter = 0;
+  int commentCounter = 0;
+  int reshareCounter = 0;
+
+  @override
+  void initState() {
+    likeCounter = widget.post['likes'];
+    commentCounter = (widget.post.containsKey('comments'))
+        ? widget.post['comments'].length
+        : 0;
+    reshareCounter = widget.post['reshares'];
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -266,98 +281,103 @@ class _ActionBarState extends State<ActionBar> {
             Row(
               children: [
                 IconButton(
-                  padding: EdgeInsets.only(bottom: 2.0),
-                  icon: Icon((_liked) ? Icons.favorite : Icons.favorite_border),
-                  color: (_liked) ? Colors.pink : null,
-                  onPressed: () => setState(() {
-                    _liked = !_liked;
-                  }),
-                ),
+                    padding: EdgeInsets.only(bottom: 2.0),
+                    icon:
+                        Icon((_liked) ? Icons.favorite : Icons.favorite_border),
+                    color: (_liked) ? Colors.pink : null,
+                    onPressed: () {
+                      setState(() {
+                        _liked = !_liked;
+                        likeCounter = (!_liked) ? --likeCounter : ++likeCounter;
+                      });
+                      print("Liked Post ID: ${widget.post['id']}");
+                    }),
                 Text(
-                  "30.65K",
+                  "${likeCounter.toString()}",
                   style: TextStyle(color: Colors.white60),
                 )
               ],
             ),
             //comment
-            if (widget.postType != "Poll" &&
-                widget.postType != "Microblog_ResharedWithComment") ...[
+            if (widget.post['type'] != "poll" &&
+                widget.post['type'] != "ResharedWithComment") ...[
               Row(
                 children: [
                   IconButton(
-                    padding: EdgeInsets.only(bottom: 2.0),
-                    icon: Icon((_reshared) ? Icons.repeat : Icons.repeat),
-                    color: (_reshared) ? Colors.green : null,
-                    onPressed: () => setState(() {
-                      _reshared = !_reshared;
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        // content: Text(
-                        //   "Saved To Bookmarks",
-                        //   style: TextStyle(color: Colors.white),
-                        // ),
-                        content: Row(
-                          children: [
-                            RaisedButton(
-                                onPressed: () {
-                                  //reshare logic
-                                },
-                                color: Colors.white10,
-                                child: Text("Reshare",
-                                    style: TextStyle(color: Colors.white))),
-                            SizedBox(
-                              width: 5.0,
+                      padding: EdgeInsets.only(bottom: 2.0),
+                      icon: Icon((_reshared) ? Icons.repeat : Icons.repeat),
+                      color: (_reshared) ? Colors.green : null,
+                      onPressed: () {
+                        setState(() {
+                          _reshared = !_reshared;
+                          reshareCounter = (!_reshared)
+                              ? --reshareCounter
+                              : ++reshareCounter;
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Row(
+                              children: [
+                                RaisedButton(
+                                    onPressed: () {
+                                      //reshare logic
+                                    },
+                                    color: Colors.white10,
+                                    child: Text("Reshare",
+                                        style: TextStyle(color: Colors.white))),
+                                SizedBox(
+                                  width: 5.0,
+                                ),
+                                RaisedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pushNamed(
+                                        '/MB_ReshareComposer',
+                                        arguments: {"MB"});
+                                  },
+                                  color: Colors.white10,
+                                  child: Text("Reshare with Comment",
+                                      style: TextStyle(color: Colors.white)),
+                                ),
+                              ],
                             ),
-                            RaisedButton(
-                              onPressed: () {
-                                Navigator.of(context).pushNamed(
-                                    '/MB_ReshareComposer',
-                                    arguments: {"MB"});
-                              },
-                              color: Colors.white10,
-                              child: Text("Reshare with Comment",
-                                  style: TextStyle(color: Colors.white)),
-                            ),
-                          ],
-                        ),
-                        backgroundColor: Colors.black,
-                        // duration: Duration(seconds: 1),
-                      ));
-                    }),
-                  ),
+                            backgroundColor: Colors.black,
+                          ));
+                        });
+                        print("Reshared Post ID: ${widget.post['id']}");
+                      }),
                   Text(
-                    "200.3K",
+                    "${reshareCounter.toString()}",
                     style: TextStyle(color: Colors.white60),
                   )
                 ],
               ),
             ],
-            if (widget.postType != "Poll" &&
-                widget.postType != "Shareable") ...[
+            if (widget.post['type'] != "poll" &&
+                widget.post['type'] != "shareable") ...[
               Row(
                 children: [
                   IconButton(
                     padding: EdgeInsets.only(bottom: 2.0),
                     icon: Icon(Icons.chat_bubble_outline),
                     onPressed: () {
+                      print("Commented on Post ID: ${widget.post['id']}");
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => CommentComposer(
                                     post: {
-                                      'id': 'ffaX3ddc',
-                                      'postType': '${widget.postType}'
+                                      'id': "${widget.post['id']}",
+                                      'postType': '${widget.post['type']}'
                                     },
                                   )));
                     },
                   ),
                   Text(
-                    "200",
+                    "${commentCounter.toString()}",
                     style: TextStyle(color: Colors.white60),
                   )
                 ],
               ),
             ],
-            if (widget.postType != "Poll") ...[
+            if (widget.post['type'] != "poll") ...[
               Row(
                 children: [
                   IconButton(
@@ -374,6 +394,7 @@ class _ActionBarState extends State<ActionBar> {
                         backgroundColor: Colors.black,
                         duration: Duration(seconds: 1),
                       ));
+                      print("Bookmarked Post ID: ${widget.post['id']}");
                       setState(() {
                         _bookmarked = !_bookmarked;
                       });
@@ -382,16 +403,6 @@ class _ActionBarState extends State<ActionBar> {
                 ],
               ),
             ],
-
-            // Row(
-            //   children: [
-            //     IconButton(
-            //       padding: EdgeInsets.only(bottom: 2.0),
-            //       icon: Icon(Icons.share),
-            //       onPressed: () => print("Share Modal"),
-            //     )
-            //   ],
-            // ),
           ],
         ));
   }

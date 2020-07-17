@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LevelOneComment extends StatefulWidget {
-  LevelOneComment({Key key}) : super(key: key);
+  final commentObject;
+  LevelOneComment({Key key, this.commentObject}) : super(key: key);
 
   @override
   _LevelOneCommentState createState() => _LevelOneCommentState();
@@ -9,6 +10,14 @@ class LevelOneComment extends StatefulWidget {
 
 class _LevelOneCommentState extends State<LevelOneComment> {
   bool _liked = false;
+  int likeCounter = 0;
+
+  @override
+  void initState() {
+    likeCounter = widget.commentObject['likes'];
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -29,7 +38,7 @@ class _LevelOneCommentState extends State<LevelOneComment> {
                     CircleAvatar(
                       radius: 24.0,
                       backgroundImage: NetworkImage(
-                          'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'),
+                          "${widget.commentObject['author']['icon']}"),
                     ),
                     Container(
                       padding: EdgeInsets.only(left: 10.0),
@@ -37,7 +46,7 @@ class _LevelOneCommentState extends State<LevelOneComment> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Manas Hejmadi",
+                            "${widget.commentObject['author']['name']}",
                             style: TextStyle(fontSize: 20.0),
                           ),
                           Row(
@@ -45,7 +54,7 @@ class _LevelOneCommentState extends State<LevelOneComment> {
                               InkWell(
                                 onTap: () => print("clicked user"),
                                 child: Text(
-                                  "@synapse.ai",
+                                  "@${widget.commentObject['author']['username']}",
                                   style: TextStyle(color: Colors.blue),
                                 ),
                               ),
@@ -53,14 +62,14 @@ class _LevelOneCommentState extends State<LevelOneComment> {
                                 width: 5,
                               ),
                               Text(
-                                "12h",
+                                "${widget.commentObject['age']}",
                                 style: TextStyle(color: Colors.white30),
                               ),
                               SizedBox(
                                 width: 5,
                               ),
                               Text(
-                                "Fact",
+                                "${widget.commentObject['category']}",
                                 style: TextStyle(color: Colors.green),
                               ),
                               SizedBox(
@@ -89,8 +98,7 @@ class _LevelOneCommentState extends State<LevelOneComment> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                              "is simply dummy text of the printing  It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, PageMaker including versions of Lorem Ipsum."),
+                          Text("${widget.commentObject['content']}"),
                         ])),
                 //---------------------------------------CONTENT-------------------------------------------------
                 //---------------------------------------SubFooter-------------------------------------------------
@@ -113,15 +121,20 @@ class _LevelOneCommentState extends State<LevelOneComment> {
                   Row(
                     children: [
                       IconButton(
-                        padding: EdgeInsets.only(bottom: 2.0),
-                        icon: Icon(
-                            (_liked) ? Icons.favorite : Icons.favorite_border),
-                        color: (_liked) ? Colors.pink : null,
-                        onPressed: () => setState(() {
-                          _liked = !_liked;
-                        }),
-                      ),
-                      Text("3000"),
+                          padding: EdgeInsets.only(bottom: 2.0),
+                          icon: Icon((_liked)
+                              ? Icons.favorite
+                              : Icons.favorite_border),
+                          color: (_liked) ? Colors.pink : null,
+                          onPressed: () {
+                            setState(() {
+                              _liked = !_liked;
+                              likeCounter =
+                                  (!_liked) ? --likeCounter : ++likeCounter;
+                            });
+                          }),
+
+                      Text("$likeCounter"),
                       Text(
                         "   Replying to ",
                         style: TextStyle(color: Colors.white24),

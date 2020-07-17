@@ -10,7 +10,7 @@ import '../Components/PostTemplates/timelines.dart';
 
 import '../Components/Others/UIElements.dart';
 
-import '../Data/datastore.dart';
+import '../Data/datafetcher.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -20,8 +20,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Object> pInfo = Data().posts;
-  Object author = Data().currentUser;
+  final data = DataFetcher();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,20 +43,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Feed(
-        pInfo: pInfo,
-      ),
+      body: Feed(data: data),
       drawer: MainAppDrawer(
-        currentUser: author,
+        currentUser: data.currentUser,
       ),
-      // floatingActionButton: FloatingActionButton(
-      //     backgroundColor: Colors.blue,
-      //     tooltip: "New Post",
-      //     child: Icon(
-      //       Icons.add,
-      //       color: Colors.white,
-      //     ),
-      //     onPressed: () => {print("new Post")}),
       floatingActionButton: FloatingCircleButton(),
       bottomNavigationBar: BottomNavigator(),
     );
@@ -65,52 +54,91 @@ class _HomePageState extends State<HomePage> {
 }
 
 class Feed extends StatelessWidget {
-  final pInfo;
-  Feed({Key key, this.pInfo}) : super(key: key);
+  final data;
+  Feed({Key key, this.data}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    List feed = [
+      ...data.microblogPosts,
+      ...data.blogPosts,
+      ...data.pollPosts,
+      ...data.shareablePosts,
+      ...data.timelinePosts,
+      ...data.resharesWithComment,
+    ];
+    feed.shuffle();
     return Center(
         child: Container(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
             child: ListView.builder(
-                itemCount: 22,
+                itemCount: feed.length,
                 itemBuilder: (context, index) {
-                  if (index < 2)
-                    return new MicroBlogPost();
-                  else if (index < 4)
-                    return new Shareable();
-                  else if (index < 6)
-                    return new PollPost();
-                  else if (index < 8)
-                    return new Reshare();
-                  else if (index < 10)
-                    return new BlogPost();
-                  else if (index < 11)
-                    return new ReshareWithComment(
-                      postObject: {'id': '4gf83h'},
-                      resharedType: "MicroBlog",
-                    );
-                  else if (index < 12)
-                    return new ResharedBlog();
-                  else if (index < 14)
-                    return new ReshareWithComment(
-                      postObject: {'id': '4gf83h'},
-                      resharedType: "Blog",
-                    );
-                  else if (index < 16)
-                    return new Timeline();
-                  else if (index < 18)
-                    return new ReshareWithComment(
-                      postObject: {'id': '4gf83h'},
-                      resharedType: "Timeline",
-                    );
-                  else if (index < 20)
-                    return new ReshareWithComment(
-                      postObject: {'id': '4gf83h'},
-                      resharedType: "Shareable",
-                    );
-                  else
-                    return new ResharedTimeline();
+                  var post = feed[index];
+                  // print(post);
+                  // print("");
+                  var output;
+                  switch (post['type']) {
+                    case "microblog":
+                      output = MicroBlogPost(postObject: post);
+                      break;
+                    case "blog":
+                      output = BlogPost(postObject: post);
+                      break;
+                    case "shareable":
+                      output = Shareable(postObject: post);
+                      break;
+                    case "timeline":
+                      output = Timeline(post);
+                      break;
+                    case "poll":
+                      output = PollPost(postObject: post);
+                      break;
+                    case "ResharedWithComment":
+                      output = ReshareWithComment(
+                        postObject: post,
+                      );
+                      break;
+                    default:
+                      break;
+                  }
+                  return output;
+                  // if (index < 2)
+                  //   return new MicroBlogPost();
+                  // else if (index < 4)
+                  //   return new Shareable();
+                  // else if (index < 6)
+                  //   return new PollPost();
+                  // else if (index < 8)
+                  //   return new Reshare();
+                  // else if (index < 10)
+                  //   return new BlogPost();
+                  // else if (index < 11)
+                  //   return new ReshareWithComment(
+                  //     postObject: {'id': '4gf83h'},
+                  //     resharedType: "MicroBlog",
+                  //   );
+                  // else if (index < 12)
+                  //   return new ResharedBlog();
+                  // else if (index < 14)
+                  //   return new ReshareWithComment(
+                  //     postObject: {'id': '4gf83h'},
+                  //     resharedType: "Blog",
+                  //   );
+                  // else if (index < 16)
+                  //   return new Timeline();
+                  // else if (index < 18)
+                  //   return new ReshareWithComment(
+                  //     postObject: {'id': '4gf83h'},
+                  //     resharedType: "Timeline",
+                  //   );
+                  // else if (index < 20)
+                  //   return new ReshareWithComment(
+                  //     postObject: {'id': '4gf83h'},
+                  //     resharedType: "Shareable",
+                  //   );
+                  // else
+                  //   return new ResharedTimeline();
                 })));
   }
 }

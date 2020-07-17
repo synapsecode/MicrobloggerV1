@@ -5,7 +5,8 @@ import 'package:flutter/rendering.dart';
 import '../Components/PostTemplates/comments.dart';
 
 class TimelineViewer extends StatefulWidget {
-  TimelineViewer({Key key}) : super(key: key);
+  final postObject;
+  TimelineViewer({Key key, this.postObject}) : super(key: key);
 
   @override
   _TimelineViewerState createState() => _TimelineViewerState();
@@ -38,8 +39,8 @@ class _TimelineViewerState extends State<TimelineViewer> {
                 children: [
                   CircleAvatar(
                     radius: 24.0,
-                    backgroundImage: NetworkImage(
-                        'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'),
+                    backgroundImage:
+                        NetworkImage("${widget.postObject['author']['icon']}"),
                   ),
                   Container(
                     padding: EdgeInsets.only(left: 10.0),
@@ -47,7 +48,7 @@ class _TimelineViewerState extends State<TimelineViewer> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Manas Hejmadi",
+                          "${widget.postObject['author']['name']}",
                           style: TextStyle(fontSize: 20.0),
                         ),
                         Row(
@@ -55,7 +56,7 @@ class _TimelineViewerState extends State<TimelineViewer> {
                             InkWell(
                               onTap: () => print("clicked user"),
                               child: Text(
-                                "@synapse.ai",
+                                "@${widget.postObject['author']['username']}",
                                 style: TextStyle(color: Colors.blue),
                               ),
                             ),
@@ -63,7 +64,7 @@ class _TimelineViewerState extends State<TimelineViewer> {
                               width: 5,
                             ),
                             Text(
-                              "12h",
+                              "${widget.postObject['age']}",
                               style: TextStyle(color: Colors.white30),
                             ),
                             SizedBox(
@@ -80,7 +81,7 @@ class _TimelineViewerState extends State<TimelineViewer> {
             Container(
               padding: EdgeInsets.all(30.0),
               child: Text(
-                "The Covid Crisis in India and Abroad",
+                "${widget.postObject['timeline_name']}",
                 style: TextStyle(fontSize: 44.0),
               ),
             ),
@@ -88,7 +89,7 @@ class _TimelineViewerState extends State<TimelineViewer> {
               padding: EdgeInsets.all(10.0),
               child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: 6,
+                  itemCount: widget.postObject['events'].length,
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     return Column(
@@ -109,7 +110,7 @@ class _TimelineViewerState extends State<TimelineViewer> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "First Signs",
+                                        "${widget.postObject['events'][index]['event_name']}",
                                         style: TextStyle(fontSize: 24.0),
                                       ),
                                       SizedBox(
@@ -117,18 +118,22 @@ class _TimelineViewerState extends State<TimelineViewer> {
                                       ),
                                       TextField(
                                         enabled: false,
-                                        maxLines: 5,
+                                        minLines: 5,
+                                        maxLines: 30,
                                         decoration: InputDecoration.collapsed(
-                                            hintText:
-                                                "The SARS-Coronavirus-19 virus caused a pandedmic that has been named CoVID-19. This virus was first isolated in the Wuhan District of China"),
+                                          hintText:
+                                              "${widget.postObject['events'][index]['description']}",
+                                        ),
                                       ),
                                       SizedBox(
-                                        height: 5.0,
+                                        height: 10.0,
                                       ),
                                       Container(
                                         padding: EdgeInsets.all(4.0),
                                         color: Colors.black12,
-                                        child: Text("16th January 2019"),
+                                        child: Text(
+                                          "${widget.postObject['events'][index]['timestamp']}",
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -155,14 +160,16 @@ class _TimelineViewerState extends State<TimelineViewer> {
             SizedBox(
               height: 10.0,
             ),
-            ActionBar(postType: "Timeline"),
+            ActionBar(
+              post: widget.postObject,
+            ),
             SizedBox(
               height: 20.0,
             ),
             Padding(
               padding: EdgeInsets.only(left: 10.0),
               child: Text(
-                'Comments (2)',
+                'Comments (${widget.postObject['comments'].length})',
                 style: TextStyle(fontSize: 22.0),
               ),
             ),
@@ -174,9 +181,10 @@ class _TimelineViewerState extends State<TimelineViewer> {
               child: ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: 2,
+                  itemCount: widget.postObject['comments'].length,
                   itemBuilder: (c, i) {
-                    return new LevelOneComment();
+                    return new LevelOneComment(
+                        commentObject: widget.postObject['comments'][i]);
                   }),
             )
           ],

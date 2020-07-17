@@ -2,16 +2,14 @@ import 'package:MicroBlogger/Components/Others/UIElements.dart';
 import 'package:flutter/material.dart';
 
 class Shareable extends StatefulWidget {
-  Shareable({Key key}) : super(key: key);
+  final postObject;
+  Shareable({Key key, this.postObject}) : super(key: key);
 
   @override
   _ShareableState createState() => _ShareableState();
 }
 
 class _ShareableState extends State<Shareable> {
-  bool _liked = false;
-  bool _bookmarked = false;
-  bool _reshared = false;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -32,7 +30,7 @@ class _ShareableState extends State<Shareable> {
                       CircleAvatar(
                         radius: 24.0,
                         backgroundImage: NetworkImage(
-                            'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'),
+                            "${widget.postObject['author']['icon']}"),
                       ),
                       Container(
                         padding: EdgeInsets.only(left: 10.0),
@@ -40,7 +38,7 @@ class _ShareableState extends State<Shareable> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Manas Hejmadi",
+                              "${widget.postObject['author']['name']}",
                               style: TextStyle(fontSize: 20.0),
                             ),
                             SizedBox(
@@ -51,7 +49,7 @@ class _ShareableState extends State<Shareable> {
                                 InkWell(
                                   onTap: () => print("clicked user"),
                                   child: Text(
-                                    "@synapse.ai",
+                                    "@${widget.postObject['author']['username']}",
                                     style: TextStyle(color: Colors.blue),
                                   ),
                                 ),
@@ -59,7 +57,7 @@ class _ShareableState extends State<Shareable> {
                                   width: 5,
                                 ),
                                 Text(
-                                  "12h",
+                                  "${widget.postObject['age']}",
                                   style: TextStyle(color: Colors.white30),
                                 ),
                                 SizedBox(
@@ -89,8 +87,7 @@ class _ShareableState extends State<Shareable> {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                                "Hey Guys! Check out my new application called Krustel Classroom! Its releasing exclusively on Android. Check it out using the link provided below!"),
+                            Text("${widget.postObject['content']}"),
                             SizedBox(
                               height: 10.0,
                             ),
@@ -99,9 +96,13 @@ class _ShareableState extends State<Shareable> {
                               children: [
                                 RaisedButton.icon(
                                     color: Colors.black,
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      print(
+                                          "Visiting ${widget.postObject['link']}");
+                                    },
                                     icon: Icon(Icons.link),
-                                    label: Text("Visit Krustel Classroom"))
+                                    label: Text(
+                                        "Visit ${widget.postObject['name']}"))
                               ],
                             )
                           ])),
@@ -113,7 +114,7 @@ class _ShareableState extends State<Shareable> {
               ),
             ),
             ActionBar(
-              postType: "Shareable",
+              post: widget.postObject,
             )
           ],
         ));

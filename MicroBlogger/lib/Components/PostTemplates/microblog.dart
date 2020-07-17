@@ -1,23 +1,31 @@
 import 'package:MicroBlogger/Components/Others/UIElements.dart';
+import 'package:MicroBlogger/PostViewers/MicroBlogViewer.dart';
 import 'package:flutter/material.dart';
 
 class MicroBlogPost extends StatefulWidget {
-  MicroBlogPost({Key key}) : super(key: key);
+  final postObject;
+  final isInViewMode;
+  MicroBlogPost({Key key, this.postObject, this.isInViewMode = false})
+      : super(key: key);
 
   @override
   _MicroBlogPostState createState() => _MicroBlogPostState();
 }
 
 class _MicroBlogPostState extends State<MicroBlogPost> {
-  bool _liked = false;
-  bool _reshared = false;
-  bool _bookmarked = false;
   @override
   Widget build(BuildContext context) {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0),
         child: InkWell(
-          onTap: () => Navigator.of(context).pushNamed('/MicroBlogViewer'),
+          onTap: () => (widget.isInViewMode == false)
+              ? Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MicroBlogViewer(
+                            postObject: widget.postObject,
+                          )))
+              : () {},
           child: Column(
             children: [
               Container(
@@ -34,7 +42,7 @@ class _MicroBlogPostState extends State<MicroBlogPost> {
                         CircleAvatar(
                           radius: 24.0,
                           backgroundImage: NetworkImage(
-                              'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'),
+                              "${widget.postObject['author']['icon']}"),
                         ),
                         Container(
                           padding: EdgeInsets.only(left: 10.0),
@@ -42,7 +50,7 @@ class _MicroBlogPostState extends State<MicroBlogPost> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Manas Hejmadi",
+                                "${widget.postObject['author']['name']}",
                                 style: TextStyle(fontSize: 20.0),
                               ),
                               Row(
@@ -50,7 +58,7 @@ class _MicroBlogPostState extends State<MicroBlogPost> {
                                   InkWell(
                                     onTap: () => print("clicked user"),
                                     child: Text(
-                                      "@synapse.ai",
+                                      "@${widget.postObject['author']['username']}",
                                       style: TextStyle(color: Colors.blue),
                                     ),
                                   ),
@@ -58,14 +66,14 @@ class _MicroBlogPostState extends State<MicroBlogPost> {
                                     width: 5,
                                   ),
                                   Text(
-                                    "12h",
+                                    "${widget.postObject['age']}",
                                     style: TextStyle(color: Colors.white30),
                                   ),
                                   SizedBox(
                                     width: 5,
                                   ),
                                   Text(
-                                    "Fact",
+                                    "${widget.postObject['category']}",
                                     style: TextStyle(color: Colors.green),
                                   ),
                                   SizedBox(
@@ -95,8 +103,7 @@ class _MicroBlogPostState extends State<MicroBlogPost> {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                  "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
+                              Text("${widget.postObject['content']}"),
                             ])),
                     //---------------------------------------CONTENT-------------------------------------------------
                     //---------------------------------------SubFooter-------------------------------------------------
@@ -106,7 +113,7 @@ class _MicroBlogPostState extends State<MicroBlogPost> {
                 ),
               ),
               ActionBar(
-                postType: "MicroBlog",
+                post: widget.postObject,
               )
             ],
           ),

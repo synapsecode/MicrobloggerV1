@@ -6,6 +6,7 @@ import 'package:MicroBlogger/Components/PostTemplates/shareable.dart';
 import 'package:MicroBlogger/Components/PostTemplates/timelines.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
+import '../Data/datafetcher.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage({Key key}) : super(key: key);
@@ -61,6 +62,9 @@ class ExporeBlogs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final data = DataFetcher();
+    List feed = [...data.blogPosts];
+    feed.shuffle();
     return Container(
       padding: EdgeInsets.all(10.0),
       color: Colors.black,
@@ -68,9 +72,11 @@ class ExporeBlogs extends StatelessWidget {
         child: ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: 20,
+            itemCount: feed.length,
             itemBuilder: (context, index) {
-              return SponsoredBlog();
+              return BlogPost(
+                postObject: feed[index],
+              );
             }),
       ),
     );
@@ -84,6 +90,9 @@ class ExploreTimelines extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final data = DataFetcher();
+    List feed = [...data.timelinePosts];
+    feed.shuffle();
     return Container(
       padding: EdgeInsets.all(10.0),
       color: Colors.black,
@@ -91,9 +100,9 @@ class ExploreTimelines extends StatelessWidget {
         child: ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: 20,
+            itemCount: feed.length,
             itemBuilder: (context, index) {
-              return SponsoredTimeline();
+              return Timeline(feed[index]);
             }),
       ),
     );
@@ -107,6 +116,9 @@ class ExploreMicroblogs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final data = DataFetcher();
+    List feed = [...data.microblogPosts];
+    feed.shuffle();
     return Container(
       padding: EdgeInsets.all(10.0),
       color: Colors.black,
@@ -114,9 +126,11 @@ class ExploreMicroblogs extends StatelessWidget {
         child: ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: 20,
+            itemCount: feed.length,
             itemBuilder: (context, index) {
-              return MicroBlogPost();
+              return MicroBlogPost(
+                postObject: feed[index],
+              );
             }),
       ),
     );
@@ -130,6 +144,9 @@ class ExploreOthers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final data = DataFetcher();
+    List feed = [...data.shareablePosts, ...data.pollPosts];
+    feed.shuffle();
     return Container(
       padding: EdgeInsets.all(10.0),
       color: Colors.black,
@@ -137,12 +154,14 @@ class ExploreOthers extends StatelessWidget {
         child: ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: 12,
+            itemCount: feed.length,
             itemBuilder: (context, index) {
-              if (index % 2 == 0)
-                return Shareable();
+              if (feed[index]['type'] == 'shareable')
+                return Shareable(
+                  postObject: feed[index],
+                );
               else
-                return PollPost();
+                return PollPost(postObject: feed[index]);
             }),
       ),
     );

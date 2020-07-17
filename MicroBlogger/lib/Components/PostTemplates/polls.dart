@@ -2,15 +2,14 @@ import 'package:MicroBlogger/Components/Others/UIElements.dart';
 import 'package:flutter/material.dart';
 
 class PollPost extends StatefulWidget {
-  PollPost({Key key}) : super(key: key);
+  final postObject;
+  PollPost({Key key, this.postObject}) : super(key: key);
 
   @override
   _PollPostState createState() => _PollPostState();
 }
 
 class _PollPostState extends State<PollPost> {
-  bool _liked = false;
-  bool _reshared = false;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -31,7 +30,7 @@ class _PollPostState extends State<PollPost> {
                     CircleAvatar(
                       radius: 24.0,
                       backgroundImage: NetworkImage(
-                          'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'),
+                          "${widget.postObject['author']['icon']}"),
                     ),
                     Container(
                       padding: EdgeInsets.only(left: 10.0),
@@ -39,7 +38,7 @@ class _PollPostState extends State<PollPost> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Manas Hejmadi",
+                            "${widget.postObject['author']['name']}",
                             style: TextStyle(fontSize: 20.0),
                           ),
                           Row(
@@ -47,7 +46,7 @@ class _PollPostState extends State<PollPost> {
                               InkWell(
                                 onTap: () => print("clicked user"),
                                 child: Text(
-                                  "@synapse.ai",
+                                  "@${widget.postObject['author']['username']}",
                                   style: TextStyle(color: Colors.blue),
                                 ),
                               ),
@@ -55,7 +54,7 @@ class _PollPostState extends State<PollPost> {
                                 width: 5,
                               ),
                               Text(
-                                "12h",
+                                "${widget.postObject['age']}",
                                 style: TextStyle(color: Colors.white30),
                               ),
                               SizedBox(
@@ -84,22 +83,23 @@ class _PollPostState extends State<PollPost> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Who is your favourite Dragon Ball Character?"),
+                          Text("${widget.postObject['content']}"),
                           SizedBox(
                             height: 10.0,
                           ),
                           Column(
-                              children: ["Goku", "Vegeta", "Piccolo", "Roshi"]
-                                  .map((x) => Row(children: <Widget>[
-                                        Expanded(
-                                            child: RaisedButton(
-                                          color: Colors.black,
-                                          onPressed: () => print(
-                                              "Clicked on option ($x) in Poll"),
-                                          child: Text(x),
-                                        ))
-                                      ]))
-                                  .toList())
+                            children: [...widget.postObject['options']]
+                                .map((x) => Row(children: <Widget>[
+                                      Expanded(
+                                          child: RaisedButton(
+                                        color: Colors.black,
+                                        onPressed: () => print(
+                                            "Clicked on option (${x['name']}) in Poll"),
+                                        child: Text(x['name']),
+                                      ))
+                                    ]))
+                                .toList(),
+                          ),
                         ])),
                 //---------------------------------------CONTENT-------------------------------------------------
                 //---------------------------------------SubFooter-------------------------------------------------
@@ -109,7 +109,7 @@ class _PollPostState extends State<PollPost> {
             ),
           ),
           ActionBar(
-            postType: "Poll",
+            post: widget.postObject,
           )
         ],
       ),

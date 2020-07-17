@@ -1,10 +1,18 @@
+import 'package:MicroBlogger/PostViewers/timelineViewer.dart';
 import 'package:flutter/material.dart';
 
 class Timeline extends StatelessWidget {
+  final postObject;
+  Timeline(this.postObject);
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () => Navigator.of(context).pushNamed('/TimelineViewer'),
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => TimelineViewer(
+                      postObject: postObject,
+                    ))),
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 10.0),
           child: ClipRRect(
@@ -16,8 +24,7 @@ class Timeline extends StatelessWidget {
                   padding: new EdgeInsets.only(left: 16.0, bottom: 8.0),
                   decoration: new BoxDecoration(
                     image: new DecorationImage(
-                        image: NetworkImage(
-                            'https://i1.wp.com/regionweek.com/wp-content/uploads/2020/03/World-Map-2.jpg?fit=1920%2C1200&ssl=1'),
+                        image: NetworkImage("${postObject['background']}"),
                         fit: BoxFit.cover),
                   ),
                   child: new Stack(
@@ -30,17 +37,17 @@ class Timeline extends StatelessWidget {
                               CircleAvatar(
                                 radius: 24.0,
                                 backgroundImage: NetworkImage(
-                                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'),
+                                    "${postObject['author']['icon']}"),
                               ),
                               SizedBox(width: 10.0),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "WION News",
+                                    "${postObject['author']['name']}",
                                     style: TextStyle(fontSize: 20.0),
                                   ),
-                                  Text("@wionews")
+                                  Text("@${postObject['author']['username']}")
                                 ],
                               )
                             ],
@@ -60,7 +67,7 @@ class Timeline extends StatelessWidget {
                               SizedBox(
                                 height: 10.0,
                               ),
-                              Text("The Covid-19 Pandemic in India",
+                              Text("${postObject['timeline_name']}",
                                   style: new TextStyle(
                                     fontSize: 20.0,
                                   )),
@@ -96,7 +103,7 @@ class ResharedTimeline extends StatelessWidget {
             )
           ],
         ),
-        Timeline()
+        //Timeline()
       ],
     );
   }
@@ -117,7 +124,7 @@ class SponsoredTimeline extends StatelessWidget {
             ),
           ],
         ),
-        Timeline()
+        //Timeline()
       ],
     );
   }
