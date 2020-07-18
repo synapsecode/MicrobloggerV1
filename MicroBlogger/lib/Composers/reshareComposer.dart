@@ -1,16 +1,16 @@
 import 'package:MicroBlogger/Components/PostTemplates/blogs.dart';
+import 'package:MicroBlogger/Components/PostTemplates/timelines.dart';
 import 'package:flutter/material.dart';
 
-class MicroBlogReshareComposer extends StatefulWidget {
-  final reshareType;
-  const MicroBlogReshareComposer({Key key, this.reshareType}) : super(key: key);
+class ReshareComposer extends StatefulWidget {
+  final postObject;
+  const ReshareComposer({Key key, this.postObject}) : super(key: key);
 
   @override
-  _MicroBlogReshareComposerState createState() =>
-      _MicroBlogReshareComposerState();
+  _ReshareComposerState createState() => _ReshareComposerState();
 }
 
-class _MicroBlogReshareComposerState extends State<MicroBlogReshareComposer> {
+class _ReshareComposerState extends State<ReshareComposer> {
   bool isFact = false;
   String content = "";
 
@@ -45,6 +45,10 @@ class _MicroBlogReshareComposerState extends State<MicroBlogReshareComposer> {
               onPressed: () {
                 print("TEXT: $content");
                 //upload
+                print("Reshare with Comment initiated");
+                print("PostObject: ${widget.postObject}");
+                print("Reshared Content: $content");
+                print("isFact: $isFact");
               },
               child: Text("Publish"),
               color: Colors.black,
@@ -54,16 +58,16 @@ class _MicroBlogReshareComposerState extends State<MicroBlogReshareComposer> {
       ),
       body: ComposerComponent(
         contentUpdater: updateComment,
-        rt: widget.reshareType,
+        postObject: widget.postObject,
       ),
     );
   }
 }
 
 class ComposerComponent extends StatefulWidget {
-  final rt;
   final contentUpdater;
-  const ComposerComponent({this.contentUpdater, this.rt});
+  final postObject;
+  const ComposerComponent({this.contentUpdater, this.postObject});
 
   @override
   _ComposerComponentState createState() => _ComposerComponentState();
@@ -76,7 +80,15 @@ class _ComposerComponentState extends State<ComposerComponent> {
       child: Container(
         color: Colors.black12,
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          if (widget.rt == "MB") HostMicroBlog() else HostMicroBlog(),
+          if (widget.postObject['type'] == "microblog") ...[
+            HostMicroBlog(widget.postObject)
+          ] else if (widget.postObject['type'] == "shareable") ...[
+            HostShareable(widget.postObject)
+          ] else if (widget.postObject['type'] == "blog") ...[
+            HostBlog(widget.postObject)
+          ] else if (widget.postObject['type'] == "timeline") ...[
+            HostTimeline(widget.postObject)
+          ],
           Flexible(
             fit: FlexFit.loose,
             child: Card(
@@ -89,7 +101,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
                     },
                     maxLines: 32,
                     decoration: InputDecoration.collapsed(
-                        hintText: "What's happening?"),
+                        hintText: "What are your views regarding this post?"),
                   ),
                 )),
           ),
@@ -100,104 +112,224 @@ class _ComposerComponentState extends State<ComposerComponent> {
 }
 
 class HostMicroBlog extends StatelessWidget {
-  const HostMicroBlog({Key key}) : super(key: key);
+  final data;
+  HostMicroBlog(this.data);
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(10.0),
+          decoration: BoxDecoration(
+              color: Colors.black54,
+              border: Border.all(color: Colors.white30, width: 1.0)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //----------------------------------------HEADER-------------------------------------------------
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 24.0,
+                    backgroundImage: NetworkImage("${data['author']['icon']}"),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${data['author']['name']}",
+                          style: TextStyle(fontSize: 20.0),
+                        ),
+                        Row(
+                          children: [
+                            InkWell(
+                              onTap: () => print("clicked user"),
+                              child: Text(
+                                "@${data['author']['username']}",
+                                style: TextStyle(color: Colors.blue),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "${data['age']}",
+                              style: TextStyle(color: Colors.white30),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "${data['category']}",
+                              style: TextStyle(color: Colors.green),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            InkWell(
+                              onTap: () => print("More clicked"),
+                              child: Icon(Icons.arrow_drop_down),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              //----------------------------------------HEADER-------------------------------------------------
+              SizedBox(
+                height: 10.0,
+              ),
+              //----------------------------------------CONTENT-------------------------------------------------
+              Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white10, width: 0.5)),
+                  padding: EdgeInsets.all(10.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("${data['content']}"),
+                      ])),
+              //---------------------------------------CONTENT-------------------------------------------------
+              //---------------------------------------SubFooter-------------------------------------------------
+
+              //---------------------------------------SubFooter-------------------------------------------------
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class HostShareable extends StatelessWidget {
+  final data;
+  const HostShareable(this.data);
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        print("Redirecting to MicroBlog");
-      },
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return Container(
+        child: Column(
+      children: [
         Container(
-            margin: EdgeInsets.symmetric(horizontal: 10.0),
-            padding: EdgeInsets.symmetric(vertical: 10.0),
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  decoration: BoxDecoration(
-                      color: Colors.black26,
-                      border: Border.all(color: Colors.white30, width: 1.0)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      //----------------------------------------HEADER-------------------------------------------------
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 24.0,
-                            backgroundImage: NetworkImage(
-                                'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'),
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(left: 10.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Carryminati",
-                                  style: TextStyle(fontSize: 20.0),
-                                ),
-                                Row(
-                                  children: [
-                                    InkWell(
-                                      onTap: () => print("clicked user"),
-                                      child: Text(
-                                        "@ajeynagar",
-                                        style: TextStyle(color: Colors.blue),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      "22h",
-                                      style: TextStyle(color: Colors.white30),
-                                    ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      "Opinion",
-                                      style: TextStyle(color: Colors.pink),
-                                    ),
-                                    SizedBox(
-                                      width: 5,
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      //----------------------------------------HEADER-------------------------------------------------
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      //----------------------------------------CONTENT-------------------------------------------------
-                      Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.white10, width: 0.5)),
-                          padding: EdgeInsets.all(10.0),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                    "Hey Guys! How are you all? I have decided to take a short break from Yout How are you all? I have decided to take a short break from Yout How are you all? I have decided to take a short break from Youtube to focus more on my creative development. See you guys soon! Hey Guys! How are you all? I have decided to take a short break from Youtube to focus more Hey Guys! How are you all? I have decided to take a short break from Youtube to focus more on my creative development. See you guys soon! Hey Guys! How are you all? I have decided to take a short break from Youtube to focus more Hey Guys! How are you all? I have decided to take a short break from Youtube to focus more on my creative development. See you guys soon! Hey Guys! How are you all? I have decided to take a short break from Youtube to focus more"),
-                              ])),
-                      //---------------------------------------CONTENT-------------------------------------------------
-                      //---------------------------------------SubFooter-------------------------------------------------
-
-                      //---------------------------------------SubFooter-------------------------------------------------
-                    ],
+          padding: EdgeInsets.all(10.0),
+          decoration: BoxDecoration(
+              color: Colors.white10,
+              border: Border.all(color: Colors.white30, width: 1.0)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //----------------------------------------HEADER-------------------------------------------------
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 24.0,
+                    backgroundImage: NetworkImage("${data['author']['icon']}"),
                   ),
-                ),
-              ],
-            ))
-      ]),
+                  Container(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${data['author']['name']}",
+                          style: TextStyle(fontSize: 20.0),
+                        ),
+                        SizedBox(
+                          height: 2.0,
+                        ),
+                        Row(
+                          children: [
+                            InkWell(
+                              onTap: () => print("clicked user"),
+                              child: Text(
+                                "@${data['author']['username']}",
+                                style: TextStyle(color: Colors.blue),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "${data['age']}",
+                              style: TextStyle(color: Colors.white30),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            InkWell(
+                              onTap: () => print("More clicked"),
+                              child: Icon(Icons.arrow_drop_down),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              //----------------------------------------HEADER-------------------------------------------------
+              SizedBox(
+                height: 10.0,
+              ),
+              //----------------------------------------CONTENT-------------------------------------------------
+              Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white10, width: 0.5)),
+                  padding: EdgeInsets.all(10.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("${data['content']}"),
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RaisedButton.icon(
+                                color: Colors.black,
+                                onPressed: () {
+                                  print("Redirected to ${data['link']}");
+                                },
+                                icon: Icon(Icons.link),
+                                label: Text("Visit ${data['name']}"))
+                          ],
+                        )
+                      ])),
+              //---------------------------------------CONTENT-------------------------------------------------
+              //---------------------------------------SubFooter-------------------------------------------------
+
+              //---------------------------------------SubFooter-------------------------------------------------
+            ],
+          ),
+        ),
+      ],
+    ));
+  }
+}
+
+class HostBlog extends StatelessWidget {
+  final data;
+  HostBlog(this.data);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlogPost(
+      postObject: data,
     );
+  }
+}
+
+class HostTimeline extends StatelessWidget {
+  final data;
+  HostTimeline(this.data);
+
+  @override
+  Widget build(BuildContext context) {
+    return Timeline(data);
   }
 }

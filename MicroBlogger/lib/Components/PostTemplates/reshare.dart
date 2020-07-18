@@ -386,137 +386,55 @@ class HostTimeline extends StatelessWidget {
   }
 }
 
-class Reshare extends StatefulWidget {
+class SimpleReshare extends StatefulWidget {
   final postObject;
-  Reshare({Key key, this.postObject}) : super(key: key);
+  SimpleReshare({Key key, this.postObject}) : super(key: key);
 
   @override
-  _ReshareState createState() => _ReshareState();
+  _SimpleReshareState createState() => _SimpleReshareState();
 }
 
-class _ReshareState extends State<Reshare> {
+class _SimpleReshareState extends State<SimpleReshare> {
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).pushNamed('/MicroBlogViewer');
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                "Reshared by ",
-                style: TextStyle(color: Colors.white30),
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              "Reshared By ",
+              style: TextStyle(color: Colors.white30),
+            ),
+            InkWell(
+              onTap: () {
+                //MAKE LOGIC TO GET USERDATA FROM DJN
+                //Navigator.of(context).pushNamed('/Profile');
+              },
+              child: Text(
+                "@${widget.postObject['author']['username']}",
+                style: TextStyle(color: Colors.pink),
               ),
-              InkWell(
-                onTap: () => Navigator.of(context).pushNamed('/Profile'),
-                child: Text(
-                  "@synapse.ai",
-                  style: TextStyle(color: Colors.pink),
-                ),
-              )
-            ],
-          ),
-          //MicroBlogPost()
-          Padding(
-              padding: EdgeInsets.only(top: 5.0, bottom: 10.0),
-              child: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                        color: Colors.white10,
-                        border: Border.all(color: Colors.white30, width: 1.0)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //----------------------------------------HEADER-------------------------------------------------
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 24.0,
-                              backgroundImage: NetworkImage(
-                                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 10.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Tanmay Bhat",
-                                    style: TextStyle(fontSize: 20.0),
-                                  ),
-                                  Row(
-                                    children: [
-                                      InkWell(
-                                        onTap: () => Navigator.of(context)
-                                            .pushNamed('/Profile'),
-                                        child: Text(
-                                          "@tanmaybot",
-                                          style: TextStyle(color: Colors.blue),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        "12h",
-                                        style: TextStyle(color: Colors.white30),
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        "Fact",
-                                        style: TextStyle(color: Colors.green),
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      InkWell(
-                                        onTap: () => print("More clicked"),
-                                        child: Icon(Icons.arrow_drop_down),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        //----------------------------------------HEADER-------------------------------------------------
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        //----------------------------------------CONTENT-------------------------------------------------
-                        Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.white10, width: 0.5)),
-                            padding: EdgeInsets.all(10.0),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      "is simply dummy text of the printing and typesetting industry.  remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
-                                ])),
-                        //---------------------------------------CONTENT-------------------------------------------------
-                        //---------------------------------------SubFooter-------------------------------------------------
-
-                        //---------------------------------------SubFooter-------------------------------------------------
-                      ],
-                    ),
-                  ),
-                  ActionBar(
-                    post: widget.postObject,
-                  )
-                ],
-              )),
+            )
+          ],
+        ),
+        if (widget.postObject['child']['type'] == "microblog") ...[
+          MicroBlogPost(
+            postObject: widget.postObject['child'],
+          )
+        ] else if (widget.postObject['child']['type'] == "shareable") ...[
+          Shareable(
+            postObject: widget.postObject['child'],
+          )
+        ] else if (widget.postObject['child']['type'] == "blog") ...[
+          BlogPost(
+            postObject: widget.postObject['child'],
+          )
+        ] else if (widget.postObject['child']['type'] == "timeline") ...[
+          Timeline(
+            widget.postObject['child'],
+          )
         ],
-      ),
+      ],
     );
   }
 }

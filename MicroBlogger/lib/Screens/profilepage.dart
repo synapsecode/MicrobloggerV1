@@ -10,6 +10,8 @@ import '../Components/PostTemplates/shareable.dart';
 import 'homepage.dart';
 
 class ProfilePage extends StatefulWidget {
+  final author;
+  ProfilePage({this.author});
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -20,6 +22,8 @@ class _ProfileState extends State<ProfilePage>
 
   @override
   void initState() {
+    //get
+
     super.initState();
     _controller = new TabController(length: 4, vsync: this);
   }
@@ -27,10 +31,6 @@ class _ProfileState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title:
-      //   ),
-      // ),
       bottomNavigationBar: BottomNavigator(),
       body: CustomScrollView(slivers: <Widget>[
         SliverAppBar(
@@ -42,87 +42,43 @@ class _ProfileState extends State<ProfilePage>
           title: Text("Profile"),
           pinned: true,
           expandedHeight: 350.0,
-          flexibleSpace: new FlexibleSpaceBar(background: SliverChild()),
+          flexibleSpace: new FlexibleSpaceBar(
+              background: SliverChild(
+            author: widget.author,
+          )),
         ),
-        SliverList(delegate: SliverChildListDelegate([ProfileAppBody()]))
+        SliverList(
+            delegate: SliverChildListDelegate([
+          ProfileAppBody(
+            author: widget.author,
+          )
+        ]))
       ]),
     );
   }
 }
 
 class SliverChild extends StatelessWidget {
+  final author;
+  SliverChild({this.author});
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
           image: DecorationImage(
               //image: AssetImage('assets/dhj.png'),
-              image: NetworkImage(
-                  'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg'),
-              //image: NetworkImage("https://picsum.photos/g/1000/1000/"),
+              image: NetworkImage("${author['background']}"),
               fit: BoxFit.cover)),
-      child: new ProfileTopBar(),
-    );
-  }
-}
-
-class ProfileTopBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        ProfileIcon(),
-        SizedBox(height: 10.0),
-        Text("Manas Hejmadi", style: TextStyle(fontSize: 30.0)),
-        Center(
-          child: Text("@synapse.code", style: TextStyle(fontSize: 20.0)),
-        ),
-        SizedBox(height: 10.0),
-        EditButton(),
-        // SizedBox(height: 10.0),
-        // Center(child: new CoinIndicator())
-      ],
-    );
-  }
-}
-
-class EditButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        width: 90.0,
-        child: RaisedButton(
-          onPressed: () => print("Pressed Edit"),
-          child: Row(
-            children: <Widget>[
-              Icon(Icons.edit),
-              SizedBox(width: 10.0),
-              Text("Edit")
-            ],
-          ),
-          color: Colors.black54,
-          shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(30.0),
-          ),
-        ));
-  }
-}
-
-class ProfileIcon extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return CircleAvatar(
-      child: CircleAvatar(
-          radius: 54.0, backgroundImage: AssetImage('assets/manas.jpg')),
-      radius: 60.0,
-      backgroundColor: Colors.white10,
+      child: new ProfileTopBar(
+        author: author,
+      ),
     );
   }
 }
 
 class ProfileAppBody extends StatefulWidget {
+  final author;
+  ProfileAppBody({this.author});
   @override
   _ProfileAppBodyState createState() => _ProfileAppBodyState();
 }
@@ -146,15 +102,86 @@ class _ProfileAppBodyState extends State<ProfileAppBody>
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
-      StatisticsBar(),
+      StatisticsBar(author: widget.author),
       //SizedBox(height: 20.0),
-      BioCard(),
-      MyPostView(controller: _controller),
+      BioCard(author: widget.author),
+      MyPostView(
+        controller: _controller,
+        author: widget.author,
+      ),
     ]);
   }
 }
 
+class ProfileTopBar extends StatelessWidget {
+  final author;
+  ProfileTopBar({this.author});
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        ProfileIcon(
+          author: author,
+        ),
+        SizedBox(height: 10.0),
+        Text("${author['name']}", style: TextStyle(fontSize: 30.0)),
+        Center(
+          child:
+              Text("@${author['username']}", style: TextStyle(fontSize: 20.0)),
+        ),
+        SizedBox(height: 10.0),
+        EditButton(
+          author: author,
+        ),
+      ],
+    );
+  }
+}
+
+class EditButton extends StatelessWidget {
+  final author;
+  EditButton({this.author});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: 90.0,
+        child: RaisedButton(
+          onPressed: () =>
+              print("editing details of author: ${author['username']}"),
+          child: Row(
+            children: <Widget>[
+              Icon(Icons.edit),
+              SizedBox(width: 10.0),
+              Text("Edit")
+            ],
+          ),
+          color: Colors.black54,
+          shape: new RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(30.0),
+          ),
+        ));
+  }
+}
+
+class ProfileIcon extends StatelessWidget {
+  final author;
+  ProfileIcon({this.author});
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      child: CircleAvatar(
+          radius: 54.0, backgroundImage: NetworkImage("${author['icon']}")),
+      radius: 60.0,
+      backgroundColor: Colors.white10,
+    );
+  }
+}
+
 class BioCard extends StatelessWidget {
+  final author;
+  BioCard({this.author});
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -170,27 +197,18 @@ class BioCard extends StatelessWidget {
                 children: <Widget>[
                   Text("Bio", style: TextStyle(fontSize: 20.0)),
                   SizedBox(width: 10.0),
-                  Text("Member Since April 2019",
+                  Text("Member since ${author['accountage']}",
                       style: TextStyle(
                         color: Colors.white70,
-                        fontSize: 10.0,
+                        fontSize: 12.0,
                       )),
                   SizedBox(width: 5.0),
-                  Text("(15 Days)",
-                      style: TextStyle(
-                        color: Colors.white54,
-                        fontSize: 10.0,
-                      )),
                 ],
               ),
               SizedBox(height: 10.0),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                      child: Text(
-                          "I'm a 15 Year old School Student from India who is very passionate about Metal and Rock Music. The Genre of Metal really touches my soul! Metal music is not just entertainment it is a way of life! My favourite band is Slipknot!"))
-                ],
+                children: <Widget>[Expanded(child: Text("${author['bio']}"))],
               ),
               SizedBox(height: 10.0),
               Row(
@@ -202,7 +220,7 @@ class BioCard extends StatelessWidget {
                     size: 20.0,
                   ),
                   SizedBox(width: 5.0),
-                  Text("Bangalore, India",
+                  Text("${author['location']}",
                       style: TextStyle(color: Colors.white30))
                 ],
               ),
@@ -215,6 +233,8 @@ class BioCard extends StatelessWidget {
 }
 
 class StatisticsBar extends StatelessWidget {
+  final author;
+  StatisticsBar({this.author});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -225,19 +245,22 @@ class StatisticsBar extends StatelessWidget {
           children: <Widget>[
             Column(
               children: <Widget>[
-                Text("25", style: TextStyle(fontSize: 25.0)),
+                Text("${author['reputation']}",
+                    style: TextStyle(fontSize: 25.0)),
                 Text("Reputation")
               ],
             ),
             Column(
               children: <Widget>[
-                Text("178", style: TextStyle(fontSize: 25.0)),
+                Text("${author['following']}",
+                    style: TextStyle(fontSize: 25.0)),
                 Text("Following")
               ],
             ),
             Column(
               children: <Widget>[
-                Text("687", style: TextStyle(fontSize: 25.0)),
+                Text("${author['followers']}",
+                    style: TextStyle(fontSize: 25.0)),
                 Text("Followers")
               ],
             ),
@@ -247,8 +270,10 @@ class StatisticsBar extends StatelessWidget {
 }
 
 class MyPostView extends StatefulWidget {
+  final author;
   const MyPostView({
     Key key,
+    this.author,
     @required TabController controller,
   })  : _controller = controller,
         super(key: key);
@@ -265,80 +290,98 @@ class _MyPostViewState extends State<MyPostView> {
 
   @override
   Widget build(BuildContext context) {
-    final data = DataFetcher();
-    List othersFeed = [...data.shareablePosts, ...data.pollPosts];
-    List microblogFeed = [...data.microblogPosts];
-    List blogandTimelineFeed = [...data.timelinePosts, ...data.blogPosts];
-    List reshareFeed = [...data.resharesWithComment];
+    List othersFeed = [
+      ...widget.author['myShareables'],
+      ...widget.author['myPolls']
+    ];
+    List microblogFeed = [...widget.author['myMicroBlogs']];
+    List blogandTimelineFeed = [
+      ...widget.author['myTimelines'],
+      ...widget.author['myBlogs']
+    ];
+    List reshareFeed = [
+      ...widget.author['myReshareWithComments'],
+      ...widget.author['mySimpleReshares']
+    ];
     othersFeed.shuffle();
     microblogFeed.shuffle();
     blogandTimelineFeed.shuffle();
     reshareFeed.shuffle();
 
     return Container(
+        color: Colors.black,
         child: Column(
-      children: <Widget>[
-        new Container(
-          decoration: new BoxDecoration(color: Theme.of(context).primaryColor),
-          child: new TabBar(
-            controller: widget._controller,
-            tabs: [
-              new Tab(icon: new Icon(Icons.content_copy)),
-              new Tab(icon: new Icon(Icons.group)),
-              new Tab(icon: new Icon(Icons.poll)),
-              new Tab(icon: new Icon(Icons.check_box)),
-            ],
-          ),
-        ),
-        new SizedBox(
-          height: 400.0,
-          child: new TabBarView(
-            controller: widget._controller,
-            children: <Widget>[
-              ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: microblogFeed.length,
-                  itemBuilder: (context, index) {
-                    return new MicroBlogPost(
-                      postObject: microblogFeed[index],
-                    );
-                  }),
-              ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: reshareFeed.length,
-                  itemBuilder: (context, index) {
-                    return new ReshareWithComment(
-                      postObject: reshareFeed[index],
-                    );
-                  }),
-              ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: blogandTimelineFeed.length,
-                  itemBuilder: (context, index) {
-                    if (blogandTimelineFeed[index]['type'] == 'blog')
-                      return BlogPost(postObject: blogandTimelineFeed[index]);
-                    else
-                      return Timeline(blogandTimelineFeed[index]);
-                  }),
-              ListView.builder(
-
-                  //shareables and polls
-                  shrinkWrap: true,
-                  itemCount: othersFeed.length,
-                  itemBuilder: (context, index) {
-                    if (othersFeed[index]['type'] == 'shareable')
-                      return new Shareable(
-                        postObject: othersFeed[index],
-                      );
-                    else
-                      return new PollPost(
-                        postObject: othersFeed[index],
-                      );
-                  }),
-            ],
-          ),
-        ),
-      ],
-    ));
+          children: <Widget>[
+            new Container(
+              decoration:
+                  new BoxDecoration(color: Theme.of(context).primaryColor),
+              child: new TabBar(
+                controller: widget._controller,
+                tabs: [
+                  new Tab(icon: new Icon(Icons.content_copy)),
+                  new Tab(icon: new Icon(Icons.group)),
+                  new Tab(icon: new Icon(Icons.poll)),
+                  new Tab(icon: new Icon(Icons.check_box)),
+                ],
+              ),
+            ),
+            new SizedBox(
+              height: 400.0,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                child: new TabBarView(
+                  controller: widget._controller,
+                  children: <Widget>[
+                    ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: microblogFeed.length,
+                        itemBuilder: (context, index) {
+                          return new MicroBlogPost(
+                            postObject: microblogFeed[index],
+                          );
+                        }),
+                    ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: reshareFeed.length,
+                        itemBuilder: (context, index) {
+                          if (reshareFeed[index]['type'] == 'SimpleReshare')
+                            return new SimpleReshare(
+                              postObject: reshareFeed[index],
+                            );
+                          else
+                            return new ReshareWithComment(
+                              postObject: reshareFeed[index],
+                            );
+                        }),
+                    ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: blogandTimelineFeed.length,
+                        itemBuilder: (context, index) {
+                          if (blogandTimelineFeed[index]['type'] == 'blog')
+                            return BlogPost(
+                                postObject: blogandTimelineFeed[index]);
+                          else
+                            return Timeline(blogandTimelineFeed[index]);
+                        }),
+                    ListView.builder(
+                        //shareables and polls
+                        shrinkWrap: true,
+                        itemCount: othersFeed.length,
+                        itemBuilder: (context, index) {
+                          if (othersFeed[index]['type'] == 'shareable')
+                            return new Shareable(
+                              postObject: othersFeed[index],
+                            );
+                          else
+                            return new PollPost(
+                              postObject: othersFeed[index],
+                            );
+                        }),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 }

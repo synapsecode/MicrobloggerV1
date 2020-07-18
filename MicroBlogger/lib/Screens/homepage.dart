@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import '../Components/PostTemplates/microblog.dart';
@@ -21,6 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final data = DataFetcher();
+  final currentUser = getCurrentUser();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +47,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Feed(data: data),
       drawer: MainAppDrawer(
-        currentUser: data.currentUser,
+        author: currentUser,
       ),
       floatingActionButton: FloatingCircleButton(),
       bottomNavigationBar: BottomNavigator(),
@@ -66,6 +68,7 @@ class Feed extends StatelessWidget {
       ...data.shareablePosts,
       ...data.timelinePosts,
       ...data.resharesWithComment,
+      ...data.simpleReshares
     ];
     feed.shuffle();
     return Center(
@@ -75,8 +78,6 @@ class Feed extends StatelessWidget {
                 itemCount: feed.length,
                 itemBuilder: (context, index) {
                   var post = feed[index];
-                  // print(post);
-                  // print("");
                   var output;
                   switch (post['type']) {
                     case "microblog":
@@ -99,46 +100,15 @@ class Feed extends StatelessWidget {
                         postObject: post,
                       );
                       break;
+                    case "SimpleReshare":
+                      output = SimpleReshare(
+                        postObject: post,
+                      );
+                      break;
                     default:
                       break;
                   }
                   return output;
-                  // if (index < 2)
-                  //   return new MicroBlogPost();
-                  // else if (index < 4)
-                  //   return new Shareable();
-                  // else if (index < 6)
-                  //   return new PollPost();
-                  // else if (index < 8)
-                  //   return new Reshare();
-                  // else if (index < 10)
-                  //   return new BlogPost();
-                  // else if (index < 11)
-                  //   return new ReshareWithComment(
-                  //     postObject: {'id': '4gf83h'},
-                  //     resharedType: "MicroBlog",
-                  //   );
-                  // else if (index < 12)
-                  //   return new ResharedBlog();
-                  // else if (index < 14)
-                  //   return new ReshareWithComment(
-                  //     postObject: {'id': '4gf83h'},
-                  //     resharedType: "Blog",
-                  //   );
-                  // else if (index < 16)
-                  //   return new Timeline();
-                  // else if (index < 18)
-                  //   return new ReshareWithComment(
-                  //     postObject: {'id': '4gf83h'},
-                  //     resharedType: "Timeline",
-                  //   );
-                  // else if (index < 20)
-                  //   return new ReshareWithComment(
-                  //     postObject: {'id': '4gf83h'},
-                  //     resharedType: "Shareable",
-                  //   );
-                  // else
-                  //   return new ResharedTimeline();
                 })));
   }
 }

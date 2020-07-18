@@ -1,5 +1,9 @@
 import 'package:MicroBlogger/Composers/commentComposer.dart';
+import 'package:MicroBlogger/Composers/reshareComposer.dart';
+import 'package:MicroBlogger/Screens/profilepage.dart';
 import 'package:flutter/material.dart';
+import '../../Data/datafetcher.dart';
+import 'dart:convert';
 
 class BottomNavigator extends StatelessWidget {
   const BottomNavigator({
@@ -8,6 +12,10 @@ class BottomNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // JsonEncoder encoder = new JsonEncoder.withIndent('  ');
+    // String prettyprint = encoder.convert(author);
+    // print(prettyprint);
+    final currentUser = getCurrentUser();
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       showSelectedLabels: false,
@@ -36,7 +44,12 @@ class BottomNavigator extends StatelessWidget {
             Navigator.of(context).pushNamed('/Notifications');
             break;
           case 3:
-            Navigator.of(context).pushNamed('/Profile');
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ProfilePage(
+                          author: currentUser,
+                        )));
             break;
         }
       },
@@ -45,8 +58,8 @@ class BottomNavigator extends StatelessWidget {
 }
 
 class MainAppDrawer extends StatelessWidget {
-  final currentUser;
-  const MainAppDrawer({Key key, this.currentUser}) : super(key: key);
+  final author;
+  const MainAppDrawer({Key key, this.author}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -60,16 +73,16 @@ class MainAppDrawer extends StatelessWidget {
               child: UserAccountsDrawerHeader(
                 currentAccountPicture: CircleAvatar(
                     radius: 20,
-                    backgroundImage: NetworkImage("${currentUser['icon']}")),
-                accountName: Text("${currentUser['name']}",
+                    backgroundImage: NetworkImage("${author['icon']}")),
+                accountName: Text("${author['name']}",
                     style: TextStyle(
                       fontSize: 20.0,
                     )),
-                accountEmail: Text("${currentUser['email']}"),
+                accountEmail: Text("${author['email']}"),
                 decoration: new BoxDecoration(
                     image: new DecorationImage(
                         fit: BoxFit.cover,
-                        image: NetworkImage("${currentUser['background']}")
+                        image: NetworkImage("${author['background']}")
                         //NetworkImage('https://www.wallpaperup.com/uploads/wallpapers/2015/01/29/604388/cff1fdb8cae21be0110304941e33130d-700.jpg')
                         )),
               ),
@@ -328,9 +341,13 @@ class _ActionBarState extends State<ActionBar> {
                                 ),
                                 RaisedButton(
                                   onPressed: () {
-                                    Navigator.of(context).pushNamed(
-                                        '/MB_ReshareComposer',
-                                        arguments: {"MB"});
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ReshareComposer(
+                                                  postObject: widget.post,
+                                                )));
                                   },
                                   color: Colors.white10,
                                   child: Text("Reshare with Comment",
@@ -363,10 +380,7 @@ class _ActionBarState extends State<ActionBar> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => CommentComposer(
-                                    post: {
-                                      'id': "${widget.post['id']}",
-                                      'postType': '${widget.post['type']}'
-                                    },
+                                    post: widget.post,
                                   )));
                     },
                   ),

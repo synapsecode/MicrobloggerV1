@@ -68,9 +68,6 @@ class MyApp extends StatelessWidget {
         '/PollComposer': (BuildContext context) => new PollComposer(),
         '/TimelineComposer': (BuildContext context) => new TimelineComposer(),
 
-        '/MB_ReshareComposer': (BuildContext context) =>
-            new MicroBlogReshareComposer(),
-
         //Viewers
         '/MicroBlogViewer': (BuildContext context) => new MicroBlogViewer(),
         '/ReshareViewer': (BuildContext context) => new MicroBlogViewer(),

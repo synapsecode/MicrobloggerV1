@@ -1,3 +1,45 @@
+Object getCurrentUser() {
+  return {
+    'name': 'Manas Hejmadi',
+    'email': 'manashejmadi@gmail.com',
+    'username': 'synapse.code',
+    'icon': 'https://biotreebe.iamharsh.dev/media/IMG_20200608_154255_957.jpg',
+    'background':
+        'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+    'reputation': "50",
+    'followers': "1987",
+    'following': "2342",
+    'accountage': 'April 2020',
+    'bio':
+        "I'm a 15 Year old School Student from India who is very passionate about Metal and Rock Music. The Genre of Metal really touches my soul! Metal music is not just entertainment it is a way of life! My favourite band is Slipknot!",
+    'location': 'Bangalore, India',
+    'myMicroBlogs': UserData().getMicroBlogPostsByAuthor(
+        "Manas Hejmadi",
+        "synapsecode",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myBlogs': UserData().getBlogsByAuthor("Manas Hejmadi", "synapsecode",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myTimelines': UserData().getTimelinesByAuthor(
+        "Manas Hejmadi",
+        "synapsecode",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myShareables': UserData().getShareablePostsByAuthor(
+        "Manas Hejmadi",
+        "synapsecode",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myReshareWithComments': UserData().getReshareWithCommentPostsByAuthor(
+        "Manas Hejmadi",
+        "synapsecode",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'mySimpleReshares': UserData().getSimpleResharesByAuthor(
+        "Manas Hejmadi",
+        "synapsecode",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myPolls': UserData().getPollsByAuthor("Manas Hejmadi", "synapsecode",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+  };
+}
+
 class Providers {
   String randomImageProvider() {
     return '';
@@ -180,16 +222,6 @@ class Providers {
 }
 
 class DataFetcher {
-  Object currentUser = {
-    'name': 'Manas Hejmadi',
-    'email': 'manashejmadi@gmail.com',
-    'username': 'synapse.code',
-    'icon':
-        'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-    'background':
-        'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg'
-  };
-
   List microblogPosts = [
     {
       'type': 'microblog',
@@ -765,4 +797,654 @@ class DataFetcher {
       },
     },
   ];
+
+  List simpleReshares = [
+    {
+      'type': 'SimpleReshare',
+      'author': {
+        'name': 'Manas Hejmadi',
+        'username': 'hejmadimanas',
+        'icon':
+            'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+      },
+      'child': {
+        'type': 'timeline',
+        'id': 'yrudggGG',
+        'background':
+            'https://i1.wp.com/regionweek.com/wp-content/uploads/2020/03/World-Map-2.jpg?fit=1920%2C1200&ssl=1',
+        'timeline_name': 'The Covid Crisis in India',
+        'author': {
+          'name': 'WHO',
+          'username': 'who_official',
+          'icon':
+              'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+        },
+        'likes': 9000,
+        'reshares': 1200,
+        'comments': Providers().getDummyTimelineComments(),
+        'age': '3m',
+        'events': [
+          {
+            'event_name': 'The Situation Abroad',
+            'description':
+                'The world has come to a standstill in the fight against the SARS-CoV2 Virus also called as the Coronavirus. The Disease associated with it is called Covid19. Several countries have been affected and are currently in lockdown.',
+            'timestamp': 'late 2019'
+          },
+          {
+            'event_name': 'First Signs',
+            'description':
+                'Most of the first infections started in various parts of Kerala, Maharashtra and Tamil Nadu. Maharashtra soon became highly effected and went into lockdown',
+            'timestamp': 'February 2020'
+          },
+          {
+            'event_name': 'Janata Curfew',
+            'description':
+                'After certain incidents, the number of Covid19 cases in India skyrocketed forcing the government to order a Janata Curfew',
+            'timestamp': 'March 2020'
+          },
+          {
+            'event_name': 'First Lockdown',
+            'description':
+                'With extremely rapid increase in case counts, the government of India issued a 30 day lockdown from the month of march.',
+            'timestamp': 'March 2020'
+          },
+          {
+            'event_name': 'Second Lockdown',
+            'description':
+                'The first lockdown was somewhat successful in containing the virus but cases were still high and hence another lockdown was instantiated',
+            'timestamp': 'April 2020'
+          },
+          {
+            'event_name': 'Third Lockdown',
+            'description':
+                'The Government, out of desperation to control cases took hasty decisions and failed to implement the lockdown correctly, due to this a number of poor workers and migrant workers had to suffer!',
+            'timestamp': 'May 2020'
+          },
+          {
+            'event_name': 'Fourth Lockdown',
+            'description':
+                'Wiht the country being in lockdown for several months now, the people lost their patience and got desensitized by the Coronavirus pandemic. Government started making Green Zones and Red Zones to allow a partial unlock',
+            'timestamp': 'May 2020'
+          },
+          {
+            'event_name': 'Unlock 1.0',
+            'description':
+                'After months of lockdown, The government of India closed the lockdown period. Cases had reached well above half a million by now.',
+            'timestamp': 'June 2020'
+          },
+          {
+            'event_name': 'Current Situation',
+            'description':
+                'The number of Covid19 cases in India has exceeded 1 Million. We are currently the Third topmost affected country in the world after USA and Brazil. There is no sight of the Vaccine yet',
+            'timestamp': 'July 2020'
+          },
+        ]
+      }
+    },
+    {
+      'type': 'SimpleReshare',
+      'author': {
+        'name': 'Rahul ',
+        'username': 'rahulsrivatsav',
+        'icon':
+            'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+      },
+      'child': {
+        'type': 'microblog',
+        'id': 'hdjf34ki',
+        'author': {
+          'name': 'Christopher Dylan',
+          'username': 'cdx1980',
+          'icon':
+              'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+        },
+        'likes': 440,
+        'comments': Providers().getDummyMicroBlogPostComments(),
+        'reshares': 45,
+        'content': "${Providers().microblogText}",
+        'age': '3h',
+        'category': 'Fact'
+      },
+    },
+    {
+      'type': 'SimpleReshare',
+      'author': {
+        'name': 'Manas Hejmadi',
+        'username': 'hejmadimanas',
+        'icon':
+            'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+      },
+      'child': {
+        'type': 'shareable',
+        'id': 'ffheUUID',
+        'author': {
+          'name': 'Salvatore',
+          'username': 'goodnesspersonified',
+          'icon':
+              'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+        },
+        'likes': 334,
+        'reshares': 12,
+        'content':
+            "Hey Guys! Please check out my new website that I made in one day! I think it looks really cool!",
+        'link': 'https://www.google.com',
+        'name': 'Google',
+        'age': '9s',
+      },
+    },
+    {
+      'type': 'SimpleReshare',
+      'author': {
+        'name': 'Manas Hejmadi',
+        'username': 'hejmadimanas',
+        'icon':
+            'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+      },
+      'child': {
+        'type': 'blog',
+        'id': 'ajzifhnf',
+        'background':
+            'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+        'blog_name': 'John Brown',
+        'author': {
+          'name': 'Bob Dylan',
+          'username': 'dylanbob',
+          'icon':
+              'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+        },
+        'likes': 1330,
+        'comments': Providers().getDummyBlogPostComments(),
+        'reshares': 60,
+        'content': "${Providers().johnbrownStory}",
+        'age': '30d'
+      },
+    }
+  ];
 }
+
+class UserData {
+  List getMicroBlogPostsByAuthor(authorName, authorUsername, authorIcon) {
+    return [
+      {
+        'type': 'microblog',
+        'id': 'hdjf34ki',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'likes': 440,
+        'comments': Providers().getDummyMicroBlogPostComments(),
+        'reshares': 45,
+        'content': "${Providers().microblogText}",
+        'age': '3h',
+        'category': 'Fact'
+      },
+      {
+        'type': 'microblog',
+        'id': 'hdjf34ki',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'likes': 440,
+        'comments': Providers().getDummyMicroBlogPostComments(),
+        'reshares': 45,
+        'content': "${Providers().microblogText}",
+        'age': '3h',
+        'category': 'Fact'
+      },
+      {
+        'type': 'microblog',
+        'id': 'hdjf34ki',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'likes': 440,
+        'comments': Providers().getDummyMicroBlogPostComments(),
+        'reshares': 45,
+        'content': "${Providers().microblogText}",
+        'age': '3h',
+        'category': 'Fact'
+      },
+    ];
+  }
+
+  List getReshareWithCommentPostsByAuthor(
+      authorName, authorUsername, authorIcon) {
+    return [
+      {
+        'type': 'ResharedWithComment',
+        'id': 'fhff39hdg',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'likes': 334,
+        'comments': Providers().getDummyMicroBlogPostComments(),
+        'content':
+            "Excellent Post! I recommend everyone to check this out! Everything is executed perfectly and is visually appealing too! The creator is extremely credible and has made numerous high quality posts!",
+        'age': '36h',
+        'category': 'Fact',
+        'child': {
+          'type': 'microblog',
+          'id': 'xswedc23',
+          'author': {
+            'name': 'Jeffrey Archer',
+            'username': 'jarcher',
+            'icon':
+                'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+          },
+          'likes': 334,
+          'comments': Providers().getDummyMicroBlogPostComments(),
+          'reshares': 12,
+          'content': "${Providers().microblogText}",
+          'age': '36h',
+          'category': 'Opinion'
+        },
+      },
+      {
+        'type': 'ResharedWithComment',
+        'id': 'fhff39hdg',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'likes': 334,
+        'comments': Providers().getDummyMicroBlogPostComments(),
+        'content':
+            "Excellent Post! I recommend everyone to check this out! Everything is executed perfectly and is visually appealing too! The creator is extremely credible and has made numerous high quality posts!",
+        'age': '36h',
+        'category': 'Fact',
+        'child': {
+          'type': 'microblog',
+          'id': 'xswedc23',
+          'author': {
+            'name': 'Jeffrey Archer',
+            'username': 'jarcher',
+            'icon':
+                'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+          },
+          'likes': 334,
+          'comments': Providers().getDummyMicroBlogPostComments(),
+          'reshares': 12,
+          'content': "${Providers().microblogText}",
+          'age': '36h',
+          'category': 'Opinion'
+        },
+      },
+    ];
+  }
+
+  List getSimpleResharesByAuthor(authorName, authorUsername, authorIcon) {
+    return [
+      {
+        'type': 'SimpleReshare',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'child': {
+          'type': 'blog',
+          'id': 'ajzifhnf',
+          'background':
+              'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+          'blog_name': 'John Brown',
+          'author': {
+            'name': 'Bob Dylan',
+            'username': 'dylanbob',
+            'icon':
+                'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+          },
+          'likes': 1330,
+          'comments': Providers().getDummyBlogPostComments(),
+          'reshares': 60,
+          'content': "${Providers().johnbrownStory}",
+          'age': '30d'
+        },
+      },
+      {
+        'type': 'SimpleReshare',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'child': {
+          'type': 'blog',
+          'id': 'ajzifhnf',
+          'background':
+              'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+          'blog_name': 'Salvatore',
+          'author': {
+            'name': 'Chris Lewin',
+            'username': 'theofficialcl',
+            'icon':
+                'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+          },
+          'likes': 1330,
+          'comments': Providers().getDummyBlogPostComments(),
+          'reshares': 60,
+          'content': "${Providers().salvatoreStory}",
+          'age': '30d'
+        },
+      }
+    ];
+  }
+
+  List getShareablePostsByAuthor(authorName, authorUsername, authorIcon) {
+    return [
+      {
+        'type': 'shareable',
+        'id': 'chdd6743',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'likes': 1560,
+        'reshares': 334,
+        'content':
+            "Hey everyone! My new application is starting in about 30 minutes! Be prepared for some awesome launch showreels!!",
+        'link': 'https://www.google.com',
+        'name': 'MicroBlogger App',
+        'age': '30s',
+      },
+      {
+        'type': 'shareable',
+        'id': 'chdd6743',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'likes': 448,
+        'reshares': 12,
+        'content':
+            "Hey everyone! My new application is starting in about 30 minutes! Be prepared for some awesome launch showreels!!",
+        'link': 'https://www.google.com',
+        'name': 'MicroBlogger App',
+        'age': '30s',
+      },
+    ];
+  }
+
+  List getBlogsByAuthor(authorName, authorUsername, authorIcon) {
+    return [
+      {
+        'type': 'blog',
+        'id': 'ajzifhnf',
+        'background':
+            'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+        'blog_name': 'John Brown',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'likes': 1330,
+        'comments': Providers().getDummyBlogPostComments(),
+        'reshares': 60,
+        'content': "${Providers().johnbrownStory}",
+        'age': '30d'
+      },
+      {
+        'type': 'blog',
+        'id': 'ajzifhnf',
+        'background':
+            'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+        'blog_name': 'Salvatore',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'likes': 1330,
+        'comments': Providers().getDummyBlogPostComments(),
+        'reshares': 60,
+        'content': "${Providers().salvatoreStory}",
+        'age': '30d'
+      },
+    ];
+  }
+
+  List getPollsByAuthor(authorName, authorUsername, authorIcon) {
+    return [
+      {
+        'type': 'poll',
+        'id': 'hdxxdx33',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'likes': 123,
+        'content': "What is your favourite Slipknot song?",
+        'options': [
+          {'name': '(SIC)', 'count': 0},
+          {'name': 'People=Shit', 'count': 0},
+          {'name': 'Disasterpiece', 'count': 0},
+          {'name': 'Spit It Out', 'count': 0},
+          {'name': 'Nero Forte', 'count': 0},
+          {'name': 'Sulfur', 'count': 0},
+        ],
+        'age': '12s'
+      },
+      {
+        'type': 'poll',
+        'id': 'hdxxdx33',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'likes': 123,
+        'content': "What is your favourite Slipknot song?",
+        'options': [
+          {'name': '(SIC)', 'count': 0},
+          {'name': 'People=Shit', 'count': 0},
+          {'name': 'Disasterpiece', 'count': 0},
+          {'name': 'Spit It Out', 'count': 0},
+          {'name': 'Nero Forte', 'count': 0},
+          {'name': 'Sulfur', 'count': 0},
+        ],
+        'age': '12s'
+      },
+    ];
+  }
+
+  List getTimelinesByAuthor(authorName, authorUsername, authorIcon) {
+    return [
+      {
+        'type': 'timeline',
+        'id': 'xdxfccvv',
+        'background':
+            'https://www.syfy.com/sites/syfy/files/styles/1200x680_hero/public/2018/03/dragon-ball-super-goku-ultra-instinct-mastered-01.jpg',
+        'timeline_name': 'Dragon Ball Z Sagas',
+        'author': {
+          'name': authorName,
+          'username': authorUsername,
+          'icon': authorIcon
+        },
+        'likes': 9000,
+        'reshares': 1200,
+        'comments': Providers().getDummyTimelineComments(),
+        'age': '3m',
+        'events': [
+          {
+            'event_name': 'Raditz Saga',
+            'description':
+                'A long haired alien appears on earth and reaches Kame House. He claims himself to be Raditz and says that he is Goku(Kakkarot)\'s biological brother. He then kidnaps Gohan. Goku and Piccolo fight raditz and then Piccolo uses the Makankosappo against Raditz taking him and goku out in one shot',
+            'timestamp': '1'
+          },
+          {
+            'event_name': 'Saiyan Saga',
+            'description':
+                'Following the demise of their partner raditz, Vegeta and Nappa arrive on earth to fight Goku. A long intense battle takes place and ends with Goku sparing vegeta\'s life.',
+            'timestamp': '2'
+          },
+          {
+            'event_name': 'Frieza Saga',
+            'description':
+                'Goku and the others decide to go to Namek to resurrect their dead friends, After hearing about the namekian dragon balls, Frieza goes to namek. A long intense battle takes place. Goku unlocks his Super Saiyan Power and destroys frieza.',
+            'timestamp': '3'
+          },
+          {
+            'event_name': 'Android Saga',
+            'description':
+                'Future Trunks comes back to the present and warns the Z-Fighters about 2 humanoid sibling androids who will destroy humanity. The z Fighters start training and  defeat Dr.Gero and Android 19 but awaken Android 16, 17 and 18 in the process',
+            'timestamp': '4'
+          },
+          {
+            'event_name': 'Cell Saga',
+            'description':
+                'Cell, a creation made of genes from the best fighters in the Universe, comes back to the present from the future to merge with Android 17 and 18 to attain his perfect form. After attaining it he is destroyed by the monstrous power of Super Saiyan 2 Gohan',
+            'timestamp': '5'
+          },
+          {
+            'event_name': 'Buu Saga',
+            'description':
+                'Babidi has freed Majin Buu from his long slumber, Buu goes on a rampage with different transformations, he kills everyone on earth and blows up the entire earth. Kid Buu comes to the planet of the Kais and has a battle with Goku and Vegeta. Goku uses is SSJ3 form and finally defeats buu by using the Universal Genkidama',
+            'timestamp': '6'
+          },
+          {
+            'event_name': 'Future World Tournament Saga',
+            'description':
+                'Goku had wished that kid buu was reincarneated as a good person. 10 years later, Uub took part in the World Matial Arts Tournament. Goku fought and won and then proceeded to Go away with Uub to train him',
+            'timestamp': '7'
+          },
+          {
+            'event_name': 'The End of Dragon Ball Z',
+            'description':
+                'Dragon Ball Z ended its run and was succeeded by Dragon Ball GT and then a decade later, Dragon Ball Super. As of now, Super has completed 131 episodes.',
+            'timestamp': '8'
+          },
+        ]
+      },
+    ];
+  }
+}
+
+List authors = [
+  {
+    'name': 'Manas Hejmadi',
+    'email': 'manashejmadi@gmail.com',
+    'username': 'synapse.code',
+    'icon': 'https://biotreebe.iamharsh.dev/media/IMG_20200608_154255_957.jpg',
+    'background':
+        'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+    'reputation': "50",
+    'followers': "1987",
+    'following': "2342",
+    'accountage': 'April 2020',
+    'bio':
+        "I'm a 15 Year old School Student from India who is very passionate about Metal and Rock Music. The Genre of Metal really touches my soul! Metal music is not just entertainment it is a way of life! My favourite band is Slipknot!",
+    'location': 'Bangalore, India',
+    'myMicroBlogs': UserData().getMicroBlogPostsByAuthor(
+        "Manas Hejmadi",
+        "synapsecode",
+        "https://biotreebe.iamharsh.dev/media/IMG_20200608_154255_957.jpg"),
+    'myBlogs': UserData().getBlogsByAuthor("Manas Hejmadi", "synapsecode",
+        "https://biotreebe.iamharsh.dev/media/IMG_20200608_154255_957.jpg"),
+    'myTimelines': UserData().getTimelinesByAuthor(
+        "Manas Hejmadi",
+        "synapsecode",
+        "https://biotreebe.iamharsh.dev/media/IMG_20200608_154255_957.jpg"),
+    'myShareables': UserData().getShareablePostsByAuthor(
+        "Manas Hejmadi",
+        "synapsecode",
+        "https://biotreebe.iamharsh.dev/media/IMG_20200608_154255_957.jpg"),
+    'myReshareWithComments': UserData().getReshareWithCommentPostsByAuthor(
+        "Manas Hejmadi",
+        "synapsecode",
+        "https://biotreebe.iamharsh.dev/media/IMG_20200608_154255_957.jpg"),
+    'mySimpleReshares': UserData().getSimpleResharesByAuthor(
+        "Manas Hejmadi",
+        "synapsecode",
+        "https://biotreebe.iamharsh.dev/media/IMG_20200608_154255_957.jpg"),
+    'myPolls': UserData().getPollsByAuthor("Manas Hejmadi", "synapsecode",
+        "https://biotreebe.iamharsh.dev/media/IMG_20200608_154255_957.jpg"),
+  },
+  {
+    'name': 'Anime Ajay',
+    'email': 'animeajay',
+    'username': 'animeajay2321',
+    'icon':
+        'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+    'background':
+        'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+    'reputation': "10",
+    'followers': "124",
+    'following': "445",
+    'accountage': 'May 2020',
+    'bio': "I make anime videos. Especially Dragon Ball",
+    'location': 'USA',
+    'myMicroBlogs': UserData().getMicroBlogPostsByAuthor(
+        "Anime Ajay",
+        "animeajay2321",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myBlogs': UserData().getBlogsByAuthor("Anime Ajay", "animeajay2321",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myTimelines': UserData().getTimelinesByAuthor(
+        "Anime Ajay",
+        "animeajay2321",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myShareables': UserData().getShareablePostsByAuthor(
+        "Anime Ajay",
+        "animeajay2321",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myReshareWithComments': UserData().getReshareWithCommentPostsByAuthor(
+        "Anime Ajay",
+        "animeajay2321",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'mySimpleReshares': UserData().getSimpleResharesByAuthor(
+        "Anime Ajay",
+        "animeajay2321",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myPolls': UserData().getPollsByAuthor("Anime Ajay", "animeajay2321",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+  },
+  {
+    'name': 'Satyajit Ray',
+    'email': 'animeajay',
+    'username': 'sotyajoy',
+    'icon':
+        'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+    'background':
+        'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+    'reputation': "40",
+    'followers': "1000",
+    'following': "9321",
+    'accountage': 'January 2020',
+    'bio': "I write Stories! Author - Fritz (ISC)",
+    'location': 'West Bengal, India',
+    'myMicroBlogs': UserData().getMicroBlogPostsByAuthor(
+        "Satyajit Ray",
+        "sotyajoy",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myBlogs': UserData().getBlogsByAuthor("Satyajit Ray", "sotyajoy",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myTimelines': UserData().getTimelinesByAuthor("Satyajit Ray", "sotyajoy",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myShareables': UserData().getShareablePostsByAuthor(
+        "Satyajit Ray",
+        "sotyajoy",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myReshareWithComments': UserData().getReshareWithCommentPostsByAuthor(
+        "Satyajit Ray",
+        "sotyajoy",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'mySimpleReshares': UserData().getSimpleResharesByAuthor(
+        "Satyajit Ray",
+        "sotyajoy",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+    'myPolls': UserData().getPollsByAuthor("Satyajit Ray", "sotyajoy",
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+  },
+];

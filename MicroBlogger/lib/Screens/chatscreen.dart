@@ -14,7 +14,7 @@ class _ChatScreenState extends State<ChatScreen> {
         appBar: AppBar(
           title: InkWell(
             onTap: () {
-              Navigator.of(context).pushNamed('/Profile');
+              //Navigator.of(context).pushNamed('/Profile');
             },
             child: Row(
               children: [
