@@ -45,58 +45,8 @@ class _ResharedWithCommentViewerState extends State<ResharedWithCommentViewer> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //----------------------------------------HEADER-------------------------------------------------
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 24.0,
-                        backgroundImage: NetworkImage(
-                            "${widget.postObject['author']['icon']}"),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(left: 10.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "${widget.postObject['author']['name']}",
-                              style: TextStyle(fontSize: 20.0),
-                            ),
-                            Row(
-                              children: [
-                                InkWell(
-                                  onTap: () => print("clicked user"),
-                                  child: Text(
-                                    "@${widget.postObject['author']['username']}",
-                                    style: TextStyle(color: Colors.blue),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  "${widget.postObject['age']}",
-                                  style: TextStyle(color: Colors.white30),
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  "${widget.postObject['category']}",
-                                  style: TextStyle(color: Colors.green),
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                InkWell(
-                                  onTap: () => print("More clicked"),
-                                  child: Icon(Icons.arrow_drop_down),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  TopBar(
+                    postObject: widget.postObject,
                   ),
                   //----------------------------------------HEADER-------------------------------------------------
                   SizedBox(
@@ -180,57 +130,8 @@ class HostMicroBlog extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //----------------------------------------HEADER-------------------------------------------------
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 24.0,
-                    backgroundImage: NetworkImage("${data['author']['icon']}"),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${data['author']['name']}",
-                          style: TextStyle(fontSize: 20.0),
-                        ),
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () => print("clicked user"),
-                              child: Text(
-                                "@${data['author']['username']}",
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "${data['age']}",
-                              style: TextStyle(color: Colors.white30),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "${data['category']}",
-                              style: TextStyle(color: Colors.green),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            InkWell(
-                              onTap: () => print("More clicked"),
-                              child: Icon(Icons.arrow_drop_down),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              TopBar(
+                postObject: data,
               ),
               //----------------------------------------HEADER-------------------------------------------------
               SizedBox(
@@ -276,53 +177,8 @@ class HostShareable extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //----------------------------------------HEADER-------------------------------------------------
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 24.0,
-                    backgroundImage: NetworkImage("${data['author']['icon']}"),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${data['author']['name']}",
-                          style: TextStyle(fontSize: 20.0),
-                        ),
-                        SizedBox(
-                          height: 2.0,
-                        ),
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () => print("clicked user"),
-                              child: Text(
-                                "@${data['author']['username']}",
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "${data['age']}",
-                              style: TextStyle(color: Colors.white30),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            InkWell(
-                              onTap: () => print("More clicked"),
-                              child: Icon(Icons.arrow_drop_down),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              TopBar(
+                postObject: data,
               ),
               //----------------------------------------HEADER-------------------------------------------------
               SizedBox(

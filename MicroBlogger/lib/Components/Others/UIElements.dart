@@ -421,3 +421,64 @@ class _ActionBarState extends State<ActionBar> {
         ));
   }
 }
+
+class TopBar extends StatelessWidget {
+  final postObject;
+  const TopBar({Key key, this.postObject}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: 24.0,
+          backgroundImage: NetworkImage("${postObject['author']['icon']}"),
+        ),
+        Container(
+          padding: EdgeInsets.only(left: 10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${postObject['author']['name']}",
+                style: TextStyle(fontSize: 20.0),
+              ),
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () => print("clicked user"),
+                    child: Text(
+                      "@${postObject['author']['username']}",
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    "${postObject['age']}",
+                    style: TextStyle(color: Colors.white30),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  if (postObject['type'] == 'microblog' ||
+                      postObject['type'] == 'ResharedWithComment' ||
+                      postObject['type'] == 'comment') ...[
+                    Text(
+                      "${postObject['category']}",
+                      style: TextStyle(
+                          color: (postObject['category'] == 'Fact')
+                              ? Colors.green
+                              : Colors.pink),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}

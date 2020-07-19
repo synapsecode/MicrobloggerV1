@@ -35,47 +35,8 @@ class _TimelineViewerState extends State<TimelineViewer> {
               color: Colors.white10,
               padding: EdgeInsets.all(10.0),
               margin: EdgeInsets.symmetric(horizontal: 5.0),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 24.0,
-                    backgroundImage:
-                        NetworkImage("${widget.postObject['author']['icon']}"),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${widget.postObject['author']['name']}",
-                          style: TextStyle(fontSize: 20.0),
-                        ),
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () => print("clicked user"),
-                              child: Text(
-                                "@${widget.postObject['author']['username']}",
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "${widget.postObject['age']}",
-                              style: TextStyle(color: Colors.white30),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              child: TopBar(
+                postObject: widget.postObject,
               ),
             ),
             Container(

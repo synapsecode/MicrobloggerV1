@@ -1,3 +1,4 @@
+import 'package:MicroBlogger/Components/Others/UIElements.dart';
 import 'package:flutter/material.dart';
 
 class LevelOneComment extends StatefulWidget {
@@ -33,58 +34,8 @@ class _LevelOneCommentState extends State<LevelOneComment> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 //----------------------------------------HEADER-------------------------------------------------
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 24.0,
-                      backgroundImage: NetworkImage(
-                          "${widget.commentObject['author']['icon']}"),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(left: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "${widget.commentObject['author']['name']}",
-                            style: TextStyle(fontSize: 20.0),
-                          ),
-                          Row(
-                            children: [
-                              InkWell(
-                                onTap: () => print("clicked user"),
-                                child: Text(
-                                  "@${widget.commentObject['author']['username']}",
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                "${widget.commentObject['age']}",
-                                style: TextStyle(color: Colors.white30),
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                "${widget.commentObject['category']}",
-                                style: TextStyle(color: Colors.green),
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              InkWell(
-                                onTap: () => print("More clicked"),
-                                child: Icon(Icons.arrow_drop_down),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                TopBar(
+                  postObject: widget.commentObject,
                 ),
                 //----------------------------------------HEADER-------------------------------------------------
                 SizedBox(
