@@ -1,4 +1,5 @@
 import 'package:MicroBlogger/Components/Others/UIElements.dart';
+import 'package:MicroBlogger/PostViewers/shareableWebViewer.dart';
 import 'package:flutter/material.dart';
 
 class Shareable extends StatefulWidget {
@@ -53,6 +54,14 @@ class _ShareableState extends State<Shareable> {
                                     onPressed: () {
                                       print(
                                           "Visiting ${widget.postObject['link']}");
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ShareableWebView(
+                                                    link: widget
+                                                        .postObject['link'],
+                                                  )));
                                     },
                                     icon: Icon(Icons.link),
                                     label: Text(

@@ -73,13 +73,7 @@ class _ProfileState extends State<ProfilePage>
                 )
               ]))
             ])
-          : Container(
-              constraints: BoxConstraints.expand(),
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: NetworkImage(
-                          "https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg"),
-                      fit: BoxFit.cover)),
+          : ErrorPage(
               child: AlertDialog(
                 title: Text("User Not Found"),
                 content: Text(

@@ -3,9 +3,9 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../Components/Others/UIElements.dart';
 import 'dart:io' show Platform;
 
-class NewsViewer extends StatelessWidget {
+class ShareableWebView extends StatelessWidget {
   final link;
-  const NewsViewer({Key key, this.link}) : super(key: key);
+  const ShareableWebView({Key key, this.link}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class NewsViewer extends StatelessWidget {
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () => Navigator.of(context).pop()),
-          title: Text("News Viewer"),
+          title: Text("Sharebale WebView"),
         ),
         body: (!Platform.isWindows)
             ? WebView(

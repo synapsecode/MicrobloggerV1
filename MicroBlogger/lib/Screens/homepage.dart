@@ -12,6 +12,7 @@ import '../Components/PostTemplates/timelines.dart';
 import '../Components/Others/UIElements.dart';
 
 import '../Data/datafetcher.dart';
+import '../Data/fetcher.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -23,6 +24,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final data = DataFetcher();
   final currentUser = getCurrentUser();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +47,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Feed(data: data),
+      body: Feed(),
       drawer: MainAppDrawer(
         author: currentUser,
       ),
@@ -55,60 +57,133 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class Feed extends StatelessWidget {
-  final data;
-  Feed({Key key, this.data}) : super(key: key);
+class Feed extends StatefulWidget {
+  Feed({Key key}) : super(key: key);
+
+  @override
+  _FeedState createState() => _FeedState();
+}
+
+class _FeedState extends State<Feed> {
+  Future feedData;
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    super.initState();
+    feedData = getFeed();
+  }
 
   @override
   Widget build(BuildContext context) {
-    List feed = [
-      ...data.microblogPosts,
-      ...data.blogPosts,
-      ...data.pollPosts,
-      ...data.shareablePosts,
-      ...data.timelinePosts,
-      ...data.resharesWithComment,
-      ...data.simpleReshares
-    ];
-    feed.shuffle();
+    // List feed = [
+    //   ...data.microblogPosts,
+    //   ...data.blogPosts,
+    //   ...data.pollPosts,
+    //   ...data.shareablePosts,
+    //   ...data.timelinePosts,
+    //   ...data.resharesWithComment,
+    //   ...data.simpleReshares
+    // ];
+    // feed.shuffle();
     return Center(
         child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: ListView.builder(
-                itemCount: feed.length,
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
+      child: FutureBuilder(
+          future: feedData,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  var post = feed[index];
-                  var output;
-                  switch (post['type']) {
+                  Widget output;
+                  switch (snapshot.data[index]['type']) {
                     case "microblog":
-                      output = MicroBlogPost(postObject: post);
+                      output = MicroBlogPost(postObject: snapshot.data[index]);
                       break;
                     case "blog":
-                      output = BlogPost(postObject: post);
+                      output = BlogPost(postObject: snapshot.data[index]);
                       break;
                     case "shareable":
-                      output = Shareable(postObject: post);
+                      output = Shareable(postObject: snapshot.data[index]);
                       break;
                     case "timeline":
-                      output = Timeline(post);
+                      output = Timeline(snapshot.data[index]);
                       break;
                     case "poll":
-                      output = PollPost(postObject: post);
+                      output = PollPost(postObject: snapshot.data[index]);
                       break;
                     case "ResharedWithComment":
                       output = ReshareWithComment(
-                        postObject: post,
+                        postObject: snapshot.data[index],
                       );
                       break;
                     case "SimpleReshare":
                       output = SimpleReshare(
-                        postObject: post,
+                        postObject: snapshot.data[index],
                       );
                       break;
                     default:
                       break;
                   }
                   return output;
-                })));
+                  // if (snapshot.data[index]['type'] == 'microblog')
+                  //   return new MicroBlogPost(postObject: snapshot.data[index]);
+                  // else if (snapshot.data[index]['type'] == 'blog')
+                  //   return new BlogPost(postObject: snapshot.data[index]);
+                  // else
+                  //   return SizedBox(
+                  //     height: 0.0,
+                  //   );
+                },
+              );
+            } else {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [CircularProgressIndicator()],
+                ),
+              );
+            }
+          }),
+
+      // ListView.builder(
+      //     itemCount: feed.length,
+      //     itemBuilder: (context, index) {
+      //       var post = feed[index];
+      //       var output;
+      //       switch (post['type']) {
+      // case "microblog":
+      //   output = MicroBlogPost(postObject: post);
+      //   break;
+      // case "blog":
+      //   output = BlogPost(postObject: post);
+      //   break;
+      // case "shareable":
+      //   output = Shareable(postObject: post);
+      //   break;
+      // case "timeline":
+      //   output = Timeline(post);
+      //   break;
+      // case "poll":
+      //   output = PollPost(postObject: post);
+      //   break;
+      // case "ResharedWithComment":
+      //   output = ReshareWithComment(
+      //     postObject: post,
+      //   );
+      //   break;
+      // case "SimpleReshare":
+      //   output = SimpleReshare(
+      //     postObject: post,
+      //   );
+      //   break;
+      // default:
+      //   break;
+      //       }
+      //       return output;
+      //     })
+    ));
   }
 }

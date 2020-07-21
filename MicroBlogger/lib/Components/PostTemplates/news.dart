@@ -22,6 +22,8 @@ class NewsItem extends StatelessWidget {
             padding: new EdgeInsets.only(left: 16.0, bottom: 8.0),
             decoration: new BoxDecoration(
               image: new DecorationImage(
+                  colorFilter: ColorFilter.mode(
+                      Colors.black.withOpacity(0.2), BlendMode.dstATop),
                   image: NetworkImage("${newsObject['background']}"),
                   fit: BoxFit.cover),
             ),

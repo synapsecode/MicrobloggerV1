@@ -565,9 +565,12 @@ class TopBar extends StatelessWidget {
                               : Colors.pink),
                     ),
                   ],
-                  IconButton(
-                    icon: Icon(Icons.arrow_drop_down),
-                    onPressed: () {},
+                  SizedBox(
+                    width: 5,
+                  ),
+                  InkWell(
+                    onTap: () => print("More clicked"),
+                    child: Icon(Icons.arrow_drop_down),
                   )
                 ],
               ),
@@ -575,6 +578,24 @@ class TopBar extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class ErrorPage extends StatelessWidget {
+  final Widget child;
+  const ErrorPage({Key key, this.child}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints.expand(),
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: NetworkImage(
+                  "https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg"),
+              fit: BoxFit.cover)),
+      child: child,
     );
   }
 }
