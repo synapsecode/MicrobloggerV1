@@ -26,33 +26,39 @@ class _BlogComposerState extends State<BlogComposer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            icon: Icon(
-              Icons.clear,
-              color: Colors.white,
-            ),
-            onPressed: () => Navigator.of(context).pop()),
-        actions: [
-          Container(
-            margin: EdgeInsets.all(10.0),
-            child: RaisedButton(
-              onPressed: () {
-                print(blogName);
-                print(content);
-                //upload
-              },
-              child: Text("Publish"),
-              color: Colors.black,
-            ),
-          )
-        ],
-      ),
-      body: ComposerComponent(
-        contentUpdater: updateComment,
-        blogNameUpdater: blogNameUpdater,
-      ),
-    );
+        appBar: AppBar(
+          leading: IconButton(
+              icon: Icon(
+                Icons.clear,
+                color: Colors.white,
+              ),
+              onPressed: () => Navigator.of(context).pop()),
+          actions: [
+            Container(
+              margin: EdgeInsets.all(10.0),
+              child: RaisedButton(
+                onPressed: () {
+                  print(blogName);
+                  print(content);
+                  //upload
+                },
+                child: Text("Publish"),
+                color: Colors.black,
+              ),
+            )
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            color: Colors.black12,
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              ComposerComponent(
+                contentUpdater: updateComment,
+                blogNameUpdater: blogNameUpdater,
+              ),
+            ]),
+          ),
+        ));
   }
 }
 
@@ -81,7 +87,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
           ),
         ),
       ),
-      Expanded(
+      Flexible(
         child: Card(
             color: Colors.black12,
             child: Padding(

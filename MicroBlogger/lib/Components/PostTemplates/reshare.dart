@@ -7,6 +7,7 @@ import 'package:MicroBlogger/PostViewers/MicroBlogViewer.dart';
 import 'package:MicroBlogger/PostViewers/ReshareViewer.dart';
 import 'package:MicroBlogger/PostViewers/blogViewer.dart';
 import 'package:MicroBlogger/PostViewers/timelineViewer.dart';
+import 'package:MicroBlogger/Screens/profilepage.dart';
 import 'package:flutter/material.dart';
 
 class ReshareWithComment extends StatefulWidget {
@@ -265,6 +266,12 @@ class _SimpleReshareState extends State<SimpleReshare> {
               onTap: () {
                 //MAKE LOGIC TO GET USERDATA FROM DJN
                 //Navigator.of(context).pushNamed('/Profile');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfilePage(
+                              username: widget.postObject['author']['username'],
+                            )));
               },
               child: Text(
                 "@${widget.postObject['author']['username']}",

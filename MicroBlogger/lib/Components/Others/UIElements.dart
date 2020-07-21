@@ -259,6 +259,7 @@ class ActionBar extends StatefulWidget {
 }
 
 class _ActionBarState extends State<ActionBar> {
+  var currentUser = getCurrentUser();
   bool _liked = false;
   bool _reshared = false;
   bool _bookmarked = false;
@@ -268,6 +269,137 @@ class _ActionBarState extends State<ActionBar> {
   int commentCounter = 0;
   int reshareCounter = 0;
 
+  autoEnableActions() {
+    //auto enable bookmark if user has bookmarked it.
+    for (var id in currentUser['bookmarkedPosts']) {
+      if (id == widget.post['id']) {
+        _bookmarked = true;
+        break;
+      }
+    }
+
+    //auto enable liked if user has liked it.
+    for (var id in currentUser['likedPosts']) {
+      if (id == widget.post['id']) {
+        _liked = true;
+        break;
+      }
+    }
+
+    //auto enable reshare light if user has reshared it (MIGHT NEED IMMEDIATE CHANGE)
+    var rwc = [], sr = [];
+    currentUser['myReshareWithComments'].forEach((e) {
+      rwc.add(e['child']['id']);
+    });
+    currentUser['mySimpleReshares'].forEach((e) {
+      sr.add(e['child']['id']);
+    });
+    for (var id in [...rwc, ...sr]) {
+      if (id == widget.post['id']) {
+        _reshared = true;
+        break;
+      }
+    }
+  }
+
+  toggleLike() {
+    if (_liked) {
+      //TODO: Unlike to server
+    } else {
+      //TODO: like to server
+    }
+    setState(() {
+      _liked = !_liked;
+      likeCounter = (!_liked) ? --likeCounter : ++likeCounter;
+    });
+    print("${(_liked) ? "L" : "Unl"}iked Post ID: ${widget.post['id']}");
+  }
+
+  toggleReshare() {
+    if (_reshared) {
+      //TODO: Initiate UnReshareSequence from server
+      print(
+          "Initiating UnReshare Seequence for both SimpleReshares and ReshareWithComments for this post by currentUser (${currentUser['username']})");
+      setState(() {
+        _reshared = !_reshared;
+        reshareCounter = (!_reshared) ? --reshareCounter : ++reshareCounter;
+      });
+      return;
+    }
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Row(
+        children: [
+          RaisedButton(
+              onPressed: () {
+                //TODO: Initate a SimpleReshare sequence from server
+                print(
+                    "Initiated Simple Reshare for this post by currentUser (${currentUser['username']})");
+                setState(() {
+                  _reshared = !_reshared;
+                  reshareCounter =
+                      (!_reshared) ? --reshareCounter : ++reshareCounter;
+                });
+              },
+              color: Colors.white10,
+              child: Text("Reshare", style: TextStyle(color: Colors.white))),
+          SizedBox(
+            width: 5.0,
+          ),
+          RaisedButton(
+            onPressed: () {
+              print(
+                  "Initiated Simple Reshare for this post by currentUser (${currentUser['username']})");
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ReshareComposer(
+                            postObject: widget.post,
+                          )));
+              setState(() {
+                _reshared = !_reshared;
+                reshareCounter =
+                    (!_reshared) ? --reshareCounter : ++reshareCounter;
+              });
+            },
+            color: Colors.white10,
+            child: Text("Reshare with Comment",
+                style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.black,
+    ));
+  }
+
+  addComment() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CommentComposer(
+                  post: widget.post,
+                )));
+    print("Commented on Post ID: ${widget.post['id']}");
+  }
+
+  toggleBookmark() {
+    if (_bookmarked) {
+      //TODO: Initate unBookmark sequence
+    }
+    setState(() {
+      _bookmarked = !_bookmarked;
+    });
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(
+        (_bookmarked) ? "Added To Bookmarks" : "Removed from Bookmarks",
+        style: TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.black,
+      duration: Duration(seconds: 1),
+    ));
+    print(
+        " ${(!_bookmarked) ? "Un" : ""}Bookmarked Post ID: ${widget.post['id']}");
+  }
+
   @override
   void initState() {
     likeCounter = widget.post['likes'];
@@ -275,6 +407,8 @@ class _ActionBarState extends State<ActionBar> {
         ? widget.post['comments'].length
         : 0;
     reshareCounter = widget.post['reshares'];
+
+    autoEnableActions();
     super.initState();
   }
 
@@ -299,11 +433,7 @@ class _ActionBarState extends State<ActionBar> {
                         Icon((_liked) ? Icons.favorite : Icons.favorite_border),
                     color: (_liked) ? Colors.pink : null,
                     onPressed: () {
-                      setState(() {
-                        _liked = !_liked;
-                        likeCounter = (!_liked) ? --likeCounter : ++likeCounter;
-                      });
-                      print("Liked Post ID: ${widget.post['id']}");
+                      toggleLike();
                     }),
                 Text(
                   "${likeCounter.toString()}",
@@ -321,44 +451,7 @@ class _ActionBarState extends State<ActionBar> {
                       icon: Icon((_reshared) ? Icons.repeat : Icons.repeat),
                       color: (_reshared) ? Colors.green : null,
                       onPressed: () {
-                        setState(() {
-                          _reshared = !_reshared;
-                          reshareCounter = (!_reshared)
-                              ? --reshareCounter
-                              : ++reshareCounter;
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Row(
-                              children: [
-                                RaisedButton(
-                                    onPressed: () {
-                                      //reshare logic
-                                    },
-                                    color: Colors.white10,
-                                    child: Text("Reshare",
-                                        style: TextStyle(color: Colors.white))),
-                                SizedBox(
-                                  width: 5.0,
-                                ),
-                                RaisedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ReshareComposer(
-                                                  postObject: widget.post,
-                                                )));
-                                  },
-                                  color: Colors.white10,
-                                  child: Text("Reshare with Comment",
-                                      style: TextStyle(color: Colors.white)),
-                                ),
-                              ],
-                            ),
-                            backgroundColor: Colors.black,
-                          ));
-                        });
-                        print("Reshared Post ID: ${widget.post['id']}");
+                        toggleReshare();
                       }),
                   Text(
                     "${reshareCounter.toString()}",
@@ -375,13 +468,7 @@ class _ActionBarState extends State<ActionBar> {
                     padding: EdgeInsets.only(bottom: 2.0),
                     icon: Icon(Icons.chat_bubble_outline),
                     onPressed: () {
-                      print("Commented on Post ID: ${widget.post['id']}");
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => CommentComposer(
-                                    post: widget.post,
-                                  )));
+                      addComment();
                     },
                   ),
                   Text(
@@ -400,18 +487,7 @@ class _ActionBarState extends State<ActionBar> {
                         (_bookmarked) ? Icons.bookmark : Icons.bookmark_border),
                     color: (_bookmarked) ? Colors.green : null,
                     onPressed: () {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text(
-                          "Saved To Bookmarks",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        backgroundColor: Colors.black,
-                        duration: Duration(seconds: 1),
-                      ));
-                      print("Bookmarked Post ID: ${widget.post['id']}");
-                      setState(() {
-                        _bookmarked = !_bookmarked;
-                      });
+                      toggleBookmark();
                     },
                   )
                 ],
@@ -430,9 +506,20 @@ class TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        CircleAvatar(
-          radius: 24.0,
-          backgroundImage: NetworkImage("${postObject['author']['icon']}"),
+        InkWell(
+          onTap: () {
+            print(postObject['author']['username']);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ProfilePage(
+                          username: postObject['author']['username'],
+                        )));
+          },
+          child: CircleAvatar(
+            radius: 24.0,
+            backgroundImage: NetworkImage("${postObject['author']['icon']}"),
+          ),
         ),
         Container(
           padding: EdgeInsets.only(left: 10.0),
@@ -446,7 +533,12 @@ class TopBar extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () => print("clicked user"),
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfilePage(
+                                  username: postObject['author']['username'],
+                                ))),
                     child: Text(
                       "@${postObject['author']['username']}",
                       style: TextStyle(color: Colors.blue),
@@ -473,6 +565,10 @@ class TopBar extends StatelessWidget {
                               : Colors.pink),
                     ),
                   ],
+                  IconButton(
+                    icon: Icon(Icons.arrow_drop_down),
+                    onPressed: () {},
+                  )
                 ],
               ),
             ],

@@ -1,5 +1,6 @@
 import 'package:MicroBlogger/Components/Others/UIElements.dart';
 import 'package:MicroBlogger/Components/PostTemplates/reshare.dart';
+import 'package:MicroBlogger/Composers/profileEditComposer.dart';
 import 'package:MicroBlogger/Data/datafetcher.dart';
 import 'package:flutter/material.dart';
 import '../Components/PostTemplates/microblog.dart';
@@ -10,8 +11,9 @@ import '../Components/PostTemplates/shareable.dart';
 import 'homepage.dart';
 
 class ProfilePage extends StatefulWidget {
-  final author;
-  ProfilePage({this.author});
+  var username;
+  var author;
+  ProfilePage({this.author, this.username});
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -26,34 +28,69 @@ class _ProfileState extends State<ProfilePage>
 
     super.initState();
     _controller = new TabController(length: 4, vsync: this);
+
+    if (widget.username != null) {
+      //search author profile using username
+      var user = {};
+      for (var e in authors) {
+        if (e['username'] == widget.username) {
+          user = e;
+          break;
+        } else {
+          user = {'username': '0xxFFFFFF'};
+        }
+      }
+      widget.author = user;
+    } else
+      widget.author = widget.author;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       bottomNavigationBar: BottomNavigator(),
-      body: CustomScrollView(slivers: <Widget>[
-        SliverAppBar(
-          leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => HomePage()),
-                  ModalRoute.withName('/'))),
-          title: Text("Profile"),
-          pinned: true,
-          expandedHeight: 350.0,
-          flexibleSpace: new FlexibleSpaceBar(
-              background: SliverChild(
-            author: widget.author,
-          )),
-        ),
-        SliverList(
-            delegate: SliverChildListDelegate([
-          ProfileAppBody(
-            author: widget.author,
-          )
-        ]))
-      ]),
+      body: (widget.author['username'] != "0xxFFFFFF")
+          ? CustomScrollView(slivers: <Widget>[
+              SliverAppBar(
+                leading: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => HomePage()),
+                        ModalRoute.withName('/'))),
+                title: Text("Profile"),
+                pinned: true,
+                expandedHeight: 350.0,
+                flexibleSpace: new FlexibleSpaceBar(
+                    background: SliverChild(
+                  author: widget.author,
+                )),
+              ),
+              SliverList(
+                  delegate: SliverChildListDelegate([
+                ProfileAppBody(
+                  author: widget.author,
+                )
+              ]))
+            ])
+          : Container(
+              constraints: BoxConstraints.expand(),
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: NetworkImage(
+                          "https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg"),
+                      fit: BoxFit.cover)),
+              child: AlertDialog(
+                title: Text("User Not Found"),
+                content: Text(
+                    "This User Profile does not exist on the MicroBlog Platform. You are probably looking for someone else!"),
+                actions: [
+                  FlatButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text("Back"))
+                ],
+              ),
+            ),
     );
   }
 }
@@ -148,8 +185,15 @@ class EditButton extends StatelessWidget {
     return Container(
         width: 90.0,
         child: RaisedButton(
-          onPressed: () =>
-              print("editing details of author: ${author['username']}"),
+          onPressed: () {
+            print("editing details of author: ${author['username']}");
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ProfileEditor(
+                          currentUser: author,
+                        )));
+          },
           child: Row(
             children: <Widget>[
               Icon(Icons.edit),
@@ -189,7 +233,7 @@ class BioCard extends StatelessWidget {
         Expanded(
             child: Container(
           padding: EdgeInsets.all(20.0),
-          color: Colors.black12,
+          color: Colors.white10,
           child: Column(
             children: <Widget>[
               Row(
@@ -239,7 +283,7 @@ class StatisticsBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         padding: EdgeInsets.all(8.0),
-        color: Colors.black38,
+        color: Colors.white12,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[

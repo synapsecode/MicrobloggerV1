@@ -1,43 +1,5 @@
-Object getCurrentUser() {
-  return {
-    'name': 'Manas Hejmadi',
-    'email': 'manashejmadi@gmail.com',
-    'username': 'synapse.code',
-    'icon': 'https://biotreebe.iamharsh.dev/media/IMG_20200608_154255_957.jpg',
-    'background':
-        'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
-    'reputation': "50",
-    'followers': "1987",
-    'following': "2342",
-    'accountage': 'April 2020',
-    'bio':
-        "I'm a 15 Year old School Student from India who is very passionate about Metal and Rock Music. The Genre of Metal really touches my soul! Metal music is not just entertainment it is a way of life! My favourite band is Slipknot!",
-    'location': 'Bangalore, India',
-    'myMicroBlogs': UserData().getMicroBlogPostsByAuthor(
-        "Manas Hejmadi",
-        "synapsecode",
-        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
-    'myBlogs': UserData().getBlogsByAuthor("Manas Hejmadi", "synapsecode",
-        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
-    'myTimelines': UserData().getTimelinesByAuthor(
-        "Manas Hejmadi",
-        "synapsecode",
-        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
-    'myShareables': UserData().getShareablePostsByAuthor(
-        "Manas Hejmadi",
-        "synapsecode",
-        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
-    'myReshareWithComments': UserData().getReshareWithCommentPostsByAuthor(
-        "Manas Hejmadi",
-        "synapsecode",
-        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
-    'mySimpleReshares': UserData().getSimpleResharesByAuthor(
-        "Manas Hejmadi",
-        "synapsecode",
-        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
-    'myPolls': UserData().getPollsByAuthor("Manas Hejmadi", "synapsecode",
-        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
-  };
+getCurrentUser() {
+  return authors[0];
 }
 
 class Providers {
@@ -546,7 +508,7 @@ class DataFetcher {
     },
     {
       'type': 'timeline',
-      'id': 'xdxfccvv',
+      'id': 'xdxfccvvZ',
       'background':
           'https://www.syfy.com/sites/syfy/files/styles/1200x680_hero/public/2018/03/dragon-ball-super-goku-ultra-instinct-mastered-01.jpg',
       'timeline_name': 'Dragon Ball Z Sagas',
@@ -960,6 +922,73 @@ class DataFetcher {
       },
     }
   ];
+
+  List newsArticles = [
+    {
+      'type': 'newsArticle',
+      'link': 'https://en.wikipedia.org/wiki/Flutter_(software)',
+      'headline':
+          'Click here to know everything about Mobile, Web and Desktop Development in Flutter!',
+      'background':
+          'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+    },
+    {
+      'type': 'newsArticle',
+      'link': 'https://en.wikipedia.org/wiki/Flutter_(software)',
+      'headline':
+          'Click here to know everything about Mobile, Web and Desktop Development in Flutter!',
+      'background':
+          'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+    },
+    {
+      'type': 'newsArticle',
+      'link': 'https://en.wikipedia.org/wiki/Flutter_(software)',
+      'headline':
+          'Click here to know everything about Mobile, Web and Desktop Development in Flutter!',
+      'background':
+          'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+    },
+    {
+      'type': 'newsArticle',
+      'link': 'https://en.wikipedia.org/wiki/Flutter_(software)',
+      'headline':
+          'Click here to know everything about Mobile, Web and Desktop Development in Flutter!',
+      'background':
+          'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+    },
+    {
+      'type': 'newsArticle',
+      'link': 'https://en.wikipedia.org/wiki/Flutter_(software)',
+      'headline':
+          'Click here to know everything about Mobile, Web and Desktop Development in Flutter!',
+      'background':
+          'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+    },
+    {
+      'type': 'newsArticle',
+      'link': 'https://en.wikipedia.org/wiki/Flutter_(software)',
+      'headline':
+          'Click here to know everything about Mobile, Web and Desktop Development in Flutter!',
+      'background':
+          'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+    },
+    {
+      'type': 'newsArticle',
+      'link': 'https://en.wikipedia.org/wiki/Flutter_(software)',
+      'headline':
+          'Click here to know everything about Mobile, Web and Desktop Development in Flutter!',
+      'background':
+          'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+    },
+    {
+      'type': 'newsArticle',
+      'link': 'https://en.wikipedia.org/wiki/Flutter_(software)',
+      'headline':
+          'Click here to know everything about Mobile, Web and Desktop Development in Flutter!',
+      'background':
+          'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg',
+    },
+  ];
 }
 
 class UserData {
@@ -1345,6 +1374,26 @@ List authors = [
     'accountage': 'April 2020',
     'bio':
         "I'm a 15 Year old School Student from India who is very passionate about Metal and Rock Music. The Genre of Metal really touches my soul! Metal music is not just entertainment it is a way of life! My favourite band is Slipknot!",
+    'likedPosts': [
+      "xdxfccvv",
+      "hdxxdx33",
+      "xswedc23",
+      "hdjf34ki",
+      "hd34m3bf",
+      "m9t85h55",
+      "3ABEdchf",
+      "hdxxdx33",
+      "fhff39hdg",
+      "xdxfccvvZ",
+    ],
+    'bookmarkedPosts': [
+      "xdxfccvv",
+      "xswedc23",
+      "m9t85h55",
+      "hdxxdx33",
+      "hd34m3bf",
+      "xdxfccvvZ",
+    ],
     'location': 'Bangalore, India',
     'myMicroBlogs': UserData().getMicroBlogPostsByAuthor(
         "Manas Hejmadi",
@@ -1385,6 +1434,12 @@ List authors = [
     'accountage': 'May 2020',
     'bio': "I make anime videos. Especially Dragon Ball",
     'location': 'USA',
+    'likedPosts': ["xdxfccvv", "hdxxdx33"],
+    'bookmarkedPost': [
+      "xdxfccvv",
+      "hdxxdx33",
+      "xswedc23",
+    ],
     'myMicroBlogs': UserData().getMicroBlogPostsByAuthor(
         "Anime Ajay",
         "animeajay2321",
@@ -1424,6 +1479,11 @@ List authors = [
     'accountage': 'January 2020',
     'bio': "I write Stories! Author - Fritz (ISC)",
     'location': 'West Bengal, India',
+    'likedPosts': [],
+    'bookmarkedPost': [
+      "xdxfccvv",
+      "hdxxdx33",
+    ],
     'myMicroBlogs': UserData().getMicroBlogPostsByAuthor(
         "Satyajit Ray",
         "sotyajoy",

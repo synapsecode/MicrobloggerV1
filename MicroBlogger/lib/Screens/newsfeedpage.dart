@@ -1,4 +1,5 @@
 import 'package:MicroBlogger/Components/Others/UIElements.dart';
+import 'package:MicroBlogger/Data/datafetcher.dart';
 import 'package:flutter/material.dart';
 import '../Components/PostTemplates/news.dart';
 
@@ -7,6 +8,8 @@ class NewsFeedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List newsFeed = DataFetcher().newsArticles;
+    newsFeed.shuffle();
     return Scaffold(
       appBar: AppBar(
         title: Text("News Feed"),
@@ -20,9 +23,11 @@ class NewsFeedPage extends StatelessWidget {
           child: ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: 7,
+            itemCount: newsFeed.length,
             itemBuilder: (context, index) {
-              return new NewsItem();
+              return new NewsItem(
+                newsObject: newsFeed[index],
+              );
             },
           ),
         ),
