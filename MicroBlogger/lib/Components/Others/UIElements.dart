@@ -1,6 +1,7 @@
 import 'package:MicroBlogger/Composers/commentComposer.dart';
 import 'package:MicroBlogger/Composers/reshareComposer.dart';
 import 'package:MicroBlogger/Screens/profilepage.dart';
+import 'package:MicroBlogger/Screens/userProfilePage.dart';
 import 'package:flutter/material.dart';
 import '../../Data/datafetcher.dart';
 import 'dart:convert';
@@ -512,7 +513,7 @@ class TopBar extends StatelessWidget {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ProfilePage(
+                    builder: (context) => UserProfile(
                           username: postObject['author']['username'],
                         )));
           },
@@ -536,7 +537,7 @@ class TopBar extends StatelessWidget {
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ProfilePage(
+                            builder: (context) => UserProfile(
                                   username: postObject['author']['username'],
                                 ))),
                     child: Text(

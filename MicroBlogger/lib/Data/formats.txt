@@ -11,7 +11,7 @@
         'icon':
             'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
       },
-      'likes': '{{integer(0, 500)}}',
+      'likes': '{{integer(0, 500)}}',	
       'comments': [
         {
           'repeat(11)':{
@@ -160,7 +160,7 @@
 				'event_name': '{{lorem(3, "word")}}',
 				'description':
 					'{{lorem(3, "sentences")}}',
-				'timestamp': '{{Date()}}'
+				'timestamp': '{{moment(this.date(new Date(2014, 0, 1), new Date())).format("LLLL")}}'
 			},
 		}
       ]
@@ -278,4 +278,36 @@
 			},
     	},
 	}
+]
+
+//CHATBUNDLE
+[
+	{
+		'repeat(15)':{
+			'username': 'synapse.code',
+			'chatList': [
+				{
+					'to': 'manashejmadi',
+					'latest': 'Great! What about you?',
+					'chats': [
+						{
+							{
+								'type': 'sent',
+								'content': 'Hello there!'
+							}, 
+							{
+								'type': 'sent',
+								'content': 'How are you? My name is manas!'
+							},
+							{
+								'type': 'recieved',
+								'content': 'Great! What about you!'
+							},
+						}
+					]
+				}
+			]
+		}
+	}
+	
 ]

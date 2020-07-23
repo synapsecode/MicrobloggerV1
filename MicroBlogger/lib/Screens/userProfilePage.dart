@@ -11,65 +11,101 @@ import '../Components/PostTemplates/shareable.dart';
 import '../Data/fetcher.dart';
 import 'homepage.dart';
 
-class ProfilePage extends StatefulWidget {
-  var username;
+class UserProfile extends StatefulWidget {
+  final username;
   var author;
-  ProfilePage({this.author, this.username});
+  UserProfile({this.username, this.author});
   @override
-  _ProfileState createState() => _ProfileState();
+  _UserProfileState createState() => _UserProfileState();
 }
 
-class _ProfileState extends State<ProfilePage>
+class _UserProfileState extends State<UserProfile>
     with SingleTickerProviderStateMixin {
   TabController _controller;
+  var _user;
 
   @override
   void initState() {
     super.initState();
     _controller = new TabController(length: 4, vsync: this);
+    _user = getSpecificUser(widget.username);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      bottomNavigationBar: BottomNavigator(),
-      body: (widget.author['username'] != "0xxFFFFFF")
-          ? CustomScrollView(slivers: <Widget>[
-              SliverAppBar(
-                leading: IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => HomePage()),
-                        ModalRoute.withName('/'))),
-                title: Text("Profile"),
-                pinned: true,
-                expandedHeight: 350.0,
-                flexibleSpace: new FlexibleSpaceBar(
-                    background: SliverChild(
-                  author: widget.author,
-                )),
-              ),
-              SliverList(
-                  delegate: SliverChildListDelegate([
-                ProfileAppBody(
-                  author: widget.author,
-                )
-              ]))
-            ])
-          : ErrorPage(
-              child: AlertDialog(
-                title: Text("User Not Found"),
-                content: Text(
-                    "This User Profile does not exist on the MicroBlog Platform. You are probably looking for someone else!"),
-                actions: [
-                  FlatButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text("Back"))
-                ],
-              ),
+        backgroundColor: Colors.transparent,
+        bottomNavigationBar: BottomNavigator(),
+        body: FutureBuilder(
+            future: _user,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                print(snapshot.data);
+                return ProfileBody(
+                  user: snapshot.data,
+                );
+              } else {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [CircularProgressIndicator()],
+                  ),
+                );
+              }
+            }));
+  }
+}
+
+class ProfileBody extends StatefulWidget {
+  final user;
+  ProfileBody({Key key, this.user}) : super(key: key);
+
+  @override
+  _ProfileBodyState createState() => _ProfileBodyState();
+}
+
+class _ProfileBodyState extends State<ProfileBody> {
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return (widget.user['username'] != "0xxFFFFFF")
+        ? CustomScrollView(slivers: <Widget>[
+            SliverAppBar(
+              leading: IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => HomePage()),
+                      ModalRoute.withName('/'))),
+              title: Text("Profile"),
+              pinned: true,
+              expandedHeight: 350.0,
+              flexibleSpace: new FlexibleSpaceBar(
+                  background: SliverChild(
+                author: widget.user,
+              )),
             ),
-    );
+            SliverList(
+                delegate: SliverChildListDelegate([
+              ProfileAppBody(
+                author: widget.user,
+              )
+            ]))
+          ])
+        : ErrorPage(
+            child: AlertDialog(
+              title: Text("User Not Found"),
+              content: Text(
+                  "This User Profile does not exist on the MicroBlog Platform. You are probably looking for someone else!"),
+              actions: [
+                FlatButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text("Back"))
+              ],
+            ),
+          );
   }
 }
 
@@ -147,39 +183,43 @@ class ProfileTopBar extends StatelessWidget {
               Text("@${author['username']}", style: TextStyle(fontSize: 20.0)),
         ),
         SizedBox(height: 10.0),
-        EditButton(
-          author: author,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FollowToggler(
+              author: author,
+            ),
+            InkWell(
+              onTap: () => print("More clicked"),
+              child: Icon(Icons.arrow_drop_down),
+            ),
+          ],
         ),
       ],
     );
   }
 }
 
-class EditButton extends StatelessWidget {
+class FollowToggler extends StatelessWidget {
   final author;
-  EditButton({this.author});
+  FollowToggler({this.author});
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: 90.0,
+        width: 110.0,
         child: RaisedButton(
           onPressed: () {
-            print("editing details of author: ${author['username']}");
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ProfileEditor(
-                          currentUser: author,
-                        )));
+            print("follow toggle for: ${author['username']}");
           },
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.edit),
+              Icon(Icons.people_outline),
               SizedBox(width: 10.0),
-              Text("Edit")
+              Text("Follow")
             ],
           ),
-          color: Colors.black54,
+          color: Colors.black87,
           shape: new RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(30.0),
           ),

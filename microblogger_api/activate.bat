@@ -1,1 +1,0 @@
-cd venv/Scripts && activate && cd ../../ && cls
