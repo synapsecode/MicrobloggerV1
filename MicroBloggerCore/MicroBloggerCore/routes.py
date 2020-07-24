@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify
 from MicroBloggerCore import app, db
-from MicroBloggerCore.models import Users
+from MicroBloggerCore.models import User
 
 @app.route("/")
 def homepage():
