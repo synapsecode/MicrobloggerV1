@@ -1,6 +1,7 @@
 from MicroBloggerCore import app, db
 from MicroBloggerCore.models import (User, MicroBlogPost, BlogPost, TimelinePost, ShareablePost, PollPost,Comment,
  SimpleReshare, ReshareWithComment, LikedPosts, BookmarkedPosts)
+from post_templates import microblog, blog, timeline, poll, shareable, reshareWithComment, simpleReshare
 
 print("Creating Database")
 db.drop_all()

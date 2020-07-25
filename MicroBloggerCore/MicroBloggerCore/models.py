@@ -358,7 +358,7 @@ class TimelinePost(db.Model):
 			db.session.commit()
 
 	def __repr__(self):
-		return f"TimelinePost({self.name})"
+		return f"TimelinePost({self.timeline_name})"
 
 class Comment(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -411,6 +411,7 @@ class SimpleReshare(db.Model):
 	post_type = db.Column(db.String)
 	post_id = db.Column(db.String)
 	host_id = db.Column(db.String)
+	host_type = db.Column(db.String)
 	author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 	def __init__(self, author, host):
@@ -418,6 +419,7 @@ class SimpleReshare(db.Model):
 		self.post_type = 'SimpleReshare'
 		self.post_id = str(uuid.uuid4())
 		self.host_id = host.post_id
+		self.host_type = host.post_type
 		
 	def __repr__(self):
 		return f"SimpleReshare({self.post_id} -> {self.host_id})"
@@ -432,6 +434,7 @@ class ReshareWithComment(db.Model):
 	content = db.Column(db.String)
 	created_on = db.Column(db.String)
 	category = db.Column(db.String)
+	host_type = db.Column(db.String)
 
 	def __init__(self, content, category, author, host):
 		self.post_type = 'ReshareWithComment'
@@ -441,6 +444,7 @@ class ReshareWithComment(db.Model):
 		self.author = author
 		self.host_id = host.post_id
 		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
+		self.host_type = host.post_type
 
 	@hybrid_property
 	def likes(self):
