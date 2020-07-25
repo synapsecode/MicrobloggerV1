@@ -1,7 +1,7 @@
 from MicroBloggerCore import db
 from datetime import date
 import uuid
-
+from sqlalchemy.ext.hybrid import hybrid_property
 
 followers = db.Table('followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
@@ -35,10 +35,9 @@ class User(db.Model):
 	my_simpleReshares = db.relationship('SimpleReshare', backref='author')
 	my_polls = db.relationship('PollPost', backref='author')
 	my_comments = db.relationship('Comment', backref='author')
-
-
 	liked_posts = db.relationship('LikedPosts', backref='user')
 	reshared_posts = db.relationship('ResharedPosts', backref='user')
+	bookmarked_posts = db.relationship('BookmarkedPosts', backref='user')
 
 	#Constructor
 	def __init__(self, username, email, password):
@@ -55,6 +54,14 @@ class User(db.Model):
 		self.bio = ''
 		self.location = 'Unspecified Location'
 
+	@hybrid_property
+	def my_following(self):
+		return [x.username for x in self.followed.all()]
+
+	@hybrid_property
+	def my_followers(self):
+		return [x.username for x in self.followers.all()]
+
 	#--------------------------------Follow other users logic-----------------------
 	def follow(self, user):
 		if not self.is_following(user):
@@ -68,6 +75,17 @@ class User(db.Model):
 		return self.followed.filter(
 		followers.c.followed_id == user.id).count() > 0
 	#--------------------------------Follow other users logic-----------------------
+
+	def add_bookmark(self, post):
+		obj = BookmarkedPosts(user=self, post=post)
+		db.session.add(obj)
+		db.session.commit()
+
+	def remove_bookmark(self, post):
+		obj = BookmarkedPosts.query.filter_by(user=self, post_id=post.post_id).first()
+		if(obj): 
+			db.session.delete(obj)
+			db.session.commit()
 
 	def __repr__(self):
 		return f"MicroBloggerUser({self.username})"
@@ -91,6 +109,16 @@ class MicroBlogPost(db.Model):
 		self.category = category
 		self.author = author
 		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
+
+	@hybrid_property
+	def likes(self):
+		lx = LikedPosts.query.filter_by(post_id=self.post_id).all()
+		return [x for x in lx]
+
+	@hybrid_property
+	def reshares(self):
+		rx = ResharedPosts.query.filter_by(og_post_id=self.post_id).all()
+		return [x for x in rx]
 
 	def like(self, user):
 		obj = LikedPosts(user=user, post=self)
@@ -138,6 +166,16 @@ class BlogPost(db.Model):
 		self.author = author
 		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
 
+	@hybrid_property
+	def likes(self):
+		lx = LikedPosts.query.filter_by(post_id=self.post_id).all()
+		return [x for x in lx]
+
+	@hybrid_property
+	def reshares(self):
+		rx = ResharedPosts.query.filter_by(og_post_id=self.post_id).all()
+		return [x for x in rx]
+
 	def like(self, user):
 		obj = LikedPosts(user=user, post=self)
 		db.session.add(obj)
@@ -181,6 +219,11 @@ class PollPost(db.Model):
 		self.options = [{'name': e, 'count': 0} for e in options]
 		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
 
+	@hybrid_property
+	def likes(self):
+		lx = LikedPosts.query.filter_by(post_id=self.post_id).all()
+		return [x for x in lx]
+
 	def like(self, user):
 		obj = LikedPosts(user=user, post=self)
 		db.session.add(obj)
@@ -214,6 +257,16 @@ class ShareablePost(db.Model):
 		self.link = link
 		self.author = author
 		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
+
+	@hybrid_property
+	def likes(self):
+		lx = LikedPosts.query.filter_by(post_id=self.post_id).all()
+		return [x for x in lx]
+
+	@hybrid_property
+	def reshares(self):
+		rx = ResharedPosts.query.filter_by(og_post_id=self.post_id).all()
+		return [x for x in rx]
 
 	def like(self, user):
 		obj = LikedPosts(user=user, post=self)
@@ -272,6 +325,16 @@ class TimelinePost(db.Model):
 		self.author = author
 		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
 
+	@hybrid_property
+	def likes(self):
+		lx = LikedPosts.query.filter_by(post_id=self.post_id).all()
+		return [x for x in lx]
+
+	@hybrid_property
+	def reshares(self):
+		rx = ResharedPosts.query.filter_by(og_post_id=self.post_id).all()
+		return [x for x in rx]
+
 	def like(self, user):
 		obj = LikedPosts(user=user, post=self)
 		db.session.add(obj)
@@ -324,6 +387,11 @@ class Comment(db.Model):
 		self.author = author
 		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
 
+	@hybrid_property
+	def likes(self):
+		lx = LikedPosts.query.filter_by(post_id=self.comment_id).all()
+		return [x for x in lx]
+
 	def like(self, user):
 		obj = LikedPosts(user=user, post=self)
 		db.session.add(obj)
@@ -374,6 +442,11 @@ class ReshareWithComment(db.Model):
 		self.host_id = host.post_id
 		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
 
+	@hybrid_property
+	def likes(self):
+		lx = LikedPosts.query.filter_by(post_id=self.post_id).all()
+		return [x for x in lx]
+
 	def like(self, user):
 		obj = LikedPosts(user=user, post=self)
 		db.session.add(obj)
@@ -417,3 +490,16 @@ class ResharedPosts(db.Model):
 
 	def __repr__(self):
 		return f"ResharedPosts(post: {self.og_post_id} -> host: {self.reshared_post_id})"
+
+class BookmarkedPosts(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	post_id = db.Column(db.String)
+	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+	def __init__(self, user, post):
+		self.post_id = post.post_id
+		self.user = user
+
+	def __repr__(self):
+		user = User.query.filter_by(id=self.user_id).first()
+		return f"BookmarkedPosts(post: {self.post_id} -> user: {user.username})"
