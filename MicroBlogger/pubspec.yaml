@@ -27,6 +27,7 @@ dependencies:
   firebase_core:
   webview_flutter:
   url_launcher:
+  shared_preferences:
 
 
   # The following adds the Cupertino Icons font to your application.

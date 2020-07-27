@@ -1,5 +1,6 @@
 #TODO Post Age helper function caluclator
 from MicroBloggerCore.models import db, MicroBlogPost, BlogPost, ShareablePost, PollPost, TimelinePost
+from helperfunctions import calculate_post_age
 
 def userTemplate(user_record):
 	return {
@@ -29,7 +30,7 @@ def comment(user, c):
 		'content': c.content,
 		'category': c.category,
 		'likes': len(c.likes),
-		'age': c.created_on,
+		'age': calculate_post_age(c.created_on),
 		'isLiked': True if (c.comment_id in [x.post_id for x in user.liked_posts] ) else False
 	}
 
@@ -47,7 +48,7 @@ def microblog(user, post):
 		'reshares': len(post.reshares),
 		'content': post.content,
 		'category': post.category,
-		'age': post.created_on,
+		'age': calculate_post_age(post.created_on),
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
 		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False
@@ -68,7 +69,7 @@ def blog(user, post):
 		'comments': [comment(user, c) for c in post.comments],
 		'reshares': len(post.reshares),
 		'content': post.content,
-		'age': post.created_on,
+		'age': calculate_post_age(post.created_on),
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
 		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False
@@ -85,7 +86,7 @@ def poll(user, post):
 		},
 		'content': post.content,
 		'options': post.options,
-		'age': post.created_on,
+		'age': calculate_post_age(post.created_on),
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 	}
 
@@ -101,7 +102,7 @@ def shareable(user, post):
 		'content': post.content,
 		'likes': len(post.likes),
 		'reshares': len(post.reshares),
-		'age': post.created_on,
+		'age': calculate_post_age(post.created_on),
 		'name': post.name,
 		'link': post.link,
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
@@ -123,7 +124,7 @@ def timeline(user, post):
 		'likes': len(post.likes),
 		'comments': [comment(user, c) for c in post.comments],
 		'reshares': len(post.reshares),
-		'age': post.created_on,
+		'age': calculate_post_age(post.created_on),
 		'events': post.events,
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
@@ -174,7 +175,7 @@ def reshareWithComment(user, post):
 		'comments': [comment(user, c) for c in post.comments],
 		'content': post.content,
 		'category': post.category,
-		'age': post.created_on,
+		'age': calculate_post_age(post.created_on),
 		'child': child,
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False

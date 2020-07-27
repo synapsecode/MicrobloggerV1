@@ -1,9 +1,10 @@
 import 'package:MicroBlogger/Composers/commentComposer.dart';
 import 'package:MicroBlogger/Composers/reshareComposer.dart';
+import 'package:MicroBlogger/Screens/homepage.dart';
 import 'package:MicroBlogger/Screens/profilepage.dart';
 import 'package:MicroBlogger/Screens/userProfilePage.dart';
 import 'package:flutter/material.dart';
-import '../../Data/datafetcher.dart';
+import '../../Data/fetcher.dart';
 import 'dart:convert';
 
 class BottomNavigator extends StatelessWidget {
@@ -13,10 +14,10 @@ class BottomNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = getCurrentUser();
     // JsonEncoder encoder = new JsonEncoder.withIndent('  ');
     // String prettyprint = encoder.convert(author);
     // print(prettyprint);
-    final currentUser = getCurrentUser();
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       showSelectedLabels: false,
@@ -36,7 +37,8 @@ class BottomNavigator extends StatelessWidget {
       onTap: (int x) {
         switch (x) {
           case 0:
-            Navigator.of(context).pushNamed('/HomePage');
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
             break;
           case 1:
             Navigator.of(context).pushNamed('/Explore');
@@ -59,11 +61,12 @@ class BottomNavigator extends StatelessWidget {
 }
 
 class MainAppDrawer extends StatelessWidget {
-  final author;
-  const MainAppDrawer({Key key, this.author}) : super(key: key);
+  const MainAppDrawer({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = getCurrentUser();
+    print(currentUser);
     return Drawer(
       child: Container(
         color: Colors.black54,
@@ -74,16 +77,16 @@ class MainAppDrawer extends StatelessWidget {
               child: UserAccountsDrawerHeader(
                 currentAccountPicture: CircleAvatar(
                     radius: 20,
-                    backgroundImage: NetworkImage("${author['icon']}")),
-                accountName: Text("${author['name']}",
+                    backgroundImage: NetworkImage("${currentUser['icon']}")),
+                accountName: Text("${currentUser['name']}",
                     style: TextStyle(
                       fontSize: 20.0,
                     )),
-                accountEmail: Text("${author['email']}"),
+                accountEmail: Text("${currentUser['email']}"),
                 decoration: new BoxDecoration(
                     image: new DecorationImage(
                         fit: BoxFit.cover,
-                        image: NetworkImage("${author['background']}")
+                        image: NetworkImage("${currentUser['background']}")
                         //NetworkImage('https://www.wallpaperup.com/uploads/wallpapers/2015/01/29/604388/cff1fdb8cae21be0110304941e33130d-700.jpg')
                         )),
               ),
@@ -409,7 +412,7 @@ class _ActionBarState extends State<ActionBar> {
         : 0;
     reshareCounter = widget.post['reshares'];
 
-    autoEnableActions();
+    //autoEnableActions();
     super.initState();
   }
 

@@ -49,7 +49,6 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/Login': (BuildContext context) => new LoginPage(),
         '/Register': (BuildContext context) => new RegisterPage(),
-        '/HomePage': (BuildContext context) => new HomePage(),
         '/About': (BuildContext context) => new AboutPage(),
         '/Bookmarks': (BuildContext context) => new BookmarksPage(),
         '/DM': (BuildContext context) => new DirectMessagePage(),

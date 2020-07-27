@@ -28,7 +28,7 @@ class _UserProfileState extends State<UserProfile>
   void initState() {
     super.initState();
     _controller = new TabController(length: 4, vsync: this);
-    _user = getSpecificUser(widget.username);
+    //_user = getSpecificUser(widget.username);
   }
 
   @override

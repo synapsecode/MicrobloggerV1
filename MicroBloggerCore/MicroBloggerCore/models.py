@@ -1,7 +1,8 @@
 from MicroBloggerCore import db
-from datetime import date
+from datetime import datetime, date
 import uuid
 from sqlalchemy.ext.hybrid import hybrid_property
+from helperfunctions import calculate_post_age
 
 followers = db.Table('followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
@@ -50,7 +51,7 @@ class User(db.Model):
 		self.reputation = '0'
 		self.followers = []
 		self.following = []
-		self.created_on = str(date.today().strftime("%B %d, %Y"))
+		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
 		self.bio = ''
 		self.location = 'Unspecified Location'
 
@@ -108,7 +109,7 @@ class MicroBlogPost(db.Model):
 		self.content = content
 		self.category = category
 		self.author = author
-		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
+		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
 
 	@hybrid_property
 	def likes(self):
@@ -164,7 +165,7 @@ class BlogPost(db.Model):
 		self.content = content
 		self.background = background
 		self.author = author
-		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
+		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
 
 	@hybrid_property
 	def likes(self):
@@ -217,7 +218,7 @@ class PollPost(db.Model):
 		self.content = content
 		self.author = author
 		self.options = [{'name': e, 'count': 0} for e in options]
-		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
+		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
 
 	@hybrid_property
 	def likes(self):
@@ -256,7 +257,7 @@ class ShareablePost(db.Model):
 		self.content = content
 		self.link = link
 		self.author = author
-		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
+		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
 
 	@hybrid_property
 	def likes(self):
@@ -323,7 +324,7 @@ class TimelinePost(db.Model):
 		self.events = events
 		self.background = background
 		self.author = author
-		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
+		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
 
 	@hybrid_property
 	def likes(self):
@@ -385,7 +386,7 @@ class Comment(db.Model):
 		if(rwc_parent != None) : self.rwc_parent = rwc_parent
 
 		self.author = author
-		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
+		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
 
 	@hybrid_property
 	def likes(self):
@@ -443,7 +444,7 @@ class ReshareWithComment(db.Model):
 		self.category = category
 		self.author = author
 		self.host_id = host.post_id
-		self.created_on = str(date.today().strftime("%B %d, %Y %H:%M:%S"))
+		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
 		self.host_type = host.post_type
 
 	@hybrid_property

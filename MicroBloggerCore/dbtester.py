@@ -97,11 +97,11 @@ db.session.add(m12)
 db.session.commit()
 
 print("Creating Blogs")
-b1 = BlogPost(author=myuser, blog_name="Salvatore", content="Salvatore was a young man....", background="img.png")
-b2 = BlogPost(author=myuser, blog_name="Dolphins", content="Dont trap the dolphins....", background="img.png")
-b3 = BlogPost(author=albert, blog_name="The Theory of Relativity", content="Here ill be explaining the....", background="img.png")
-b4 = BlogPost(author=richard, blog_name="Quantum Mechanics Explained", content="If you understand quantum mechanics, you dont understand it....", background="img.png")
-b5 = BlogPost(author=tesla, blog_name="How Edison tried to defame me", content="He publically executed animals....", background="img.png")
+b1 = BlogPost(author=myuser, blog_name="Salvatore", content="Salvatore was a young man....", background="https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg")
+b2 = BlogPost(author=myuser, blog_name="Dolphins", content="Dont trap the dolphins....", background="https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg")
+b3 = BlogPost(author=albert, blog_name="The Theory of Relativity", content="Here ill be explaining the....", background="https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg")
+b4 = BlogPost(author=richard, blog_name="Quantum Mechanics Explained", content="If you understand quantum mechanics, you dont understand it....", background="https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg")
+b5 = BlogPost(author=tesla, blog_name="How Edison tried to defame me", content="He publically executed animals....", background="https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg")
 db.session.add(b1)
 db.session.add(b2)
 db.session.add(b3)
@@ -125,7 +125,7 @@ db.session.add(p3)
 db.session.commit()
 
 print("Creating Timeline Posts")
-t1 = TimelinePost(author=myuser, background="img.png", timeline_name="Nationalism in India", events=[
+t1 = TimelinePost(author=myuser, background="https://i1.wp.com/regionweek.com/wp-content/uploads/2020/03/World-Map-2.jpg?fit=1920%2C1200&ssl=1", timeline_name="Nationalism in India", events=[
 	{
 		'event_name': 'The Rise of BJPs Power',
 		'description':

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -10,21 +11,17 @@ import '../Components/PostTemplates/blogs.dart';
 import '../Components/PostTemplates/timelines.dart';
 
 import '../Components/Others/UIElements.dart';
-
-import '../Data/datafetcher.dart';
 import '../Data/fetcher.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+  final currentUser;
+  HomePage({Key key, this.currentUser}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final data = DataFetcher();
-  final currentUser = getCurrentUser();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,10 +44,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Feed(),
-      drawer: MainAppDrawer(
-        author: currentUser,
+      body: Feed(
+        currentUser: (widget.currentUser['username']),
       ),
+      drawer: MainAppDrawer(),
       floatingActionButton: FloatingCircleButton(),
       bottomNavigationBar: BottomNavigator(),
     );
@@ -58,7 +55,8 @@ class _HomePageState extends State<HomePage> {
 }
 
 class Feed extends StatefulWidget {
-  Feed({Key key}) : super(key: key);
+  final currentUser;
+  Feed({Key key, this.currentUser}) : super(key: key);
 
   @override
   _FeedState createState() => _FeedState();
@@ -68,24 +66,13 @@ class _FeedState extends State<Feed> {
   Future feedData;
   @override
   void initState() {
-    // TODO: implement initState
-
     super.initState();
-    feedData = getFeed();
+    print("Current User ${widget.currentUser}");
+    feedData = getFeed(widget.currentUser);
   }
 
   @override
   Widget build(BuildContext context) {
-    // List feed = [
-    //   ...data.microblogPosts,
-    //   ...data.blogPosts,
-    //   ...data.pollPosts,
-    //   ...data.shareablePosts,
-    //   ...data.timelinePosts,
-    //   ...data.resharesWithComment,
-    //   ...data.simpleReshares
-    // ];
-    // feed.shuffle();
     return Center(
         child: Container(
       padding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -147,43 +134,6 @@ class _FeedState extends State<Feed> {
               );
             }
           }),
-
-      // ListView.builder(
-      //     itemCount: feed.length,
-      //     itemBuilder: (context, index) {
-      //       var post = feed[index];
-      //       var output;
-      //       switch (post['type']) {
-      // case "microblog":
-      //   output = MicroBlogPost(postObject: post);
-      //   break;
-      // case "blog":
-      //   output = BlogPost(postObject: post);
-      //   break;
-      // case "shareable":
-      //   output = Shareable(postObject: post);
-      //   break;
-      // case "timeline":
-      //   output = Timeline(post);
-      //   break;
-      // case "poll":
-      //   output = PollPost(postObject: post);
-      //   break;
-      // case "ResharedWithComment":
-      //   output = ReshareWithComment(
-      //     postObject: post,
-      //   );
-      //   break;
-      // case "SimpleReshare":
-      //   output = SimpleReshare(
-      //     postObject: post,
-      //   );
-      //   break;
-      // default:
-      //   break;
-      //       }
-      //       return output;
-      //     })
     ));
   }
 }

@@ -1,4 +1,9 @@
+import 'dart:io';
+
+import 'package:MicroBlogger/Screens/homepage.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../Data/fetcher.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -8,6 +13,26 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  String username;
+  String password;
+  @override
+  void initState() {
+    super.initState();
+    if (!Platform.isWindows) {
+      SharedPreferences.getInstance().then((pref) {
+        //Get user if exists
+        String user = pref.getString('loggedInUser');
+        if (user.isNotEmpty) {
+          //Navigator.of(context).pushNamed('/HomePage');
+        } else {
+          print("Stored User not found. Please login");
+        }
+      });
+    } else {
+      print("Load User feature unsupported! Please login!");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,18 +65,22 @@ class _LoginPageState extends State<LoginPage> {
                     children: <Widget>[
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Username:'),
-                        validator: (input) => input.length == 0
-                            ? 'Username Cannot Be Empty'
-                            : null,
+                        onChanged: (x) {
+                          setState(() {
+                            username = x;
+                          });
+                        },
                       ),
                       SizedBox(
                         height: 20.0,
                       ),
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Password:'),
-                        validator: (input) => input.length == 0
-                            ? 'Password Cannot be Empty'
-                            : null,
+                        onChanged: (x) {
+                          setState(() {
+                            password = x;
+                          });
+                        },
                         obscureText: true,
                       ),
                       SizedBox(
@@ -65,8 +94,29 @@ class _LoginPageState extends State<LoginPage> {
                           "Login",
                           style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/HomePage');
+                        onPressed: () async {
+                          if (username != null && password != null) {
+                            Map loginObject = await login(username, password);
+                            if (loginObject['code'] == 'S1') {
+                              print(loginObject);
+                              print(loginObject['user']['username']);
+                              setCurrentUser(loginObject['user']);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HomePage(
+                                            currentUser: loginObject['user'],
+                                          )));
+                            } else if (loginObject['code'] == 'INCP') {
+                              print("Either Username or password is incorrect");
+                            } else {
+                              print("There was an error!");
+                            }
+                          } else {
+                            print(
+                                "Please enter both the username and password to login");
+                          }
+                          //Navigator.pushNamed(context, '/HomePage');
                         },
                       ),
                       SizedBox(
