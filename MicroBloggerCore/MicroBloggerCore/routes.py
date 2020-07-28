@@ -124,7 +124,7 @@ def create_blog():
 	user = User.query.filter_by(username=username).first()
 	xb = BlogPost(author=user, blog_name=blog_name, content=content, background="https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg")
 
-	db.session.add(xb)
+	db.session.add(xb)	
 	db.session.commit()
 	return jsonify({
 		'blog': blog(user, xb)
@@ -185,6 +185,7 @@ def create_timeline():
 def get_my_blogs_and_timelines():
 	data = request.get_json()
 	username = data['username']
+	user = User.query.filter_by(username=username).first()
 	b_ids = [x.post_id for x in user.bookmarked_posts]
 	bookmarked = []
 	for id in b_ids:
@@ -202,6 +203,11 @@ def get_my_blogs_and_timelines():
 					bookmarked.append(timeline(user, post))
 				elif(post.post_type == 'ResharedWithComment'):
 					bookmarked.append(reshareWithComment(user, post))
+
+	return jsonify({
+		'length': len(bookmarked),
+		'bookmarked_posts': bookmarked
+	})
 
 #------------------------------------------------------GETTERS---------------------------------------------
 
@@ -290,7 +296,8 @@ def unresharepost():
 	host_type = data['host_type']
 	host_id = data['host_id']
 	reshare_type = data['reshare_type'] 
-
+	user = User.query.filter_by(username=username).first()
+	post = getPost(host_type, host_id)
 	if(reshare_type == 'ResharedWithComment'):
 		rwc = ReshareWithComment.query.filter_by(author=user, host_id=host_id).first()
 		post.unreshare(user=user, post=rwc)
@@ -327,8 +334,32 @@ def addcomment():
 		post = ReshareWithComment.query.filter_by(post_id=post_id).first()
 		c = Comment(author=user, content=content, category=category, rwc_parent=post)
 	
-	db.session.add(c1)
+	db.session.add(c)
 	db.session.commit()
+
+	return jsonify({
+		'message': 'comment added',
+	})
+
+@app.route('/deletecomment', methods=['POST'])
+def deletecomment():
+	data = request.get_json()
+	username = data['username']
+	c_id = data['comment_id']
+
+	user = User.query.filter_by(username=username).first()
+	comment = getPost('comment', c_id)
+
+	if(comment.author_id == user.id):
+		db.session.delete(comment)
+		db.session.commit()
+	else:
+		return jsonify({
+			'message':'Cannot delete comment as you do not have the rights to do so' 
+		})
+	return jsonify({
+		'message':'Deleted Comment!' 
+	})
 
 @app.route('/deletepost', methods=['POST'])
 def deletepost():
@@ -447,48 +478,11 @@ def getPost(post_type, post_id):
 	elif(post_type == 'ReshareWithComment'):
 		post = ReshareWithComment.query.filter_by(post_id=post_id).first()
 	elif(post_type == 'comment'):
-		post = Comment.query.filter_by(post_type=post_id).first()
+		post = Comment.query.filter_by(comment_id=post_id).first()
 	return post
 
 """
-Add getters for my posst!
-'my_microblogs' : [microblog(x) for x in user_record.my_microblogs],
-'my_blogs' : str(user_record.my_blogs),
-'my_timelines' : str(user_record.my_timelines),
-'my_shareables' : str(user_record.my_shareables),
-'my_reshareWithComments' : str(user_record.my_reshareWithComments),
-'my_simpleReshares' : str(user_record.my_simpleReshares),
-'my_polls' : str(user_record.my_polls),
-'liked_posts': str(user_record.liked_posts), get when post is loaded to indicate sign
-
-'bookmarked_posts': [x.post_id for x in user_record.bookmarked_posts]
-'reshared_posts': str(user_record.reshared_posts), get when post is loaded to indicate sign
+implement delete comment
+implement submit vote
+implement getNews
 """
-
-# @app.route('/addvote', methods=['POST'])
-#TODO: IMPLEMEMENT THE SUBMIT VOTE FEATURE
-# def addvote():
-# 	data = request.get_json()
-# 	username = data['username']
-# 	p_id = data['poll_id']
-# 	selectedvote = int(data['selectedvote'])
-	
-# 	user = User.query.filter_by(username=username).first()
-# 	p = PollPost.query.filter_by(post_id=p_id).first()
-
-# 	x = [y for y in p.options]
-# 	p.options = []
-# 	db.session.commit()
-# 	x[selectedvote]['count']+=1
-# 	p.options = x
-# 	db.session.commit()
-
-# 	v = VotedPolls(user=user, poll=p, vote=selectedvote)
-# 	db.session.add(v)
-# 	db.session.commit()
-
-# 	return jsonify({
-# 		'message': 'submitted vote',
-# 		'votedFor': p.options[selectedvote],
-# 		'poll': poll(user, p)
-# 	})
