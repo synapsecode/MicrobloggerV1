@@ -18,3 +18,4 @@ def calculate_post_age(created):
 		x = created.split(" ")[:3]
 		age = f"{x[0]} {x[2]}"
 	return age
+

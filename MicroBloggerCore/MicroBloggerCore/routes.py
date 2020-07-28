@@ -1,7 +1,8 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify
 from MicroBloggerCore import app, db
-from MicroBloggerCore.models import (User, MicroBlogPost, BlogPost, TimelinePost, ShareablePost, PollPost, ReshareWithComment, SimpleReshare, Comment)
-from post_templates import microblog, blog, timeline, poll, shareable, reshareWithComment, simpleReshare, userTemplate
+from MicroBloggerCore.models import (User, MicroBlogPost, BlogPost, TimelinePost, ShareablePost,
+ PollPost, ReshareWithComment, SimpleReshare, Comment, BookmarkedPosts, ResharedPosts)
+from post_templates import microblog, blog, timeline, poll, shareable, reshareWithComment, simpleReshare, userTemplate, comment
 
 #TODO: Unify functions and make it efficient
 
@@ -58,7 +59,8 @@ def getprofile(username):
 	if(user_record):
 		return jsonify({
 			'code': 'S1',
-			'user': userTemplate(user_record)
+			'user': userTemplate(user_record),
+			'posts': getUserData(username)
 		})
 	else:
 		return jsonify({
@@ -96,7 +98,7 @@ def feed():
 			'code': 'E1',
 			'message': 'Invalid user submission'
 		})
-
+	
 #----------------------------------------------POST COMPOSER-----------------------------------------------
 @app.route('/createmicroblog', methods=['POST'])
 def create_microblog():
@@ -127,7 +129,81 @@ def create_blog():
 	return jsonify({
 		'blog': blog(user, xb)
 	})
+
+@app.route('/createshareable', methods=['POST'])
+def create_shareable():
+	data = request.get_json()
+	username = data['username']
+	content = data['content']
+	name = data['name']
+	link = data['link']
+
+	user = User.query.filter_by(username=username).first()
+	sb = ShareablePost(author=user, name=name, content=content, link=link)
+	db.session.add(sb)
+	db.session.commit()
+	return jsonify({
+		'shareable': shareable(user, sb)
+	})
+
+@app.route('/createpoll', methods=['POST'])
+def create_poll():
+	data = request.get_json()
+	username = data['username']
+	content = data['content']
+	options = data['options']
+
+	user = User.query.filter_by(username=username).first()
+	p = PollPost(author=user, content=content, options=options)
+	db.session.add(p)
+	db.session.commit()
+	return jsonify({
+		'poll': poll(user, p)
+	})
+
+@app.route('/createtimeline', methods=['POST'])
+def create_timeline():
+	data = request.get_json()
+	username = data['username']
+	content = data['content']
+	timeline_name = data['timeline_name']
+	events = data['events']
+
+	user = User.query.filter_by(username=username).first()
+	t = TimelinePost(author=user, timeline_name=timeline_name, events=events, background="https://i1.wp.com/regionweek.com/wp-content/uploads/2020/03/World-Map-2.jpg?fit=1920%2C1200&ssl=1")
+
+	db.session.add(t)
+	db.session.commit()
+	return jsonify({
+		'timeline': timeline(user, t)
+	})
 #----------------------------------------------POST COMPOSER-----------------------------------------------
+
+
+#------------------------------------------------------GETTERS---------------------------------------------
+@app.route('/my_bookmarked', methods=['POST'])
+def get_my_blogs_and_timelines():
+	data = request.get_json()
+	username = data['username']
+	b_ids = [x.post_id for x in user.bookmarked_posts]
+	bookmarked = []
+	for id in b_ids:
+		record = BookmarkedPosts.query.filter_by(post_id=id, user=user).first()
+		if(record):
+			post = getPost(record.post_type, id)
+			if(post): 
+				if(post.post_type == 'microblog'):
+					bookmarked.append(microblog(user, post))
+				elif(post.post_type == 'blog'):
+					bookmarked.append(blog(user, post))
+				elif(post.post_type == 'shareable'):
+					bookmarked.append(shareable(user, post))
+				elif(post.post_type == 'timeline'):
+					bookmarked.append(timeline(user, post))
+				elif(post.post_type == 'ResharedWithComment'):
+					bookmarked.append(reshareWithComment(user, post))
+
+#------------------------------------------------------GETTERS---------------------------------------------
 
 #-------------------------------------------------POSTACTIONS-----------------------------------------------
 @app.route('/likepost', methods=['POST'])
@@ -164,7 +240,7 @@ def bookmarkpost():
 	post_id = data['post_id']
 	user = User.query.filter_by(username=username).first()
 	post = getPost(post_type, post_id)
-	user.add_bookmark(post)
+	user.add_bookmark(post, post_type)
 	return jsonify({
 		'message':'Bookmarked Post' 
 	})
@@ -275,7 +351,83 @@ def deletepost():
 	return jsonify({
 		'message':'Deleted Post!' 
 	})
+
 #-------------------------------------------------POSTACTIONS-----------------------------------------------
+
+#--------------------------------------------------EXPLORE--------------------------------------------------
+
+@app.route('/exploremicroblogs')
+def exploremicroblogs():
+	posts = []
+	[posts.append(microblog(x.author, x)) for x in MicroBlogPost.query.all()]
+	return jsonify({
+		'length': len(posts),
+		'posts': posts
+	})
+
+@app.route('/exploreblogs')
+def exploreblogs():
+	posts = []
+	[posts.append(blog(x.author, x)) for x in BlogPost.query.all()]
+	return jsonify({
+		'length': len(posts),
+		'posts': posts
+	})
+
+@app.route('/exploretimelines')
+def exploretimelines():
+	posts = []
+	[posts.append(timeline(x.author, x)) for x in TimelinePost.query.all()]
+	return jsonify({
+		'length': len(posts),
+		'posts': posts
+	})
+
+@app.route('/exploreshareablesandpolls')
+def exploreshareablesandpolls():
+	posts = []
+	[posts.append(shareable(x.author, x)) for x in ShareablePost.query.all()]
+	[posts.append(poll(x.author, x)) for x in PollPost.query.all()]
+	return jsonify({
+		'length': len(posts),
+		'posts': posts
+	})
+#--------------------------------------------------EXPLORE--------------------------------------------------
+
+
+def getUserData(username):
+	user = User.query.filter_by(username=username).first()
+	#Get Reshares
+	r_ids = [x.reshared_post_id for x in user.reshared_posts]
+	reshared = []
+	mbandcomments = []
+	blogandtimelines = []
+	pollsandshareables = []
+	for id in r_ids:
+		record = ResharedPosts.query.filter_by(reshared_post_id=id).first()
+		if(record):
+			post = getPost(record.reshare_type, id)
+			if(post):
+				if(post.post_type == 'SimpleReshare'):
+					reshared.append(simpleReshare(user, post))
+				elif(post.post_type == 'ReshareWithComment'):
+					reshared.append(reshareWithComment(user, post))
+
+	#Get posts
+	[mbandcomments.append(microblog(user, x)) for x in user.my_microblogs]
+	[mbandcomments.append(comment(user, x)) for x in Comment.query.filter_by(author=user).all()]
+	[blogandtimelines.append(blog(user, x)) for x in user.my_blogs]
+	[blogandtimelines.append(timeline(user, x)) for x in user.my_timelines]
+	[pollsandshareables.append(shareable(user, x)) for x in user.my_shareables]
+	[pollsandshareables.append(poll(user, x)) for x in user.my_polls]
+
+	return {
+		'mymicroblogsandcomments': mbandcomments,
+		'myreshares': reshared,
+		'myblogsandtimeline': blogandtimelines,
+		'mypollsandshareables': pollsandshareables
+	}
+
 
 
 def getPost(post_type, post_id):
@@ -290,7 +442,9 @@ def getPost(post_type, post_id):
 		post = PollPost.query.filter_by(post_id=post_id).first()
 	elif(post_type == 'timeline'):
 		post = TimelinePost.query.filter_by(post_id=post_id).first()
-	elif(post_type == 'ResharedWithComment'):
+	elif(post_type == 'SimpleReshare'):
+		post = SimpleReshare.query.filter_by(post_id=post_id).first()
+	elif(post_type == 'ReshareWithComment'):
 		post = ReshareWithComment.query.filter_by(post_id=post_id).first()
 	elif(post_type == 'comment'):
 		post = Comment.query.filter_by(post_type=post_id).first()
@@ -310,3 +464,31 @@ Add getters for my posst!
 'bookmarked_posts': [x.post_id for x in user_record.bookmarked_posts]
 'reshared_posts': str(user_record.reshared_posts), get when post is loaded to indicate sign
 """
+
+# @app.route('/addvote', methods=['POST'])
+#TODO: IMPLEMEMENT THE SUBMIT VOTE FEATURE
+# def addvote():
+# 	data = request.get_json()
+# 	username = data['username']
+# 	p_id = data['poll_id']
+# 	selectedvote = int(data['selectedvote'])
+	
+# 	user = User.query.filter_by(username=username).first()
+# 	p = PollPost.query.filter_by(post_id=p_id).first()
+
+# 	x = [y for y in p.options]
+# 	p.options = []
+# 	db.session.commit()
+# 	x[selectedvote]['count']+=1
+# 	p.options = x
+# 	db.session.commit()
+
+# 	v = VotedPolls(user=user, poll=p, vote=selectedvote)
+# 	db.session.add(v)
+# 	db.session.commit()
+
+# 	return jsonify({
+# 		'message': 'submitted vote',
+# 		'votedFor': p.options[selectedvote],
+# 		'poll': poll(user, p)
+# 	})

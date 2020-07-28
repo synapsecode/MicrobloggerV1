@@ -39,6 +39,7 @@ class User(db.Model):
 	liked_posts = db.relationship('LikedPosts', backref='user')
 	reshared_posts = db.relationship('ResharedPosts', backref='user')
 	bookmarked_posts = db.relationship('BookmarkedPosts', backref='user')
+	#voted_polls = db.relationship('VotedPolls', backref='user')
 
 	#Constructor
 	def __init__(self, username, email, password):
@@ -77,8 +78,8 @@ class User(db.Model):
 		followers.c.followed_id == user.id).count() > 0
 	#--------------------------------Follow other users logic-----------------------
 
-	def add_bookmark(self, post):
-		obj = BookmarkedPosts(user=self, post=post)
+	def add_bookmark(self, post, posttype):
+		obj = BookmarkedPosts(user=self, post=post, post_type=posttype)
 		db.session.add(obj)
 		db.session.commit()
 
@@ -208,7 +209,7 @@ class PollPost(db.Model):
 	post_id = db.Column(db.String)
 	author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 	content = db.Column(db.String)
-	options = db.Column(db.PickleType)
+	options = db.Column(db.PickleType(comparator=lambda *a: False))
 	created_on = db.Column(db.String)
 
 	#Constructor
@@ -485,26 +486,48 @@ class LikedPosts(db.Model):
 class ResharedPosts(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	og_post_id = db.Column(db.String)
+	og_post_type = db.Column(db.String)
 	reshared_post_id = db.Column(db.String)
+	reshare_type = db.Column(db.String)
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 	def __init__(self, user, host, post):
 		self.og_post_id = host.post_id
+		self.og_post_type = host.post_type
 		self.user = user
 		self.reshared_post_id = post.post_id
+		self.reshare_type = post.post_type
+
 
 	def __repr__(self):
-		return f"ResharedPosts(post: {self.og_post_id} -> host: {self.reshared_post_id})"
+		return f"ResharedPosts<{self.reshare_type}>(post: {self.og_post_id} -> host: {self.reshared_post_id})"
 
 class BookmarkedPosts(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	post_id = db.Column(db.String)
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+	post_type = db.Column(db.Integer)
 
-	def __init__(self, user, post):
+	def __init__(self, user, post, post_type):
 		self.post_id = post.post_id
 		self.user = user
+		self.post_type = post_type
 
 	def __repr__(self):
 		user = User.query.filter_by(id=self.user_id).first()
 		return f"BookmarkedPosts(post: {self.post_id} -> user: {user.username})"
+
+# class VotedPolls(db.Model):
+# 	id = db.Column(db.Integer, primary_key=True)
+# 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+# 	selected_option = db.Column(db.Integer)
+# 	poll_id = db.Column(db.String)
+
+# 	def __init__(self, user, poll, vote):
+# 		self.user = user
+# 		self.selected_option = vote
+# 		self.poll_id = poll.id
+
+# 	def __repr__(self):
+# 		user = User.query.filter_by(id=self.user_id).first()
+# 		return f"Poll<{self}> -> {user}"

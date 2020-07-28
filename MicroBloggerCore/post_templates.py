@@ -76,6 +76,10 @@ def blog(user, post):
 	}
 
 def poll(user, post):
+	print(post.author_id)
+	# selectedOption = -1
+	# v = VotedPolls.query.filter_by(user=user, poll_id=post.post_id).first()
+	# if(v): selectedOption = v.selected_option
 	return {
 		'type':'poll',
 		'id': post.post_id,
@@ -88,6 +92,8 @@ def poll(user, post):
 		'options': post.options,
 		'age': calculate_post_age(post.created_on),
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
+		'likes': len(post.likes),
+		# 'votedFor': selectedOption
 	}
 
 def shareable(user, post):
