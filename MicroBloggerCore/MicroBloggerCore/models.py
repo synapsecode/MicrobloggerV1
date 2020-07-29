@@ -39,7 +39,7 @@ class User(db.Model):
 	liked_posts = db.relationship('LikedPosts', backref='user')
 	reshared_posts = db.relationship('ResharedPosts', backref='user')
 	bookmarked_posts = db.relationship('BookmarkedPosts', backref='user')
-	#voted_polls = db.relationship('VotedPolls', backref='user')
+	voted_polls = db.Column(db.PickleType(comparator=lambda *a: False))
 
 	#Constructor
 	def __init__(self, username, email, password):
@@ -55,6 +55,7 @@ class User(db.Model):
 		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
 		self.bio = ''
 		self.location = 'Unspecified Location'
+		self.voted_polls = []
 
 	@hybrid_property
 	def my_following(self):

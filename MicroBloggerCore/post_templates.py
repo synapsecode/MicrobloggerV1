@@ -76,10 +76,13 @@ def blog(user, post):
 	}
 
 def poll(user, post):
-	print(post.author_id)
-	# selectedOption = -1
-	# v = VotedPolls.query.filter_by(user=user, poll_id=post.post_id).first()
-	# if(v): selectedOption = v.selected_option
+	selected = -1
+	#print(user.username, user.voted_polls)
+	for i in user.voted_polls:
+		# print(post.post_id, i['poll_id'])
+		if(i['poll_id'] == post.post_id):
+			selected = i['selected']
+			break
 	return {
 		'type':'poll',
 		'id': post.post_id,
@@ -93,6 +96,7 @@ def poll(user, post):
 		'age': calculate_post_age(post.created_on),
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 		'likes': len(post.likes),
+		'votedFor': selected
 		# 'votedFor': selectedOption
 	}
 

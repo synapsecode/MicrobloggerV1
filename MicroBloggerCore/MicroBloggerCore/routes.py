@@ -74,19 +74,19 @@ def feed():
 	data = request.get_json()
 	username = data['username']
 	print(f"username: {username}")
-	user = User.query.filter_by(username=username).first()
-	if(user):
+	myuser = User.query.filter_by(username=username).first()
+	if(myuser):
 		feed = []
-		following = user.my_following
-		for u in [user.username, *following]:
-			user = User.query.filter_by(username=u).first()
-			[feed.append(microblog(user, x)) for x in MicroBlogPost.query.filter_by(author_id=user.id).all()]
-			[feed.append(blog(user, x)) for x in BlogPost.query.filter_by(author_id=user.id).all()]
-			[feed.append(shareable(user, x)) for x in ShareablePost.query.filter_by(author_id=user.id).all()]
-			[feed.append(poll(user, x)) for x in PollPost.query.filter_by(author_id=user.id).all()]
-			[feed.append(timeline(user, x)) for x in TimelinePost.query.filter_by(author_id=user.id).all()]
-			[feed.append(reshareWithComment(user, x)) for x in ReshareWithComment.query.filter_by(author_id=user.id).all()]
-			[feed.append(simpleReshare(user, x)) for x in SimpleReshare.query.filter_by(author_id=user.id).all()]
+		following = myuser.my_following
+		for u in [myuser.username, *following]:
+			ux = User.query.filter_by(username=u).first()
+			[feed.append(microblog(myuser, x)) for x in MicroBlogPost.query.filter_by(author_id=ux.id).all()]
+			[feed.append(blog(myuser, x)) for x in BlogPost.query.filter_by(author_id=ux.id).all()]
+			[feed.append(shareable(myuser, x)) for x in ShareablePost.query.filter_by(author_id=ux.id).all()]
+			[feed.append(poll(myuser, x)) for x in PollPost.query.filter_by(author_id=ux.id).all()]
+			[feed.append(timeline(myuser, x)) for x in TimelinePost.query.filter_by(author_id=ux.id).all()]
+			[feed.append(reshareWithComment(myuser, x)) for x in ReshareWithComment.query.filter_by(author_id=ux.id).all()]
+			[feed.append(simpleReshare(myuser, x)) for x in SimpleReshare.query.filter_by(author_id=ux.id).all()]
 		
 		return jsonify({
 			'code': 'S1',
@@ -383,12 +383,48 @@ def deletepost():
 		'message':'Deleted Post!' 
 	})
 
+@app.route('/submitvote', methods=['POST'])
+def submit_vote():
+	data = request.get_json()
+	username = data['username']
+	poll_id = data['poll_id']
+	selected = int(data['selected'])
+
+	user = User.query.filter_by(username=username).first()
+
+	#Add to Voted
+	vx = [x for x in user.voted_polls]
+	user.voted_polls = []
+	db.session.commit()
+	user.voted_polls = [{
+		'poll_id': poll_id,
+		'selected': selected
+	}, *vx]
+	db.session.commit()
+
+	#Increment vote count
+	p = PollPost.query.filter_by(post_id=poll_id).first()
+
+	px = [x for x in p.options]
+	p.options = []
+	db.session.commit()
+	px[selected]['count']+=1
+	p.options = [x for x in px]
+	db.session.commit()
+
+	return jsonify({
+		'myvoted': user.voted_polls,
+		'options': p.options
+	})
+
+	#Vote
+
 #-------------------------------------------------POSTACTIONS-----------------------------------------------
 
 #--------------------------------------------------EXPLORE--------------------------------------------------
 
-@app.route('/exploremicroblogs')
-def exploremicroblogs():
+@app.route('/exploremicroblogs/<username>')
+def exploremicroblogs(username):
 	posts = []
 	[posts.append(microblog(x.author, x)) for x in MicroBlogPost.query.all()]
 	return jsonify({
@@ -396,29 +432,32 @@ def exploremicroblogs():
 		'posts': posts
 	})
 
-@app.route('/exploreblogs')
-def exploreblogs():
+@app.route('/exploreblogs/<username>')
+def exploreblogs(username):
+	user = User.query.filter_by(username=username).first()
 	posts = []
-	[posts.append(blog(x.author, x)) for x in BlogPost.query.all()]
+	[posts.append(blog(user, x)) for x in BlogPost.query.all()]
 	return jsonify({
 		'length': len(posts),
 		'posts': posts
 	})
 
-@app.route('/exploretimelines')
-def exploretimelines():
+@app.route('/exploretimelines/<username>')
+def exploretimelines(username):
+	user = User.query.filter_by(username=username).first()
 	posts = []
-	[posts.append(timeline(x.author, x)) for x in TimelinePost.query.all()]
+	[posts.append(timeline(user, x)) for x in TimelinePost.query.all()]
 	return jsonify({
 		'length': len(posts),
 		'posts': posts
 	})
 
-@app.route('/exploreshareablesandpolls')
-def exploreshareablesandpolls():
+@app.route('/exploreshareablesandpolls/<username>')
+def exploreshareablesandpolls(username):
+	user = User.query.filter_by(username=username).first()
 	posts = []
-	[posts.append(shareable(x.author, x)) for x in ShareablePost.query.all()]
-	[posts.append(poll(x.author, x)) for x in PollPost.query.all()]
+	[posts.append(shareable(user, x)) for x in ShareablePost.query.all()]
+	[posts.append(poll(user, x)) for x in PollPost.query.all()]
 	return jsonify({
 		'length': len(posts),
 		'posts': posts
@@ -482,7 +521,5 @@ def getPost(post_type, post_id):
 	return post
 
 """
-implement delete comment
-implement submit vote
 implement getNews
 """
