@@ -3,6 +3,7 @@ from MicroBloggerCore import app, db
 from MicroBloggerCore.models import (User, MicroBlogPost, BlogPost, TimelinePost, ShareablePost,
  PollPost, ReshareWithComment, SimpleReshare, Comment, BookmarkedPosts, ResharedPosts)
 from post_templates import microblog, blog, timeline, poll, shareable, reshareWithComment, simpleReshare, userTemplate, comment
+import requests
 
 #TODO: Unify functions and make it efficient
 
@@ -43,11 +44,29 @@ def registerpage():
 		'user': userTemplate(user_record)
 	})
 
+
+@app.route("/get_news_feed")
+def getnews():
+	#TODO: Can add a new way to get news
+	nx = requests.get('https://newsapi.org/v2/top-headlines?country=in&apiKey=590b8ff1c78d4c0e8088535f3cf54122')
+	j = nx.json()
+	articles = []
+	for e in j['articles']:
+		articles.append({
+			'source': e['source']['name'],
+        	'headline': e['title'],
+			"link": e['url'],
+			"background": e['urlToImage']
+		})
+	print(len(articles))
+	return jsonify(articles)
+
 @app.route("/all_users")
 def allusers():
 	users = User.query.all()
 	return jsonify(
 		{
+			'length': len(users),
 			'code': 'S1',
 			'users': [userTemplate(u) for u in users]
 		}
@@ -67,6 +86,68 @@ def getprofile(username):
 			'code': 'E2',
 			'message': 'Profile does not exist!'
 		})
+
+#Follow
+@app.route('/follow_profile', methods=['POST'])
+def follow_profile():
+	data = request.get_json()
+	username = data['username']
+	following_username = data['following_username']
+	myuser = User.query.filter_by(username=username).first()
+	following_user = User.query.filter_by(username=following_username).first()
+
+	myuser.followed.append(following_user)
+	db.session.commit()
+
+	return jsonify({
+		'myfollowing': myuser.my_following,
+		'myfollowers':  myuser.my_followers,
+		'hostfollowing': following_user.my_following,
+		'hostfollowers':  following_user.my_followers,
+	})
+
+#Unfollow
+@app.route('/unfollow_profile', methods=['POST'])
+def unfollow_profile():
+	data = request.get_json()
+	username = data['username']
+	following_username = data['following_username']
+	myuser = User.query.filter_by(username=username).first()
+	following_user = User.query.filter_by(username=following_username).first()
+
+	myuser.followed.remove(following_user)
+	db.session.commit()
+
+	return jsonify({
+		'myfollowing': myuser.my_following,
+		'myfollowers':  myuser.my_followers,
+		'hostfollowing': following_user.my_following,
+		'hostfollowers':  following_user.my_followers,
+	})
+
+@app.route('/editprofile', methods=['POST'])
+def editprofile():
+	data = request.get_json()
+	username = data['username']
+	#background -> image
+	#icon -> image
+	email = data['email'] if('email' in data) else None
+	location = data['location'] if('location' in data)else None
+	bio = data['bio'] if('bio' in data) else None
+	name = data['name'] if('name' in data) else None
+
+	user = User.query.filter_by(username=username).first()
+	user.bio = bio if bio else user.bio
+	user.name = name if name else user.name
+	user.email = email if email else user.email
+	user.location = location if location else user.location
+
+	db.session.commit()
+
+	return jsonify({
+		'profile': userTemplate(user)
+	})
+	
 
 @app.route('/feed', methods=['POST'])
 def feed():
@@ -521,5 +602,4 @@ def getPost(post_type, post_id):
 	return post
 
 """
-implement getNews
 """
