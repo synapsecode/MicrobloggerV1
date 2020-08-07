@@ -2,7 +2,7 @@ from flask import render_template, url_for, flash, redirect, request, jsonify
 from MicroBloggerCore import app, db
 from MicroBloggerCore.models import (User, MicroBlogPost, BlogPost, TimelinePost, ShareablePost,
  PollPost, ReshareWithComment, SimpleReshare, Comment, BookmarkedPosts, ResharedPosts)
-from post_templates import microblog, blog, timeline, poll, shareable, reshareWithComment, simpleReshare, userTemplate, comment
+from post_templates import *
 import requests
 
 #TODO: Unify functions and make it efficient
@@ -59,7 +59,9 @@ def getnews():
 			"background": e['urlToImage']
 		})
 	print(len(articles))
-	return jsonify(articles)
+	return jsonify({
+		'articles': articles
+		})
 
 @app.route("/all_users")
 def allusers():
@@ -68,24 +70,45 @@ def allusers():
 		{
 			'length': len(users),
 			'code': 'S1',
-			'users': [userTemplate(u) for u in users]
+			'users': [{
+				'username': u.username,
+				'icon': u.icon
+			} for u in users]
 		}
 	)
 
-@app.route("/profile/<username>")
-def getprofile(username):
+@app.route("/profile/<myusername>/<username>")
+def getprofile(myusername, username):
+	my_user_record = User.query.filter_by(username=myusername).first()
 	user_record = User.query.filter_by(username=username).first()
+	isFollowing = False
+	print(user_record)
+	print(my_user_record)
+	if(my_user_record and user_record):
+		for i in user_record.my_followers:
+			if(i == my_user_record.username):
+				isFollowing = True
 	if(user_record):
-		return jsonify({
+		return jsonify({	
 			'code': 'S1',
 			'user': userTemplate(user_record),
-			'posts': getUserData(username)
+			'posts': getUserData(username),
+			'isFollowing': isFollowing
 		})
 	else:
 		return jsonify({
 			'code': 'E2',
 			'message': 'Profile does not exist!'
 		})
+
+@app.route("/getprofiledetails/<username>")
+def getprofiledetails(username):
+	user_record = User.query.filter_by(username=username).first()
+	if(user_record):
+		return jsonify({	
+			'user': userTemplate(user_record),
+		})
+
 
 #Follow
 @app.route('/follow_profile', methods=['POST'])
@@ -135,12 +158,14 @@ def editprofile():
 	location = data['location'] if('location' in data)else None
 	bio = data['bio'] if('bio' in data) else None
 	name = data['name'] if('name' in data) else None
+	#website = data['website'] if('website' in data) else None
 
 	user = User.query.filter_by(username=username).first()
 	user.bio = bio if bio else user.bio
 	user.name = name if name else user.name
 	user.email = email if email else user.email
 	user.location = location if location else user.location
+	#user.website = website if website else user.website
 
 	db.session.commit()
 
@@ -162,10 +187,10 @@ def feed():
 		for u in [myuser.username, *following]:
 			ux = User.query.filter_by(username=u).first()
 			[feed.append(microblog(myuser, x)) for x in MicroBlogPost.query.filter_by(author_id=ux.id).all()]
-			[feed.append(blog(myuser, x)) for x in BlogPost.query.filter_by(author_id=ux.id).all()]
+			[feed.append(blog_skin(myuser, x)) for x in BlogPost.query.filter_by(author_id=ux.id).all()]
 			[feed.append(shareable(myuser, x)) for x in ShareablePost.query.filter_by(author_id=ux.id).all()]
 			[feed.append(poll(myuser, x)) for x in PollPost.query.filter_by(author_id=ux.id).all()]
-			[feed.append(timeline(myuser, x)) for x in TimelinePost.query.filter_by(author_id=ux.id).all()]
+			[feed.append(timeline_skin(myuser, x)) for x in TimelinePost.query.filter_by(author_id=ux.id).all()]
 			[feed.append(reshareWithComment(myuser, x)) for x in ReshareWithComment.query.filter_by(author_id=ux.id).all()]
 			[feed.append(simpleReshare(myuser, x)) for x in SimpleReshare.query.filter_by(author_id=ux.id).all()]
 		
@@ -246,7 +271,6 @@ def create_poll():
 def create_timeline():
 	data = request.get_json()
 	username = data['username']
-	content = data['content']
 	timeline_name = data['timeline_name']
 	events = data['events']
 
@@ -277,11 +301,11 @@ def get_my_blogs_and_timelines():
 				if(post.post_type == 'microblog'):
 					bookmarked.append(microblog(user, post))
 				elif(post.post_type == 'blog'):
-					bookmarked.append(blog(user, post))
+					bookmarked.append(blog_skin(user, post))
 				elif(post.post_type == 'shareable'):
 					bookmarked.append(shareable(user, post))
 				elif(post.post_type == 'timeline'):
-					bookmarked.append(timeline(user, post))
+					bookmarked.append(timeline_skin(user, post))
 				elif(post.post_type == 'ResharedWithComment'):
 					bookmarked.append(reshareWithComment(user, post))
 
@@ -290,6 +314,41 @@ def get_my_blogs_and_timelines():
 		'bookmarked_posts': bookmarked
 	})
 
+
+@app.route('/getpostcomments', methods=['POST'])
+def getpostcomments():
+	data = request.get_json()
+	username = data['username']
+	post_id = data['post_id']
+	post_type = data['post_type']
+	user = User.query.filter_by(username=username).first()
+	post = getPost(post_type, post_id)
+	print(post)
+	return jsonify({
+			'comments': get_comments_from_post(user, post)
+		})
+
+@app.route('/getblogbody', methods=['POST'])
+def getblogbody():
+	data = request.get_json()
+	username = data['username']
+	post_id = data['post_id']
+	user = User.query.filter_by(username=username).first()
+	post = getPost('blog', post_id)
+	return jsonify({
+		'blog': blog_body(user, post)
+	})
+
+@app.route('/gettimelinebody', methods=['POST'])
+def gettimelinebody():
+	data = request.get_json()
+	username = data['username']
+	post_id = data['post_id']
+	user = User.query.filter_by(username=username).first()
+	post = getPost('timeline', post_id)
+	return jsonify({
+		'timeline': timeline_body(user, post)
+	})
 #------------------------------------------------------GETTERS---------------------------------------------
 
 #-------------------------------------------------POSTACTIONS-----------------------------------------------
@@ -300,6 +359,7 @@ def likemicrobloggerpost():
 	post_type = data['post_type']
 	post_id = data['post_id']
 	user = User.query.filter_by(username=username).first()
+	print(post_id)
 	post = getPost(post_type, post_id)
 	post.like(user)
 	return jsonify({
@@ -313,6 +373,7 @@ def unlikemicrobloggerpost():
 	post_type = data['post_type']
 	post_id = data['post_id']
 	user = User.query.filter_by(username=username).first()
+	print(post_id)
 	post = getPost(post_type, post_id)
 	post.unlike(user)
 	return jsonify({
@@ -364,8 +425,8 @@ def resharepost():
 		post.reshare(user=user, post=rwc)
 	else:
 		sr = SimpleReshare(author=user, host=post)
-		db.session.add(sr1)
-		post.reshare(user=user, post=sr1)
+		db.session.add(sr)
+		post.reshare(user=user, post=sr)
 	return jsonify({
 		'message':'Reshared Post' 
 	})
@@ -376,16 +437,21 @@ def unresharepost():
 	username = data['username']
 	host_type = data['host_type']
 	host_id = data['host_id']
-	reshare_type = data['reshare_type'] 
 	user = User.query.filter_by(username=username).first()
 	post = getPost(host_type, host_id)
-	if(reshare_type == 'ResharedWithComment'):
-		rwc = ReshareWithComment.query.filter_by(author=user, host_id=host_id).first()
-		post.unreshare(user=user, post=rwc)
-	else:
-		sr = SimpleReshare.query.filter_by(author=user, host_id=host_id).first()
-		post.unreshare(user=user, post=sr1)
-	
+	allreshares = [*ReshareWithComment.query.all(), *SimpleReshare.query.all()]
+	for i in allreshares:
+		if(host_id == i.host_id):
+			if(i.post_type == "ReshareWithComment"):
+				rwc = ReshareWithComment.query.filter_by(author=user, host_id=host_id).first()
+				post.unreshare(user=user, post=rwc)
+				db.session.delete(rwc)
+				db.session.commit()
+			elif(i.post_type == "SimpleReshare"):
+				sr = SimpleReshare.query.filter_by(author=user, host_id=host_id).first()
+				post.unreshare(user=user, post=sr)
+				db.session.delete(sr)
+				db.session.commit()
 	return jsonify({
 		'message':'Unreshared Post' 
 	})
@@ -517,7 +583,7 @@ def exploremicroblogs(username):
 def exploreblogs(username):
 	user = User.query.filter_by(username=username).first()
 	posts = []
-	[posts.append(blog(user, x)) for x in BlogPost.query.all()]
+	[posts.append(blog_skin(user, x)) for x in BlogPost.query.all()]
 	return jsonify({
 		'length': len(posts),
 		'posts': posts
@@ -527,7 +593,7 @@ def exploreblogs(username):
 def exploretimelines(username):
 	user = User.query.filter_by(username=username).first()
 	posts = []
-	[posts.append(timeline(user, x)) for x in TimelinePost.query.all()]
+	[posts.append(timeline_skin(user, x)) for x in TimelinePost.query.all()]
 	return jsonify({
 		'length': len(posts),
 		'posts': posts
@@ -550,6 +616,7 @@ def getUserData(username):
 	user = User.query.filter_by(username=username).first()
 	#Get Reshares
 	r_ids = [x.reshared_post_id for x in user.reshared_posts]
+	print(r_ids)
 	reshared = []
 	mbandcomments = []
 	blogandtimelines = []
@@ -567,15 +634,17 @@ def getUserData(username):
 	#Get posts
 	[mbandcomments.append(microblog(user, x)) for x in user.my_microblogs]
 	[mbandcomments.append(comment(user, x)) for x in Comment.query.filter_by(author=user).all()]
-	[blogandtimelines.append(blog(user, x)) for x in user.my_blogs]
-	[blogandtimelines.append(timeline(user, x)) for x in user.my_timelines]
+	[blogandtimelines.append(blog_skin(user, x)) for x in user.my_blogs]
+	[blogandtimelines.append(timeline_skin(user, x)) for x in user.my_timelines]
 	[pollsandshareables.append(shareable(user, x)) for x in user.my_shareables]
 	[pollsandshareables.append(poll(user, x)) for x in user.my_polls]
+
+	print(f"PS: {reshared}")
 
 	return {
 		'mymicroblogsandcomments': mbandcomments,
 		'myreshares': reshared,
-		'myblogsandtimeline': blogandtimelines,
+		'myblogsandtimelines': blogandtimelines,
 		'mypollsandshareables': pollsandshareables
 	}
 
@@ -595,11 +664,15 @@ def getPost(post_type, post_id):
 		post = TimelinePost.query.filter_by(post_id=post_id).first()
 	elif(post_type == 'SimpleReshare'):
 		post = SimpleReshare.query.filter_by(post_id=post_id).first()
-	elif(post_type == 'ReshareWithComment'):
+	elif(post_type == 'ResharedWithComment'):
 		post = ReshareWithComment.query.filter_by(post_id=post_id).first()
 	elif(post_type == 'comment'):
 		post = Comment.query.filter_by(comment_id=post_id).first()
+		print(post_type, post_id, post)
 	return post
 
 """
 """
+
+def delete_all_comments_in_post(post_id):
+	post = None

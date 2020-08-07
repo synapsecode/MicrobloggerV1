@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Backend/server.dart';
 
 class ShareableComposer extends StatefulWidget {
   const ShareableComposer({Key key}) : super(key: key);
@@ -44,11 +45,13 @@ class _ShareableComposerState extends State<ShareableComposer> {
           Container(
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
-              onPressed: () {
+              onPressed: () async {
                 print(name);
                 print(link);
                 print(content);
                 //upload
+                await createShareable(content, name, link);
+                Navigator.pushNamed(context, '/HomePage');
               },
               child: Text("Publish"),
               color: Colors.black,
@@ -110,6 +113,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
             child: Padding(
               padding: EdgeInsets.all(12.0),
               child: TextField(
+                style: TextStyle(fontSize: 19.0),
                 onChanged: (x) {
                   widget.contentUpdater("$x");
                 },

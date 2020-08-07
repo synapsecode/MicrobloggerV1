@@ -1,4 +1,10 @@
+import 'package:MicroBlogger/Backend/datastore.dart';
+import 'package:MicroBlogger/Screens/editprofile.dart';
+import 'package:MicroBlogger/Screens/homepage.dart';
+import 'package:MicroBlogger/Screens/login.dart';
 import 'package:flutter/material.dart';
+import 'package:MicroBlogger/Backend/server.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key key}) : super(key: key);
@@ -8,6 +14,25 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  String username = "";
+  String email = "";
+  String password = "";
+  String cpassword = "";
+
+  void showAlert(title, content) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              title: Text("$title"),
+              content: Text("$content"),
+              actions: [
+                FlatButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text("Back"))
+              ],
+            ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,37 +59,28 @@ class _RegisterPageState extends State<RegisterPage> {
                     children: <Widget>[
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Username:'),
-                        validator: (input) {
-                          if (input.length == 0) {
-                            print("Username cannot be empty");
-                            return "Username cannot be empty";
-                          }
-                        },
+                        onChanged: (x) => setState(() {
+                          username = x;
+                        }),
                       ),
                       SizedBox(
                         height: 10.0,
                       ),
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Email:'),
-                        validator: (input) {
-                          if (!input.contains('@')) {
-                            print("Invalid email");
-                            return "Invalid email";
-                          } else if (input.length > 0) {
-                            print("Invalid email");
-                            return "Invalid email";
-                          }
-                        },
+                        onChanged: (x) => setState(() {
+                          email = x;
+                        }),
                       ),
                       SizedBox(
                         height: 10.0,
                       ),
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Password:'),
-                        validator: (input) => input.length == 0
-                            ? 'Password Cannot be Empty'
-                            : null,
                         obscureText: true,
+                        onChanged: (x) => setState(() {
+                          password = x;
+                        }),
                       ),
                       SizedBox(
                         height: 10.0,
@@ -72,10 +88,10 @@ class _RegisterPageState extends State<RegisterPage> {
                       TextFormField(
                         decoration:
                             InputDecoration(labelText: 'Confirm Password:'),
-                        validator: (input) => input.length == 0
-                            ? 'Password Cannot be Empty'
-                            : null,
                         obscureText: true,
+                        onChanged: (x) => setState(() {
+                          cpassword = x;
+                        }),
                       ),
                       SizedBox(
                         height: 20.0,
@@ -88,7 +104,42 @@ class _RegisterPageState extends State<RegisterPage> {
                           "Register Account",
                           style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: () => print("Register Account"),
+                        onPressed: () async {
+                          if (username.isNotEmpty &&
+                              password.isNotEmpty &&
+                              email.isNotEmpty &&
+                              cpassword.isNotEmpty) {
+                            if (password == cpassword) {
+                              print("$username $password $email");
+                              Fluttertoast.showToast(
+                                msg: "Creating Account",
+                                backgroundColor:
+                                    Color.fromARGB(200, 220, 20, 60),
+                              );
+                              Map registerObject =
+                                  await register(username, password, email);
+                              if (registerObject['code'] == 'S1') {
+                                print(registerObject);
+                                await saveUserLoginInfo(
+                                    registerObject['user']['username']);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            EditProfilePage()));
+                              } else {
+                                showAlert("Register Error",
+                                    "Unknown error occured! Please try again later!");
+                              }
+                            } else {
+                              showAlert("Passwords dont match!",
+                                  "Please make sure the password entered matches your confirmed password and try again!");
+                            }
+                          } else {
+                            showAlert("Fill all fields!",
+                                "Please make sure you fill all the fields to register a user!");
+                          }
+                        },
                       ),
                       SizedBox(
                         height: 20.0,
@@ -97,7 +148,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: Text("Already Have an account? Login",
                             style: TextStyle(color: Colors.white54)),
                         onTap: () {
-                          Navigator.pushNamed(context, '/Login');
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginPage()));
                         },
                       )
                     ],

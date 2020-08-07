@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Backend/server.dart';
 
 class MicroBlogComposer extends StatefulWidget {
   const MicroBlogComposer({Key key}) : super(key: key);
@@ -39,10 +40,13 @@ class _MicroBlogComposerState extends State<MicroBlogComposer> {
           Container(
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
-              onPressed: () {
+              onPressed: () async {
                 print("Fact: $isFact");
                 print(content);
                 //upload
+                String category = (isFact) ? "Fact" : "Opinion";
+                await createMicroblog(content, category);
+                Navigator.pushNamed(context, '/HomePage');
               },
               child: Text("Publish"),
               color: Colors.black,
@@ -76,7 +80,8 @@ class _ComposerComponentState extends State<ComposerComponent> {
                 onChanged: (x) {
                   widget.contentUpdater("$x");
                 },
-                maxLines: 15,
+                maxLines: 1000,
+                style: TextStyle(fontSize: 19.0),
                 decoration:
                     InputDecoration.collapsed(hintText: "What's happening?"),
               ),

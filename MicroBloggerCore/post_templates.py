@@ -16,6 +16,7 @@ def userTemplate(user_record):
 		'created_on' : user_record.created_on,
 		'bio' : (user_record.bio) if (user_record.bio != "") else "Hey! I use MicroBlogger",
 		'location' : user_record.location,
+		#'website': user_record.website
 	}
 
 def comment(user, c):
@@ -44,8 +45,8 @@ def microblog(user, post):
 			'icon': post.author.icon
 		},
 		'likes': len(post.likes),
-		'comments': [comment(user, c) for c in post.comments],
 		'reshares': len(post.reshares),
+		'comments': len(post.comments),
 		'content': post.content,
 		'category': post.category,
 		'age': calculate_post_age(post.created_on),
@@ -66,8 +67,8 @@ def blog(user, post):
 			'icon': post.author.icon
 		},
 		'likes': len(post.likes),
-		'comments': [comment(user, c) for c in post.comments],
 		'reshares': len(post.reshares),
+		'comments': len(post.comments),
 		'content': post.content,
 		'age': calculate_post_age(post.created_on),
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
@@ -132,9 +133,9 @@ def timeline(user, post):
 			'icon': post.author.icon
 		},
 		'likes': len(post.likes),
-		'comments': [comment(user, c) for c in post.comments],
 		'reshares': len(post.reshares),
 		'age': calculate_post_age(post.created_on),
+		'comments': len(post.comments),
 		'events': post.events,
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
@@ -182,9 +183,9 @@ def reshareWithComment(user, post):
 			'icon': post.author.icon
 		},
 		'likes': len(post.likes),
-		'comments': [comment(user, c) for c in post.comments],
 		'content': post.content,
 		'category': post.category,
+		'comments': len(post.comments),
 		'age': calculate_post_age(post.created_on),
 		'child': child,
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
@@ -198,3 +199,78 @@ def newsArticle(headline, url, background, source="internet"):
 		'background':background,
 		'source': source
 	}
+
+
+
+#PIECE FUNCTIONS
+
+def timeline_skin(user, post):
+	return {
+		'type':'timeline',
+		'id': post.post_id,
+		'background': post.background,
+		'timeline_name': post.timeline_name,
+		'author': {
+			'name': (post.author.name) if (post.author.name != None) else "Default User",
+			'username': post.author.username,
+			'icon': post.author.icon
+		},
+	}
+
+def timeline_body(user, post):
+	return {
+		'type':'timeline',
+		'id': post.post_id,
+		'timeline_name': post.timeline_name,
+		'author': {
+			'name': (post.author.name) if (post.author.name != None) else "Default User",
+			'username': post.author.username,
+			'icon': post.author.icon
+		},
+		'likes': len(post.likes),
+		'reshares': len(post.reshares),
+		'age': calculate_post_age(post.created_on),
+		'comments': len(post.comments),
+		'events': post.events,
+		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
+		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
+		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False
+	}
+
+def blog_skin(user, post):
+	return {
+		'type':'blog',
+		'id': post.post_id,
+		'background': post.background,
+		'blog_name': post.blog_name,
+		'author': {
+			'name': (post.author.name) if (post.author.name != None) else "Default User",
+			'username': post.author.username,
+			'icon': post.author.icon
+		},
+	}
+
+def blog_body(user, post):
+	return {
+		'type':'blog',
+		'id': post.post_id,
+		'blog_name': post.blog_name,
+		'author': {
+			'name': (post.author.name) if (post.author.name != None) else "Default User",
+			'username': post.author.username,
+			'icon': post.author.icon
+		},
+		'comments': len(post.comments),
+		'likes': len(post.likes),
+		'reshares': len(post.reshares),
+		'content': post.content,
+		'age': calculate_post_age(post.created_on),
+		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
+		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
+		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False
+	}
+
+def get_comments_from_post(user, post):
+	return [comment(user, c) for c in post.comments]
+
+#'commenfts': [comment(user, c) for c in post.comments],

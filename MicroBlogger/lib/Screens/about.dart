@@ -1,4 +1,4 @@
-import 'package:MicroBlogger/Components/Others/UIElements.dart';
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:flutter/material.dart';
 
 class AboutPage extends StatelessWidget {
@@ -33,7 +33,7 @@ class AboutPage extends StatelessWidget {
               // style: TextStyle(color: Colors.white30),
             ),
             Text(
-              'v0.0.1',
+              'v0.1.0',
               // style: TextStyle(color: Colors.white30),
             ),
           ],

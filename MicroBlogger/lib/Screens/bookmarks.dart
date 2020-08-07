@@ -1,83 +1,112 @@
-import 'package:MicroBlogger/Components/Others/UIElements.dart';
-import 'package:MicroBlogger/Components/PostTemplates/blogs.dart';
-import 'package:MicroBlogger/Components/PostTemplates/polls.dart';
-import 'package:MicroBlogger/Components/PostTemplates/reshare.dart';
-import 'package:MicroBlogger/Components/PostTemplates/shareable.dart';
-import 'package:MicroBlogger/Components/PostTemplates/timelines.dart';
-import 'package:MicroBlogger/Data/datafetcher.dart';
+import '../Backend/datastore.dart';
+import '../Backend/server.dart';
 import 'package:flutter/material.dart';
-import '../Components/PostTemplates/microblog.dart';
+import '../Components/Templates/postTemplates.dart';
 
-class BookmarksPage extends StatelessWidget {
-  const BookmarksPage({Key key}) : super(key: key);
+class BookmarksPage extends StatefulWidget {
+  final currentUser;
+  BookmarksPage({Key key, this.currentUser}) : super(key: key);
+
+  @override
+  _BookmarksPageState createState() => _BookmarksPageState();
+}
+
+class _BookmarksPageState extends State<BookmarksPage> {
+  Future bookmarkData;
+  @override
+  void initState() {
+    super.initState();
+    print("Current User ${widget.currentUser}");
+    bookmarkData = getBookmarks();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = getCurrentUser();
-    final data = DataFetcher();
-    List feed = [
-      ...data.microblogPosts,
-      ...data.blogPosts,
-      ...data.pollPosts,
-      ...data.shareablePosts,
-      ...data.timelinePosts,
-      ...data.resharesWithComment,
-      ...data.simpleReshares
-    ];
-    List bookmarked = [];
-    for (var f in feed) {
-      if (f.containsKey('id')) {
-        if (currentUser['bookmarkedPosts'].contains(f['id'])) {
-          bookmarked.add(f);
-        }
-      }
-    }
-    bookmarked.shuffle();
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Bookmarked Posts"),
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop()),
-      ),
-      body: SingleChildScrollView(
-          child: Container(
-        padding: EdgeInsets.all(10.0),
-        color: Colors.black,
-        child: ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: bookmarked.length,
-          itemBuilder: (context, index) {
-            print("${bookmarked[index]['id']}\n\n");
-            if (bookmarked[index]['type'] == "microblog")
-              return MicroBlogPost(
-                postObject: bookmarked[index],
-              );
-            else if (bookmarked[index]['type'] == "shareable")
-              return Shareable(
-                postObject: bookmarked[index],
-              );
-            else if (bookmarked[index]['type'] == "blog")
-              return BlogPost(
-                postObject: bookmarked[index],
-              );
-            else if (bookmarked[index]['type'] == "poll")
-              return PollPost(
-                postObject: bookmarked[index],
-              );
-            else if (bookmarked[index]['type'] == "timeline")
-              return Timeline(
-                bookmarked[index],
-              );
-            else
-              return ReshareWithComment(
-                postObject: bookmarked[index],
-              );
-          },
+        appBar: AppBar(
+          title: Text("Bookmarked Posts"),
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop()),
         ),
-      )),
-      bottomNavigationBar: BottomNavigator(),
-    );
+        body: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 10.0,
+                ),
+                FutureBuilder(
+                    future: bookmarkData,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: snapshot.data.length,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            Widget output;
+                            switch (snapshot.data[index]['type']) {
+                              case "microblog":
+                                output = MicroBlogPost(
+                                    postObject: snapshot.data[index]);
+                                break;
+                              case "blog":
+                                output = BlogPost(snapshot.data[index]);
+                                break;
+                              case "shareable":
+                                output = ShareablePost(
+                                    postObject: snapshot.data[index]);
+                                break;
+                              case "timeline":
+                                output = Timeline(snapshot.data[index]);
+                                break;
+                              case "poll":
+                                output =
+                                    PollPost(postObject: snapshot.data[index]);
+                                break;
+                              case "ResharedWithComment":
+                                output = ReshareWithComment(
+                                  postObject: snapshot.data[index],
+                                );
+                                break;
+                              case "SimpleReshare":
+                                output = SimpleReshare(
+                                  postObject: snapshot.data[index],
+                                );
+                                break;
+                              default:
+                                output = Container(
+                                  color: Colors.red,
+                                );
+                                break;
+                            }
+                            return output;
+                          },
+                        );
+                      } else {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(
+                                valueColor: new AlwaysStoppedAnimation<Color>(
+                                    Colors.red),
+                                backgroundColor:
+                                    Color.fromARGB(200, 220, 20, 60),
+                              )
+                            ],
+                          ),
+                        );
+                      }
+                    }),
+                SizedBox(
+                  height: 10.0,
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 }

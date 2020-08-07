@@ -1,19 +1,13 @@
-import 'package:MicroBlogger/Components/Others/UIElements.dart';
-import 'package:MicroBlogger/Data/datafetcher.dart';
-import 'package:MicroBlogger/Data/fetcher.dart';
+import 'package:MicroBlogger/Backend/server.dart';
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:MicroBlogger/Components/Templates/news.dart';
 import 'package:flutter/material.dart';
-import '../Components/PostTemplates/news.dart';
-
-//590b8ff1c78d4c0e8088535f3cf54122
-//http://newsapi.org/v2/everything?q=bitcoin&from=2020-06-21&sortBy=publishedAt&apiKey=590b8ff1c78d4c0e8088535f3cf54122
 
 class NewsFeedPage extends StatelessWidget {
   const NewsFeedPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List newsFeed = DataFetcher().newsArticles;
-    newsFeed.shuffle();
     return Scaffold(
       appBar: AppBar(
         title: Text("News Feed"),
@@ -25,7 +19,7 @@ class NewsFeedPage extends StatelessWidget {
         padding: EdgeInsets.all(10.0),
         child: Container(
           child: FutureBuilder(
-              future: getNewsArticles(),
+              future: getNewsFeed(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return ListView.builder(
@@ -42,21 +36,17 @@ class NewsFeedPage extends StatelessWidget {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [CircularProgressIndicator()],
+                      children: [
+                        CircularProgressIndicator(
+                          valueColor:
+                              new AlwaysStoppedAnimation<Color>(Colors.red),
+                          backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                        )
+                      ],
                     ),
                   );
                 }
               }),
-          // child: ListView.builder(
-          //   shrinkWrap: true,
-          //   physics: NeverScrollableScrollPhysics(),
-          //   itemCount: newsFeed.length,
-          //   itemBuilder: (context, index) {
-          //     return new NewsItem(
-          //       newsObject: newsFeed[index],
-          //     );
-          //   },
-          // ),
         ),
       ),
       bottomNavigationBar: BottomNavigator(),

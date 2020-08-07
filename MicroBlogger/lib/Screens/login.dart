@@ -1,9 +1,11 @@
 import 'dart:io';
-
+import 'package:MicroBlogger/Backend/datastore.dart';
 import 'package:MicroBlogger/Screens/homepage.dart';
+import 'package:MicroBlogger/Screens/register.dart';
 import 'package:flutter/material.dart';
+import 'package:MicroBlogger/Backend/server.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Data/fetcher.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -13,24 +15,21 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String username;
-  String password;
-  @override
-  void initState() {
-    super.initState();
-    if (!Platform.isWindows) {
-      SharedPreferences.getInstance().then((pref) {
-        //Get user if exists
-        String user = pref.getString('loggedInUser');
-        if (user.isNotEmpty) {
-          //Navigator.of(context).pushNamed('/HomePage');
-        } else {
-          print("Stored User not found. Please login");
-        }
-      });
-    } else {
-      print("Load User feature unsupported! Please login!");
-    }
+  String username = "";
+  String password = "";
+
+  void showAlert(title, content) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              title: Text("$title"),
+              content: Text("$content"),
+              actions: [
+                FlatButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text("Back"))
+              ],
+            ));
   }
 
   @override
@@ -42,7 +41,43 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Image(image: AssetImage('assets/env.png')),
+              InkWell(
+                  child: Image(image: AssetImage('assets/env.png')),
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              title: Text("Connect to a Development Server"),
+                              content: Container(
+                                height: 140.0,
+                                width: MediaQuery.of(context).size.width,
+                                child: Column(
+                                  children: [
+                                    TextFormField(
+                                        decoration: InputDecoration(
+                                            labelText: 'Server URL:'),
+                                        onChanged: (x) =>
+                                            setState(() => serverURL = x)),
+                                    SizedBox(
+                                      height: 20.0,
+                                    ),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: RaisedButton(
+                                          color:
+                                              Color.fromARGB(200, 220, 20, 60),
+                                          child: Text("Initialize Server"),
+                                          onPressed: () async {
+                                            print(serverURL);
+                                            setServerURL(serverURL);
+                                            Navigator.pop(context);
+                                          }),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ));
+                  }),
               Text(
                 'MicroBlogger',
                 style: Theme.of(context).textTheme.headline4,
@@ -55,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                 // style: TextStyle(color: Colors.white30),
               ),
               Text(
-                'v0.0.1',
+                'v0.1.0',
                 // style: TextStyle(color: Colors.white30),
               ),
               Container(
@@ -86,38 +121,47 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(
                         height: 20.0,
                       ),
-                      RaisedButton(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 20.0, horizontal: 115.0),
-                        color: Color.fromARGB(200, 220, 20, 60),
-                        child: Text(
-                          "Login",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          if (username != null && password != null) {
-                            Map loginObject = await login(username, password);
-                            if (loginObject['code'] == 'S1') {
-                              print(loginObject);
-                              print(loginObject['user']['username']);
-                              setCurrentUser(loginObject['user']);
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HomePage(
-                                            currentUser: loginObject['user'],
-                                          )));
-                            } else if (loginObject['code'] == 'INCP') {
-                              print("Either Username or password is incorrect");
+                      SizedBox(
+                        width: double.infinity,
+                        child: RaisedButton(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20.0, horizontal: 12.0),
+                          color: Color.fromARGB(200, 220, 20, 60),
+                          child: Text(
+                            "Login",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () async {
+                            if (username.isNotEmpty && password.isNotEmpty) {
+                              print(username);
+                              print(password);
+                              Fluttertoast.showToast(
+                                msg: "Logging In",
+                                backgroundColor:
+                                    Color.fromARGB(200, 220, 20, 60),
+                              );
+                              //LOGIN
+                              Map loginObject = await login(username, password);
+                              if (loginObject['code'] == 'S1') {
+                                await saveUserLoginInfo(
+                                    loginObject['user']['username']);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HomePage()));
+                              } else if (loginObject['code'] == 'INCP') {
+                                showAlert("Invalid Credentials",
+                                    "Either your username or password is incorrect! Please try again!");
+                              } else {
+                                showAlert("Login Error",
+                                    "Unknown error occured! Please try again later!");
+                              }
                             } else {
-                              print("There was an error!");
+                              showAlert("Fill all fields",
+                                  "Please make sure all the fields are filled!");
                             }
-                          } else {
-                            print(
-                                "Please enter both the username and password to login");
-                          }
-                          //Navigator.pushNamed(context, '/HomePage');
-                        },
+                          },
+                        ),
                       ),
                       SizedBox(
                         height: 20.0,
@@ -126,7 +170,10 @@ class _LoginPageState extends State<LoginPage> {
                         child: Text("Do not have an account? Register",
                             style: TextStyle(color: Colors.white54)),
                         onTap: () {
-                          Navigator.pushNamed(context, '/Register');
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RegisterPage()));
                         },
                       )
                     ],

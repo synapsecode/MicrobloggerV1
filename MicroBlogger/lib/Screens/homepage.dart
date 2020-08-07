@@ -1,27 +1,14 @@
 import 'dart:async';
-import 'dart:convert';
+import 'package:MicroBlogger/Backend/server.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import '../Backend/datastore.dart';
+import '../Components/Global/globalcomponents.dart';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import '../Components/PostTemplates/microblog.dart';
-import '../Components/PostTemplates/shareable.dart';
-import '../Components/PostTemplates/polls.dart';
-import '../Components/PostTemplates/reshare.dart';
-import '../Components/PostTemplates/blogs.dart';
-import '../Components/PostTemplates/timelines.dart';
+import '../Components/Templates/postTemplates.dart';
 
-import '../Components/Others/UIElements.dart';
-import '../Data/fetcher.dart';
-
-class HomePage extends StatefulWidget {
-  final currentUser;
-  HomePage({Key key, this.currentUser}) : super(key: key);
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,8 +18,15 @@ class _HomePageState extends State<HomePage> {
         title: Text("Feed"),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.bubble_chart),
-            onPressed: () => print("SecondaryOptions"),
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              Fluttertoast.showToast(
+                msg: "Logging Out",
+                backgroundColor: Color.fromARGB(200, 220, 20, 60),
+              );
+              logoutSavedUser();
+              Navigator.of(context).pushReplacementNamed('/Login');
+            },
           ),
           IconButton(
             icon: Icon(Icons.refresh),
@@ -40,12 +34,15 @@ class _HomePageState extends State<HomePage> {
           ),
           IconButton(
             icon: Icon(Icons.send),
-            onPressed: () => Navigator.of(context).pushNamed('/DM'),
+            onPressed: () => Fluttertoast.showToast(
+              msg: "Feature Coming Soon!",
+              backgroundColor: Color.fromARGB(200, 220, 20, 60),
+            ),
           ),
         ],
       ),
       body: Feed(
-        currentUser: (widget.currentUser['username']),
+        currentUser: (currentUser['username']),
       ),
       drawer: MainAppDrawer(),
       floatingActionButton: FloatingCircleButton(),
@@ -67,8 +64,7 @@ class _FeedState extends State<Feed> {
   @override
   void initState() {
     super.initState();
-    print("Current User ${widget.currentUser}");
-    feedData = getFeed(widget.currentUser);
+    feedData = getFeed();
   }
 
   @override
@@ -90,10 +86,10 @@ class _FeedState extends State<Feed> {
                       output = MicroBlogPost(postObject: snapshot.data[index]);
                       break;
                     case "blog":
-                      output = BlogPost(postObject: snapshot.data[index]);
+                      output = BlogPost(snapshot.data[index]);
                       break;
                     case "shareable":
-                      output = Shareable(postObject: snapshot.data[index]);
+                      output = ShareablePost(postObject: snapshot.data[index]);
                       break;
                     case "timeline":
                       output = Timeline(snapshot.data[index]);
@@ -115,23 +111,10 @@ class _FeedState extends State<Feed> {
                       break;
                   }
                   return output;
-                  // if (snapshot.data[index]['type'] == 'microblog')
-                  //   return new MicroBlogPost(postObject: snapshot.data[index]);
-                  // else if (snapshot.data[index]['type'] == 'blog')
-                  //   return new BlogPost(postObject: snapshot.data[index]);
-                  // else
-                  //   return SizedBox(
-                  //     height: 0.0,
-                  //   );
                 },
               );
             } else {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [CircularProgressIndicator()],
-                ),
-              );
+              return CirclularLoader();
             }
           }),
     ));

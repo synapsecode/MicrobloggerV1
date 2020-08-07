@@ -1,4 +1,4 @@
-import 'package:MicroBlogger/Components/Others/UIElements.dart';
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatelessWidget {

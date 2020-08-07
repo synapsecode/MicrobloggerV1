@@ -1,30 +1,22 @@
-import 'package:MicroBlogger/Components/PostTemplates/shareable.dart';
 import 'package:MicroBlogger/Composers/blogComposer.dart';
-import 'package:MicroBlogger/Composers/commentComposer.dart';
 import 'package:MicroBlogger/Composers/microblogComposer.dart';
 import 'package:MicroBlogger/Composers/pollComposer.dart';
-import 'package:MicroBlogger/Composers/reshareComposer.dart';
 import 'package:MicroBlogger/Composers/shareableComposer.dart';
 import 'package:MicroBlogger/Composers/timelineComposer.dart';
-import 'package:MicroBlogger/PostViewers/blogViewer.dart';
-import 'package:MicroBlogger/PostViewers/timelineViewer.dart';
-import 'package:MicroBlogger/Screens/chatscreen.dart';
+import 'package:MicroBlogger/Screens/about.dart';
+import 'package:MicroBlogger/Screens/bookmarks.dart';
+import 'package:MicroBlogger/Screens/editprofile.dart';
+import 'package:MicroBlogger/Screens/explorepage.dart';
+import 'package:MicroBlogger/Screens/homepage.dart';
+import 'package:MicroBlogger/Screens/newsfeedpage.dart';
+import 'package:MicroBlogger/Screens/notifications.dart';
+import 'package:MicroBlogger/Screens/profile.dart';
+import 'package:MicroBlogger/Screens/register.dart';
+import 'package:MicroBlogger/Screens/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'Screens/login.dart';
-import 'Screens/register.dart';
-import 'Screens/homepage.dart';
-import 'PostViewers/MicroBlogViewer.dart';
-
-import 'Screens/about.dart';
-import 'Screens/bookmarks.dart';
-import 'Screens/directmessages.dart';
-import 'Screens/explorepage.dart';
-import 'Screens/newsfeedpage.dart';
-import 'Screens/notificationpage.dart';
-import 'Screens/profilepage.dart';
-import 'Screens/settings.dart';
-import 'Screens/trendingpage.dart';
+import 'Backend/datastore.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,45 +26,86 @@ void main() {
   });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   // This widget is the root of your application.
+  //TODO: CHECK IF USER ALREADY LOGGED IN THROUGH SHARED PREFERENCES
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  String user_id = "";
+  Widget payload = Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image(image: AssetImage('assets/env.png')),
+        SizedBox(
+          height: 10.0,
+        ),
+        CircularProgressIndicator(
+          valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
+          backgroundColor: Color.fromARGB(200, 220, 20, 60),
+        )
+      ],
+    ),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  void loadUser() async {
+    String x = await loadSavedUsername();
+    setState(() {
+      if (x == "") {
+        payload = LoginPage();
+      }
+      user_id = x;
+    });
+    print("\nMAINSCREEN: $user_id");
+    setState(() {
+      if (user_id.isNotEmpty) payload = HomePage();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MicroBlogger',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          primarySwatch: Colors.red,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          brightness: Brightness.dark),
-      home: LoginPage(),
-      routes: <String, WidgetBuilder>{
-        '/Login': (BuildContext context) => new LoginPage(),
-        '/Register': (BuildContext context) => new RegisterPage(),
-        '/About': (BuildContext context) => new AboutPage(),
-        '/Bookmarks': (BuildContext context) => new BookmarksPage(),
-        '/DM': (BuildContext context) => new DirectMessagePage(),
-        '/Explore': (BuildContext context) => new ExplorePage(),
-        '/NewsFeed': (BuildContext context) => new NewsFeedPage(),
-        '/Notifications': (BuildContext context) => new NotificationsPage(),
-        '/Profile': (BuildContext context) => new ProfilePage(),
-        '/Settings': (BuildContext context) => new SettingsPage(),
-        '/Trending': (BuildContext context) => new TrendingPage(),
-        '/Chat': (BuildContext context) => new ChatScreen(),
+        title: 'MicroBlogger',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+            primarySwatch: Colors.red,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+            brightness: Brightness.dark),
+        routes: <String, WidgetBuilder>{
+          //General Screens
+          '/About': (BuildContext context) => new AboutPage(),
+          '/NewsFeed': (BuildContext context) => new NewsFeedPage(),
+          '/Login': (BuildContext context) => new LoginPage(),
+          '/Register': (BuildContext context) => new RegisterPage(),
+          '/Settings': (BuildContext context) => new SettingsPage(),
+          '/Explore': (BuildContext context) => new ExplorePage(),
 
-        //Composers
-        '/MicroBlogComposer': (BuildContext context) => new MicroBlogComposer(),
-        '/ShareableComposer': (BuildContext context) => new ShareableComposer(),
-        '/BlogComposer': (BuildContext context) => new BlogComposer(),
-        '/PollComposer': (BuildContext context) => new PollComposer(),
-        '/TimelineComposer': (BuildContext context) => new TimelineComposer(),
+          //User screens
+          '/HomePage': (BuildContext context) => new HomePage(),
+          '/ProfilePage': (BuildContext context) =>
+              new ProfilePage(currentUser['user']['username']),
+          '/Bookmarks': (BuildContext context) => new BookmarksPage(),
+          '/EditProfile': (BuildContext context) => new EditProfilePage(),
+          '/Notifications': (BuildContext context) => new NotificationsPage(),
 
-        //Viewers
-        '/MicroBlogViewer': (BuildContext context) => new MicroBlogViewer(),
-        '/ReshareViewer': (BuildContext context) => new MicroBlogViewer(),
-        '/BlogViewer': (BuildContext context) => new BlogViewer(),
-        '/TimelineViewer': (BuildContext context) => new TimelineViewer(),
-      },
-    );
+          //Composers
+          '/MicroBlogComposer': (BuildContext context) =>
+              new MicroBlogComposer(),
+          '/ShareableComposer': (BuildContext context) =>
+              new ShareableComposer(),
+          '/BlogComposer': (BuildContext context) => new BlogComposer(),
+          '/PollComposer': (BuildContext context) => new PollComposer(),
+          '/TimelineComposer': (BuildContext context) => new TimelineComposer(),
+        },
+        home: payload);
   }
 }

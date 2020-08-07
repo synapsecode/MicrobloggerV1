@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Backend/server.dart';
 
 class PollComposer extends StatefulWidget {
   const PollComposer({Key key}) : super(key: key);
@@ -47,9 +48,11 @@ class _PollComposerState extends State<PollComposer> {
           Container(
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
-              onPressed: () {
+              onPressed: () async {
                 print(pollItems);
                 print(content);
+                await createpoll(content, pollItems);
+                Navigator.pushNamed(context, '/HomePage');
               },
               child: Text("Publish"),
               color: Colors.black,
@@ -88,7 +91,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
   Widget build(BuildContext context) {
     return Column(children: [
       Flexible(
-        flex: 2,
+        flex: 1,
         child: Card(
             color: Colors.black12,
             child: Padding(

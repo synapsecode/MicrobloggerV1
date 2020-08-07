@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Backend/server.dart';
 
 class BlogComposer extends StatefulWidget {
   const BlogComposer({Key key}) : super(key: key);
@@ -37,9 +38,11 @@ class _BlogComposerState extends State<BlogComposer> {
             Container(
               margin: EdgeInsets.all(10.0),
               child: RaisedButton(
-                onPressed: () {
+                onPressed: () async {
                   print(blogName);
                   print(content);
+                  await createBlog(content, blogName);
+                  Navigator.pushNamed(context, '/HomePage');
                   //upload
                 },
                 child: Text("Publish"),
@@ -87,21 +90,20 @@ class _ComposerComponentState extends State<ComposerComponent> {
           ),
         ),
       ),
-      Flexible(
-        child: Card(
-            color: Colors.black12,
-            child: Padding(
-              padding: EdgeInsets.all(12.0),
-              child: TextField(
-                onChanged: (x) {
-                  widget.contentUpdater("$x");
-                },
-                maxLines: 45,
-                decoration:
-                    InputDecoration.collapsed(hintText: "Start Blogging!"),
-              ),
-            )),
-      ),
+      Card(
+          color: Colors.black12,
+          child: Padding(
+            padding: EdgeInsets.all(12.0),
+            child: TextField(
+              style: TextStyle(fontSize: 19.0),
+              onChanged: (x) {
+                widget.contentUpdater("$x");
+              },
+              maxLines: 45,
+              decoration:
+                  InputDecoration.collapsed(hintText: "Start Blogging!"),
+            ),
+          )),
     ]);
   }
 }

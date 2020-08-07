@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Backend/server.dart';
 
 class CommentComposer extends StatefulWidget {
   final post;
@@ -9,12 +10,12 @@ class CommentComposer extends StatefulWidget {
 }
 
 class _CommentComposerState extends State<CommentComposer> {
-  String commentName = "";
+  String commentContent = "";
   bool isFact = false;
 
   void updateComment(x) {
     setState(() {
-      commentName = x;
+      commentContent = x;
     });
   }
 
@@ -40,13 +41,15 @@ class _CommentComposerState extends State<CommentComposer> {
           Container(
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
-              onPressed: () {
+              onPressed: () async {
                 print(widget.post);
                 print(isFact);
-                print(commentName);
-
+                print(commentContent);
+                String category = (isFact) ? "Fact" : "Opinion";
+                await addCommentToPost(widget.post['id'], widget.post['type'],
+                    commentContent, category);
                 //upload
-                Navigator.pop(context);
+                Navigator.pushNamed(context, '/HomePage');
               },
               child: Text("Publish"),
               color: Colors.black,
@@ -83,6 +86,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
                   widget.commentUpdater("$x");
                 },
                 maxLines: 45,
+                style: TextStyle(fontSize: 19.0),
                 decoration:
                     InputDecoration.collapsed(hintText: "Start Commenting"),
               ),
