@@ -427,7 +427,7 @@ def unresharepost():
 	allreshares = [*ReshareWithComment.query.all(), *SimpleReshare.query.all()]
 	for i in allreshares:
 		if(host_id == i.host_id):
-			if(i.post_type == "ReshareWithComment"):
+			if(i.post_type == "ResharedWithComment"):
 				rwc = ReshareWithComment.query.filter_by(author=user, host_id=host_id).first()
 				post.unreshare(user=user, post=rwc)
 				db.session.delete(rwc)
@@ -439,6 +439,9 @@ def unresharepost():
 				db.session.delete(sr)
 				db.session.commit()
 				print(f"{user} unreshared post: {post} => {sr}")
+	# robj = ResharedPosts.query.filter_by(og_post_id=host_id, user=author).first()
+	# db.session.delete(robj)
+	# db.session.commit()
 	return jsonify({
 		'message':'Unreshared Post' 
 	})
@@ -614,7 +617,7 @@ def getUserData(username):
 			if(post):
 				if(post.post_type == 'SimpleReshare'):
 					reshared.append(simpleReshare(user, post))
-				elif(post.post_type == 'ReshareWithComment'):
+				elif(post.post_type == 'ResharedWithComment'):
 					reshared.append(reshareWithComment(user, post))
 
 	#Get posts

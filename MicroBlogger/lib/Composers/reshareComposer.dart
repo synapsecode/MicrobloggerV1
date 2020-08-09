@@ -78,11 +78,6 @@ class _ReshareComposerState extends State<ReshareComposer> {
             child: RaisedButton(
               onPressed: () async {
                 String category = (isFact) ? "Fact" : "Opinion";
-                // print(widget.postObject['id']);
-                // print(widget.postObject['type']);
-                // print("ResharedWithComment");
-                // print(content);
-                // print(category);
                 await resharePost(widget.postObject['id'],
                     widget.postObject['type'], "ResharedWithComment",
                     content: content, category: category);

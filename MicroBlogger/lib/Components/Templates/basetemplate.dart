@@ -301,7 +301,7 @@ class _ActionBarState extends State<ActionBar> {
                             )));
               });
               print(
-                  "Initiated ReshareWithComment for this post by currentUser (${currentUser['username']})");
+                  "Initiated ResharedWithComment for this post by currentUser (${currentUser['username']})");
             },
             color: Colors.white10,
             child: Text("Reshare with Comment",
@@ -462,7 +462,7 @@ class _ActionBarState extends State<ActionBar> {
                   onTap: () {
                     print(widget.post);
                     if (widget.post['type'] == 'microblog' ||
-                        widget.post['type'] == 'ReshareWithComment') {
+                        widget.post['type'] == 'ResharedWithComment') {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                         return BaseViewer(

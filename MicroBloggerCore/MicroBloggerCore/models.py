@@ -442,7 +442,7 @@ class ReshareWithComment(db.Model):
 	host_type = db.Column(db.String)
 
 	def __init__(self, content, category, author, host):
-		self.post_type = 'ReshareWithComment'
+		self.post_type = 'ResharedWithComment'
 		self.post_id = str(uuid.uuid4())
 		self.content = content
 		self.category = category
@@ -468,7 +468,7 @@ class ReshareWithComment(db.Model):
 			db.session.commit()
 		
 	def __repr__(self):
-		return f"ReshareWithComment({self.post_id} -> {self.host_id})"
+		return f"ResharedWithComment({self.post_id} -> {self.host_id})"
 
 class LikedPosts(db.Model):
 	id = db.Column(db.Integer, primary_key=True)

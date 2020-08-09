@@ -102,11 +102,6 @@ class _FeedState extends State<Feed> {
                         postObject: snapshot.data[index],
                       );
                       break;
-                    case "ReshareWithComment":
-                      output = ReshareWithComment(
-                        postObject: snapshot.data[index],
-                      );
-                      break;
                     case "SimpleReshare":
                       output = SimpleReshare(
                         postObject: snapshot.data[index],
