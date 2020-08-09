@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:MicroBlogger/Backend/server.dart';
 import 'package:MicroBlogger/Screens/profile.dart';
 import 'package:MicroBlogger/Views/blog_viewer.dart';
@@ -6,6 +8,7 @@ import 'package:MicroBlogger/Views/timeline_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'basetemplate.dart';
+import '../../Backend/datastore.dart';
 
 class MicroBlogPost extends StatelessWidget {
   final postObject;
@@ -55,7 +58,6 @@ class PollPost extends StatefulWidget {
 }
 
 class _PollPostState extends State<PollPost> {
-  bool isVoted;
   int votedFor;
   @override
   void initState() {
@@ -88,6 +90,7 @@ class _PollPostState extends State<PollPost> {
                           widget.postObject['options'].indexOf(x).toString());
                       setState(() {
                         votedFor = widget.postObject['options'].indexOf(x);
+                        x['count']++;
                       });
                       widget.postObject['votedFor'] = votedFor;
                     } else
@@ -95,7 +98,18 @@ class _PollPostState extends State<PollPost> {
                           msg: "Already Voted",
                           backgroundColor: Color.fromARGB(200, 220, 20, 60));
                   },
-                  child: Text(x['name']),
+                  child: (votedFor != -1)
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("${x['name']}"),
+                            Text(
+                              " (${x['count']})",
+                              style: TextStyle(color: Colors.white30),
+                            )
+                          ],
+                        )
+                      : Text("${x['name']}"),
                 ))
               ]);
             }).toList(),

@@ -1,5 +1,6 @@
 import 'package:MicroBlogger/Screens/editprofile.dart';
 import 'package:MicroBlogger/Screens/homepage.dart';
+import 'package:MicroBlogger/Screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../Backend/datastore.dart';
@@ -65,9 +66,20 @@ class MainAppDrawer extends StatelessWidget {
             new SizedBox(
               height: 270.0,
               child: UserAccountsDrawerHeader(
-                currentAccountPicture: CircleAvatar(
-                    radius: 20,
-                    backgroundImage: NetworkImage("${user['icon']}")),
+                currentAccountPicture: InkWell(
+                  onTap: () {
+                    // print(postObject['author']['username']);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfilePage(
+                                  user['username'],
+                                )));
+                  },
+                  child: CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage("${user['icon']}")),
+                ),
                 accountName: Text("${user['name']}",
                     style: TextStyle(
                       fontSize: 20.0,
@@ -246,14 +258,17 @@ class CirclularLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
-            backgroundColor: Color.fromARGB(200, 220, 20, 60),
-          )
-        ],
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 25.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
+              backgroundColor: Color.fromARGB(200, 220, 20, 60),
+            )
+          ],
+        ),
       ),
     );
   }

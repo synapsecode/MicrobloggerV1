@@ -1,4 +1,5 @@
 import 'package:MicroBlogger/Backend/server.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../Components/Templates/postTemplates.dart';
 import 'package:flutter/material.dart';
@@ -81,6 +82,10 @@ class _ReshareComposerState extends State<ReshareComposer> {
                 await resharePost(widget.postObject['id'],
                     widget.postObject['type'], "ResharedWithComment",
                     content: content, category: category);
+                Fluttertoast.showToast(
+                  msg: "Reshared Post",
+                  backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                );
                 Navigator.pushNamed(context, '/HomePage');
               },
               child: Text("Publish"),

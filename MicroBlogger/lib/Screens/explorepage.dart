@@ -119,9 +119,15 @@ class ExploreMicroblogs extends StatelessWidget {
                     shrinkWrap: true,
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
-                      return MicroBlogPost(
-                        postObject: snapshot.data[index],
-                      );
+                      if (snapshot.data[index]['type'] == 'microblog') {
+                        return MicroBlogPost(
+                          postObject: snapshot.data[index],
+                        );
+                      } else {
+                        return ReshareWithComment(
+                          postObject: snapshot.data[index],
+                        );
+                      }
                     }));
           } else {
             return CirclularLoader();
@@ -186,10 +192,10 @@ class _ExplorerState extends State<Explorer> {
           child: new TabBar(
             controller: widget._controller,
             tabs: [
+              new Tab(icon: new Icon(Icons.clear_all)),
               new Tab(icon: new Icon(Icons.content_copy)),
-              new Tab(icon: new Icon(Icons.group)),
+              new Tab(icon: new Icon(Icons.timeline)),
               new Tab(icon: new Icon(Icons.poll)),
-              new Tab(icon: new Icon(Icons.check_box)),
             ],
           ),
         ),

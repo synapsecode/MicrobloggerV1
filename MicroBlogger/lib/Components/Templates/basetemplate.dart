@@ -6,6 +6,7 @@ import 'package:MicroBlogger/Screens/editprofile.dart';
 import 'package:MicroBlogger/Screens/homepage.dart';
 import 'package:MicroBlogger/Screens/profile.dart';
 import 'package:MicroBlogger/Views/blog_viewer.dart';
+import 'package:MicroBlogger/Views/timeline_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../Backend/datastore.dart';
@@ -126,7 +127,6 @@ class _BasicTemplateState extends State<BasicTemplate> {
 class TopBar extends StatelessWidget {
   final postObject;
   const TopBar({Key key, this.postObject}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -153,7 +153,6 @@ class TopBar extends StatelessWidget {
             children: [
               Text(
                 "${postObject['author']['name']}",
-                overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 20.0),
               ),
               Row(
@@ -196,10 +195,83 @@ class TopBar extends StatelessWidget {
                       width: 10,
                     ),
                   ],
-                  InkWell(
-                    onTap: () => print("More clicked"),
-                    child: Icon(Icons.arrow_drop_down),
-                  )
+                  if (postObject['author']['username'] ==
+                      currentUser['user']['username']) ...[
+                    ConstrainedBox(
+                        constraints: new BoxConstraints(
+                          maxHeight: 20.0,
+                          maxWidth: 30.0,
+                        ),
+                        child: PopupMenuButton(
+                            padding: EdgeInsets.zero,
+                            icon: Icon(Icons.arrow_drop_down),
+                            onSelected: (x) async {
+                              switch (x) {
+                                case "del":
+                                  showDialog(
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          content: Text(
+                                              "Are you sure you want to delete this post? This action is irreversible and would result in the post being permanantly erased"),
+                                          title: Text("Delete Post"),
+                                          actions: [
+                                            FlatButton(
+                                              child: Text("Delete"),
+                                              onPressed: () async {
+                                                print("Deleting Post...");
+                                                await deletePost(
+                                                    postObject['id'],
+                                                    postObject['type']);
+                                                print("Deleted Post");
+                                                Fluttertoast.showToast(
+                                                  msg: "Deleted Post",
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                          200, 220, 20, 60),
+                                                );
+                                                Navigator.pushReplacementNamed(
+                                                    context, '/HomePage');
+                                              },
+                                            ),
+                                            FlatButton(
+                                              child: Text("Cancel"),
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                            )
+                                          ],
+                                        );
+                                      },
+                                      context: context);
+                                  break;
+                                case "unreshare":
+                                  print("unresharing post");
+                                  await unresharePost(postObject['child']['id'],
+                                      postObject['child']['type']);
+                                  print("Unreshared post");
+                                  Fluttertoast.showToast(
+                                    msg: "Unreshared Post",
+                                    backgroundColor:
+                                        Color.fromARGB(200, 220, 20, 60),
+                                  );
+                                  Navigator.pushReplacementNamed(
+                                      context, '/HomePage');
+                                  break;
+                                default:
+                                  print("Invalid option");
+                              }
+                            },
+                            itemBuilder: (context) {
+                              return [
+                                (postObject['type'] != "ResharedWithComment")
+                                    ? PopupMenuItem(
+                                        value: "del",
+                                        child: Text("Delete Post"))
+                                    : PopupMenuItem(
+                                        value: "unreshare",
+                                        child: Text("Unreshare Post"))
+                              ];
+                            })),
+                  ],
                 ],
               ),
             ],
@@ -256,14 +328,22 @@ class _ActionBarState extends State<ActionBar> {
 
   toggleReshare() async {
     setState(() {
-      _reshared = !_reshared;
-      reshareCounter = (!_reshared) ? --reshareCounter : ++reshareCounter;
       widget.post['reshares'] = reshareCounter;
       widget.post['isReshared'] = _reshared;
     });
-    if (!_reshared) {
+    if (_reshared) {
       //TODO: Implement RWC Unshare
       await unresharePost(widget.post['id'], widget.post['type']);
+      setState(() {
+        _reshared = !_reshared;
+        reshareCounter = (!_reshared) ? --reshareCounter : ++reshareCounter;
+        widget.post['reshares'] = reshareCounter;
+        widget.post['isReshared'] = _reshared;
+      });
+      Fluttertoast.showToast(
+        msg: "Unreshared Post",
+        backgroundColor: Color.fromARGB(200, 220, 20, 60),
+      );
       print(
           "${widget.post['id']}, ${widget.post['type']}, ${widget.post['author']['username']}");
       return;
@@ -280,7 +360,13 @@ class _ActionBarState extends State<ActionBar> {
                   _reshared = !_reshared;
                   reshareCounter =
                       (!_reshared) ? --reshareCounter : ++reshareCounter;
+                  widget.post['reshares'] = reshareCounter;
+                  widget.post['isReshared'] = _reshared;
                 });
+                Fluttertoast.showToast(
+                  msg: "Reshared Post",
+                  backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                );
               },
               color: Colors.white10,
               child: Text("Reshare", style: TextStyle(color: Colors.white))),
@@ -293,6 +379,8 @@ class _ActionBarState extends State<ActionBar> {
                 _reshared = !_reshared;
                 reshareCounter =
                     (!_reshared) ? --reshareCounter : ++reshareCounter;
+                widget.post['reshares'] = reshareCounter;
+                widget.post['isReshared'] = _reshared;
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -459,20 +547,41 @@ class _ActionBarState extends State<ActionBar> {
                 style: TextStyle(color: Colors.white24),
               ),
               InkWell(
-                  onTap: () {
+                  onTap: () async {
+                    print("Redirecting to Parent Post");
                     print(widget.post);
-                    if (widget.post['type'] == 'microblog' ||
-                        widget.post['type'] == 'ResharedWithComment') {
+                    Map post = await getSpecificPost(
+                        widget.post['parent_post_id'],
+                        widget.post['parent_post_type']);
+                    print("POSTTT: $post");
+                    if (widget.post['parent_post_type'] == 'microblog' ||
+                        widget.post['parent_post_type'] ==
+                            'ResharedWithComment') {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                         return BaseViewer(
-                          postObject: widget.post,
+                          postObject: post,
+                        );
+                      }));
+                    } else if (widget.post['parent_post_type'] == 'timeline') {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return TimelineViewer(
+                          postObject: post,
+                        );
+                      }));
+                    } else if (widget.post['parent_post_type'] == 'blog') {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return BlogViewer(
+                          postObject: post,
                         );
                       }));
                     }
                   },
-                  child:
-                      Text("Parent Post", style: TextStyle(color: Colors.blue)))
+                  child: InkWell(
+                      child: Text("Parent Post",
+                          style: TextStyle(color: Colors.blue))))
             ]
           ],
         ));

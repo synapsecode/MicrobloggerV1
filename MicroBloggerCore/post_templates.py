@@ -1,5 +1,5 @@
 #TODO Post Age helper function caluclator
-from MicroBloggerCore.models import db, MicroBlogPost, BlogPost, ShareablePost, PollPost, TimelinePost
+from MicroBloggerCore.models import db, MicroBlogPost, BlogPost, ShareablePost, PollPost, TimelinePost, ReshareWithComment
 from helperfunctions import calculate_post_age
 
 def userTemplate(user_record):
@@ -20,8 +20,24 @@ def userTemplate(user_record):
 	}
 
 def comment(user, c):
+	postID = None
+	postType = None
+	if(c.microblog_pid):
+		postID = MicroBlogPost.query.filter_by(id=c.microblog_pid).first().post_id
+		postType = 'microblog'
+	elif(c.blog_pid):
+		postID = BlogPost.query.filter_by(id=c.blog_pid).first().post_id
+		postType = 'blog'
+	elif(c.timeline_pid):
+		postID = TimelinePost.query.filter_by(id=c.timeline_pid).first().post_id
+		postType = 'timeline'
+	elif(c.rwc_pid):
+		postID = ReshareWithComment.query.filter_by(id=c.rwc_pid).first().post_id
+		postType = 'ResharedWithComment'
 	return {
 		'cid': c.comment_id,
+		'parent_post_type':postType,
+		'parent_post_id':postID,
 		'author': {
 			'name': (c.author.name) if (c.author.name != None) else "Default User",
 			'username': c.author.username,

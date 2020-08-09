@@ -91,7 +91,7 @@ def getprofile(myusername, username):
 		return jsonify({	
 			'code': 'S1',
 			'user': userTemplate(user_record),
-			'posts': getUserData(username),
+			'posts': getUserData(username, my_user_record),
 			'isFollowing': isFollowing
 		})
 	else:
@@ -313,6 +313,28 @@ def getpostcomments():
 			'comments': get_comments_from_post(user, post)
 		})
 
+@app.route('/getspecificpost', methods=['POST'])
+def getspecificmicroblog():
+	data = request.get_json()
+	username = data['username']
+	post_id = data['post_id']
+	post_type = data['post_type']
+	user = User.query.filter_by(username=username).first()
+	post = getPost(post_type, post_id)
+	p = None
+	print(post_type, post_id, post)
+	if(post_type == 'microblog'):
+		p = microblog(user, post)
+	elif(post_type == 'blog'):
+		p = blog(user, post)
+	elif(post_type == 'timeline'):
+		p = timeline(user, post)
+	elif(post_type == 'ResharedWithComment'):
+		p = reshareWithComment(user, post)
+	return jsonify({
+			'post': p
+		})
+
 @app.route('/getblogbody', methods=['POST'])
 def getblogbody():
 	data = request.get_json()
@@ -430,6 +452,9 @@ def unresharepost():
 			if(i.post_type == "ResharedWithComment"):
 				rwc = ReshareWithComment.query.filter_by(author=user, host_id=host_id).first()
 				post.unreshare(user=user, post=rwc)
+				for c in rwc.comments:
+					db.session.delete(c)
+				db.session.commit()
 				db.session.delete(rwc)
 				db.session.commit()
 				print(f"{user} unreshared post: {post} => {rwc}")
@@ -439,9 +464,6 @@ def unresharepost():
 				db.session.delete(sr)
 				db.session.commit()
 				print(f"{user} unreshared post: {post} => {sr}")
-	# robj = ResharedPosts.query.filter_by(og_post_id=host_id, user=author).first()
-	# db.session.delete(robj)
-	# db.session.commit()
 	return jsonify({
 		'message':'Unreshared Post' 
 	})
@@ -508,7 +530,11 @@ def deletepost():
 	user = User.query.filter_by(username=username).first()
 	post = getPost(post_type, post_id)
 
-	if(post.author_id == user.id):
+	if(post.author.id == user.id):
+		if(post_type != "poll" and post_type != "shareable"):
+			for c in post.comments:
+				db.session.delete(c)
+			db.session.commit()
 		db.session.delete(post)
 		db.session.commit()
 	else:
@@ -602,7 +628,7 @@ def exploreshareablesandpolls(username):
 	})
 #--------------------------------------------------EXPLORE--------------------------------------------------
 
-def getUserData(username):
+def getUserData(username, currentuser):
 	user = User.query.filter_by(username=username).first()
 	#Get Reshares
 	r_ids = [x.reshared_post_id for x in user.reshared_posts]
@@ -626,7 +652,7 @@ def getUserData(username):
 	[blogandtimelines.append(blog_skin(user, x)) for x in user.my_blogs]
 	[blogandtimelines.append(timeline_skin(user, x)) for x in user.my_timelines]
 	[pollsandshareables.append(shareable(user, x)) for x in user.my_shareables]
-	[pollsandshareables.append(poll(user, x)) for x in user.my_polls]
+	[pollsandshareables.append(poll(currentuser, x)) for x in user.my_polls]
 
 	return {
 		'mymicroblogsandcomments': mbandcomments,

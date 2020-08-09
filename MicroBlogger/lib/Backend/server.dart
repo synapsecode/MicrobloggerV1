@@ -214,6 +214,24 @@ getBlogData(post) async {
   }
 }
 
+getSpecificPost(post_id, post_type) async {
+  final response = await http.post(
+    '$serverURL/getspecificpost',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'username': currentUser['user']['username'],
+      'post_type': post_type,
+      'post_id': post_id
+    }),
+  );
+  if (response.statusCode == 200) {
+    Map x = json.decode(response.body);
+    return x['post'];
+  }
+}
+
 getTimelineData(post) async {
   final response = await http.post(
     '$serverURL/gettimelinebody',
@@ -439,6 +457,7 @@ deleteCommentFromPost(comment_id) async {
 }
 
 deletePost(post_id, post_type) async {
+  print("VAL: ${post_id} ${post_type}");
   final response = await http.post(
     '$serverURL/deletepost',
     headers: <String, String>{

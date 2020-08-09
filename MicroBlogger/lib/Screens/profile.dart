@@ -110,8 +110,10 @@ class _ProfileAppBodyState extends State<ProfileAppBody>
       StatisticsBar(),
       //SizedBox(height: 20.0),
       BioCard(),
-      MyPostView(
-        controller: _controller,
+      Container(
+        child: MyPostView(
+          controller: _controller,
+        ),
       ),
     ]);
   }
@@ -330,80 +332,86 @@ class _MyPostViewState extends State<MyPostView> {
     blogandTimelineFeed.shuffle();
     reshareFeed.shuffle();
 
-    return Container(
-        color: Colors.black,
-        child: Column(
-          children: <Widget>[
-            new Container(
-              decoration:
-                  new BoxDecoration(color: Theme.of(context).primaryColor),
-              child: new TabBar(
-                controller: widget._controller,
-                tabs: [
-                  new Tab(icon: new Icon(Icons.content_copy)),
-                  new Tab(icon: new Icon(Icons.group)),
-                  new Tab(icon: new Icon(Icons.poll)),
-                  new Tab(icon: new Icon(Icons.check_box)),
-                ],
-              ),
-            ),
-            new SizedBox(
-              height: 400.0,
-              child: Container(
-                padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                child: new TabBarView(
-                  controller: widget._controller,
-                  children: <Widget>[
-                    ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: microblogFeed.length,
-                        itemBuilder: (context, index) {
-                          return new MicroBlogPost(
-                            postObject: microblogFeed[index],
-                          );
-                        }),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: reshareFeed.length,
-                        itemBuilder: (context, index) {
-                          print(reshareFeed[index]['type']);
-                          if (reshareFeed[index]['type'] == 'SimpleReshare')
-                            return new SimpleReshare(
-                              postObject: reshareFeed[index],
-                            );
-                          else
-                            return new ReshareWithComment(
-                              postObject: reshareFeed[index],
-                            );
-                        }),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: blogandTimelineFeed.length,
-                        itemBuilder: (context, index) {
-                          if (blogandTimelineFeed[index]['type'] == 'blog')
-                            return BlogPost(blogandTimelineFeed[index]);
-                          else
-                            return Timeline(blogandTimelineFeed[index]);
-                        }),
-                    ListView.builder(
-                        //shareables and polls
-                        shrinkWrap: true,
-                        itemCount: othersFeed.length,
-                        itemBuilder: (context, index) {
-                          if (othersFeed[index]['type'] == 'shareable')
-                            return new ShareablePost(
-                              postObject: othersFeed[index],
-                            );
-                          else
-                            return new PollPost(
-                              postObject: othersFeed[index],
-                            );
-                        }),
-                  ],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        new Container(
+          decoration: new BoxDecoration(color: Theme.of(context).primaryColor),
+          child: new TabBar(
+            controller: widget._controller,
+            tabs: [
+              new Tab(icon: new Icon(Icons.clear_all)),
+              new Tab(icon: new Icon(Icons.repeat)),
+              new Tab(icon: new Icon(Icons.content_copy)),
+              new Tab(icon: new Icon(Icons.poll)),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 530.0,
+          child: Container(
+            // transform: Matrix4.translationValues(
+            //           0, -20, 0),
+            child: TabBarView(
+              controller: widget._controller,
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.builder(
+                      itemCount: microblogFeed.length,
+                      itemBuilder: (context, index) {
+                        return new MicroBlogPost(
+                          postObject: microblogFeed[index],
+                        );
+                      }),
                 ),
-              ),
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.builder(
+                      itemCount: reshareFeed.length,
+                      itemBuilder: (context, index) {
+                        if (reshareFeed[index]['type'] == 'SimpleReshare')
+                          return new SimpleReshare(
+                            postObject: reshareFeed[index],
+                          );
+                        else
+                          return new ReshareWithComment(
+                            postObject: reshareFeed[index],
+                          );
+                      }),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.builder(
+                      itemCount: blogandTimelineFeed.length,
+                      itemBuilder: (context, index) {
+                        if (blogandTimelineFeed[index]['type'] == 'blog')
+                          return BlogPost(blogandTimelineFeed[index]);
+                        else
+                          return Timeline(blogandTimelineFeed[index]);
+                      }),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.builder(
+                      itemCount: othersFeed.length,
+                      itemBuilder: (context, index) {
+                        if (othersFeed[index]['type'] == 'shareable')
+                          return new ShareablePost(
+                            postObject: othersFeed[index],
+                          );
+                        else
+                          return new PollPost(
+                            postObject: othersFeed[index],
+                          );
+                      }),
+                ),
+              ],
             ),
-          ],
-        ));
+          ),
+        ),
+      ],
+    );
   }
 }

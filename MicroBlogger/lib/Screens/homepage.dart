@@ -30,7 +30,9 @@ class HomePage extends StatelessWidget {
           ),
           IconButton(
             icon: Icon(Icons.refresh),
-            onPressed: () => print("Refresh"),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/HomePage');
+            },
           ),
           IconButton(
             icon: Icon(Icons.send),
