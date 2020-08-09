@@ -169,11 +169,11 @@ def reshareWithComment(user, post):
 	if(post.host_type == 'microblog'):
 		child = microblog(user, MicroBlogPost.query.filter_by(post_id=post.host_id).first())
 	elif(post.host_type == 'blog'):
-		child = blog(user, BlogPost.query.filter_by(post_id=post.host_id).first())
+		child = blog_skin(user, BlogPost.query.filter_by(post_id=post.host_id).first())
 	if(post.host_type == 'shareable'):
 		child = shareable(user, ShareablePost.query.filter_by(post_id=post.host_id).first())
 	if(post.host_type == 'timeline'):
-		child = timeline(user, TimelinePost.query.filter_by(post_id=post.host_id).first())
+		child = timeline_skin(user, TimelinePost.query.filter_by(post_id=post.host_id).first())
 	return {
 		'type':'ResharedWithComment',
 		'id': post.post_id,
@@ -243,6 +243,7 @@ def blog_skin(user, post):
 		'id': post.post_id,
 		'background': post.background,
 		'blog_name': post.blog_name,
+		'age': calculate_post_age(post.created_on),
 		'author': {
 			'name': (post.author.name) if (post.author.name != None) else "Default User",
 			'username': post.author.username,

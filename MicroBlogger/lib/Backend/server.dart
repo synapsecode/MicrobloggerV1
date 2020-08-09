@@ -246,7 +246,7 @@ createMicroblog(content, category) async {
       'category': category
     }),
   );
-  print("Microblog Created ${json.decode(response.body)}");
+  print("${json.decode(response.body)}");
 }
 
 createBlog(content, blogName) async {
@@ -261,7 +261,7 @@ createBlog(content, blogName) async {
       'blog_name': blogName
     }),
   );
-  print("Blog Created ${json.decode(response.body)}");
+  print("${json.decode(response.body)}");
 }
 
 createShareable(content, name, link) async {
@@ -277,7 +277,7 @@ createShareable(content, name, link) async {
       'link': link
     }),
   );
-  print("Shareable Created ${json.decode(response.body)}");
+  print("${json.decode(response.body)}");
 }
 
 createpoll(content, options) async {
@@ -292,7 +292,7 @@ createpoll(content, options) async {
       'options': options
     }),
   );
-  print("Poll Created ${json.decode(response.body)}");
+  print("${json.decode(response.body)}");
 }
 
 createTimeline(timelineName, events) async {
@@ -307,7 +307,7 @@ createTimeline(timelineName, events) async {
       'events': events
     }),
   );
-  print("Timeline Created ${json.decode(response.body)}");
+  print("${json.decode(response.body)}");
 }
 //------------------------------------------COMPOSERS----------------------------------------------
 

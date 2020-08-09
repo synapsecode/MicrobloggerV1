@@ -82,8 +82,7 @@ def getprofile(myusername, username):
 	my_user_record = User.query.filter_by(username=myusername).first()
 	user_record = User.query.filter_by(username=username).first()
 	isFollowing = False
-	print(user_record)
-	print(my_user_record)
+	print(f"{my_user_record} accessed {user_record}")
 	if(my_user_record and user_record):
 		for i in user_record.my_followers:
 			if(i == my_user_record.username):
@@ -109,7 +108,6 @@ def getprofiledetails(username):
 			'user': userTemplate(user_record),
 		})
 
-
 #Follow
 @app.route('/follow_profile', methods=['POST'])
 def follow_profile():
@@ -118,15 +116,10 @@ def follow_profile():
 	following_username = data['following_username']
 	myuser = User.query.filter_by(username=username).first()
 	following_user = User.query.filter_by(username=following_username).first()
-
 	myuser.followed.append(following_user)
 	db.session.commit()
-
 	return jsonify({
-		'myfollowing': myuser.my_following,
-		'myfollowers':  myuser.my_followers,
-		'hostfollowing': following_user.my_following,
-		'hostfollowers':  following_user.my_followers,
+		'message' : 'Started Following!'
 	})
 
 #Unfollow
@@ -137,15 +130,10 @@ def unfollow_profile():
 	following_username = data['following_username']
 	myuser = User.query.filter_by(username=username).first()
 	following_user = User.query.filter_by(username=following_username).first()
-
 	myuser.followed.remove(following_user)
 	db.session.commit()
-
 	return jsonify({
-		'myfollowing': myuser.my_following,
-		'myfollowers':  myuser.my_followers,
-		'hostfollowing': following_user.my_following,
-		'hostfollowers':  following_user.my_followers,
+		'message' : 'Stopped Following!'
 	})
 
 @app.route('/editprofile', methods=['POST'])
@@ -173,7 +161,6 @@ def editprofile():
 		'profile': userTemplate(user)
 	})
 	
-
 @app.route('/feed', methods=['POST'])
 def feed():
 	#TODO: Make it more efficient!! URGENT!!!!
@@ -217,7 +204,7 @@ def create_microblog():
 	db.session.add(mxb)
 	db.session.commit()
 	return jsonify({
-		'microblog': microblog(user, mxb)
+		'message': 'created microblog',
 	})
 
 @app.route('/createblog', methods=['POST'])
@@ -233,7 +220,7 @@ def create_blog():
 	db.session.add(xb)	
 	db.session.commit()
 	return jsonify({
-		'blog': blog(user, xb)
+		'message': 'created blog',
 	})
 
 @app.route('/createshareable', methods=['POST'])
@@ -249,7 +236,7 @@ def create_shareable():
 	db.session.add(sb)
 	db.session.commit()
 	return jsonify({
-		'shareable': shareable(user, sb)
+		'message': 'created shareable',
 	})
 
 @app.route('/createpoll', methods=['POST'])
@@ -264,7 +251,7 @@ def create_poll():
 	db.session.add(p)
 	db.session.commit()
 	return jsonify({
-		'poll': poll(user, p)
+		'message': 'created poll',
 	})
 
 @app.route('/createtimeline', methods=['POST'])
@@ -280,7 +267,7 @@ def create_timeline():
 	db.session.add(t)
 	db.session.commit()
 	return jsonify({
-		'timeline': timeline(user, t)
+		'message': 'created timeline',
 	})
 #----------------------------------------------POST COMPOSER-----------------------------------------------
 
@@ -314,7 +301,6 @@ def get_my_blogs_and_timelines():
 		'bookmarked_posts': bookmarked
 	})
 
-
 @app.route('/getpostcomments', methods=['POST'])
 def getpostcomments():
 	data = request.get_json()
@@ -323,7 +309,6 @@ def getpostcomments():
 	post_type = data['post_type']
 	user = User.query.filter_by(username=username).first()
 	post = getPost(post_type, post_id)
-	print(post)
 	return jsonify({
 			'comments': get_comments_from_post(user, post)
 		})
@@ -359,9 +344,9 @@ def likemicrobloggerpost():
 	post_type = data['post_type']
 	post_id = data['post_id']
 	user = User.query.filter_by(username=username).first()
-	print(post_id)
 	post = getPost(post_type, post_id)
 	post.like(user)
+	print(f"{user} liked post: {post}")
 	return jsonify({
 		'message':'Liked Post' 
 	})
@@ -373,9 +358,9 @@ def unlikemicrobloggerpost():
 	post_type = data['post_type']
 	post_id = data['post_id']
 	user = User.query.filter_by(username=username).first()
-	print(post_id)
 	post = getPost(post_type, post_id)
 	post.unlike(user)
+	print(f"{user} unliked post: {post}")
 	return jsonify({
 		'message':'Unliked Post' 
 	})
@@ -415,18 +400,18 @@ def resharepost():
 	content = data['content']
 	category = data['category']
 	reshare_type = data['reshare_type']
-	
 	post = getPost(host_type, host_id)
 	user = User.query.filter_by(username=username).first()
-
 	if(reshare_type == 'ResharedWithComment'):
 		rwc = ReshareWithComment(author=user, host=post, content=content, category=category)
 		db.session.add(rwc)
 		post.reshare(user=user, post=rwc)
+		print(f"{user} reshared post: {post} => {rwc}")
 	else:
 		sr = SimpleReshare(author=user, host=post)
 		db.session.add(sr)
 		post.reshare(user=user, post=sr)
+		print(f"{user} reshared post: {post} => {sr}")
 	return jsonify({
 		'message':'Reshared Post' 
 	})
@@ -447,11 +432,13 @@ def unresharepost():
 				post.unreshare(user=user, post=rwc)
 				db.session.delete(rwc)
 				db.session.commit()
+				print(f"{user} unreshared post: {post} => {rwc}")
 			elif(i.post_type == "SimpleReshare"):
 				sr = SimpleReshare.query.filter_by(author=user, host_id=host_id).first()
 				post.unreshare(user=user, post=sr)
 				db.session.delete(sr)
 				db.session.commit()
+				print(f"{user} unreshared post: {post} => {sr}")
 	return jsonify({
 		'message':'Unreshared Post' 
 	})
@@ -464,7 +451,6 @@ def addcomment():
 	post_id = data['post_id']
 	content = data['content']
 	category = data['category']
-
 	user = User.query.filter_by(username=username).first()
 	post = None
 	c=None
@@ -483,7 +469,7 @@ def addcomment():
 	
 	db.session.add(c)
 	db.session.commit()
-
+	print(f"{user} commented on post: {post} => {c}")
 	return jsonify({
 		'message': 'comment added',
 	})
@@ -504,6 +490,7 @@ def deletecomment():
 		return jsonify({
 			'message':'Cannot delete comment as you do not have the rights to do so' 
 		})
+	print(f"{user} deleted commented on post: {post} => {comment}")
 	return jsonify({
 		'message':'Deleted Comment!' 
 	})
@@ -525,7 +512,7 @@ def deletepost():
 		return jsonify({
 			'message':'Cannot delete post as you do not have the rights to do so' 
 		})
-
+	print(f"{user} deleted post: {post}")
 	return jsonify({
 		'message':'Deleted Post!' 
 	})
@@ -574,6 +561,7 @@ def submit_vote():
 def exploremicroblogs(username):
 	posts = []
 	[posts.append(microblog(x.author, x)) for x in MicroBlogPost.query.all()]
+	[posts.append(reshareWithComment(x.author, x)) for x in ReshareWithComment.query.all()]
 	return jsonify({
 		'length': len(posts),
 		'posts': posts
@@ -611,12 +599,10 @@ def exploreshareablesandpolls(username):
 	})
 #--------------------------------------------------EXPLORE--------------------------------------------------
 
-
 def getUserData(username):
 	user = User.query.filter_by(username=username).first()
 	#Get Reshares
 	r_ids = [x.reshared_post_id for x in user.reshared_posts]
-	print(r_ids)
 	reshared = []
 	mbandcomments = []
 	blogandtimelines = []
@@ -639,16 +625,12 @@ def getUserData(username):
 	[pollsandshareables.append(shareable(user, x)) for x in user.my_shareables]
 	[pollsandshareables.append(poll(user, x)) for x in user.my_polls]
 
-	print(f"PS: {reshared}")
-
 	return {
 		'mymicroblogsandcomments': mbandcomments,
 		'myreshares': reshared,
 		'myblogsandtimelines': blogandtimelines,
 		'mypollsandshareables': pollsandshareables
 	}
-
-
 
 def getPost(post_type, post_id):
 	post = None
@@ -668,11 +650,7 @@ def getPost(post_type, post_id):
 		post = ReshareWithComment.query.filter_by(post_id=post_id).first()
 	elif(post_type == 'comment'):
 		post = Comment.query.filter_by(comment_id=post_id).first()
-		print(post_type, post_id, post)
 	return post
-
-"""
-"""
 
 def delete_all_comments_in_post(post_id):
 	post = None
