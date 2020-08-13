@@ -16,10 +16,12 @@ class User(db.Model):
 	password = db.Column(db.String)
 	name = db.Column(db.String)
 	email = db.Column(db.String)
-	#website = db.Column(db.String)
+	website = db.Column(db.String)
 	icon = db.Column(db.String)
 	background = db.Column(db.String)
 	reputation = db.Column(db.String)
+	basepoints = db.Column(db.String)
+	secondarypoints = db.Column(db.String)
 	#This controlls the follow logic
 	followed = db.relationship(
 		'User', secondary=followers,
@@ -57,7 +59,9 @@ class User(db.Model):
 		self.bio = ''
 		self.location = 'Unspecified Location'
 		self.voted_polls = []
-		#self.website = ''
+		self.website = ''
+		self.basepoints = '0'
+		self.secondarypoints = '0'
 
 	@hybrid_property
 	def my_following(self):

@@ -1,6 +1,7 @@
 import 'package:MicroBlogger/Backend/datastore.dart';
 import 'package:MicroBlogger/Backend/server.dart';
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:MicroBlogger/Screens/browser.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Components/Templates/postTemplates.dart';
@@ -248,19 +249,47 @@ class BioCard extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 10.0),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    Icons.location_on,
-                    color: Colors.white30,
-                    size: 20.0,
+              if (user['user']['location'] != "") ...[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.location_on,
+                      color: Colors.white30,
+                      size: 20.0,
+                    ),
+                    SizedBox(width: 5.0),
+                    Text("${user['user']['location']}",
+                        style: TextStyle(color: Colors.white30))
+                  ],
+                ),
+                SizedBox(height: 5.0),
+              ],
+              if (user['user']['website'] != "") ...[
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => GeneralBrowser(
+                                  link: user['user']['website'],
+                                )));
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.link,
+                        color: Colors.blue,
+                        size: 20.0,
+                      ),
+                      SizedBox(width: 5.0),
+                      Text("${user['user']['website']}",
+                          style: TextStyle(color: Colors.blue))
+                    ],
                   ),
-                  SizedBox(width: 5.0),
-                  Text("${user['user']['location']}",
-                      style: TextStyle(color: Colors.white30))
-                ],
-              ),
+                ),
+              ],
             ],
           ),
         )),
@@ -327,10 +356,6 @@ class _MyPostViewState extends State<MyPostView> {
     List microblogFeed = user['posts']['mymicroblogsandcomments'] ?? [];
     List blogandTimelineFeed = user['posts']['myblogsandtimelines'] ?? [];
     List reshareFeed = user['posts']['myreshares'] ?? [];
-
-    othersFeed.shuffle();
-    blogandTimelineFeed.shuffle();
-    reshareFeed.shuffle();
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,

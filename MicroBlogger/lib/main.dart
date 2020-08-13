@@ -102,9 +102,17 @@ class _MyAppState extends State<MyApp> {
               new MicroBlogComposer(),
           '/ShareableComposer': (BuildContext context) =>
               new ShareableComposer(),
-          '/BlogComposer': (BuildContext context) => new BlogComposer(),
+          '/BlogComposer': (BuildContext context) => new BlogComposer(
+                preExistingState: {'content': "", 'blogName': "", 'cover': ""},
+              ),
           '/PollComposer': (BuildContext context) => new PollComposer(),
-          '/TimelineComposer': (BuildContext context) => new TimelineComposer(),
+          '/TimelineComposer': (BuildContext context) => new TimelineComposer(
+                preExistingState: {
+                  'timelineTitle': "",
+                  'events': [],
+                  'cover': ""
+                },
+              ),
         },
         home: payload);
   }

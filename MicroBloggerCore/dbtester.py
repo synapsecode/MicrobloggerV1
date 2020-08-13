@@ -1,74 +1,74 @@
-from MicroBloggerCore import app, db
-from MicroBloggerCore.models import (User, MicroBlogPost, BlogPost, TimelinePost, ShareablePost, PollPost,Comment,
- SimpleReshare, ReshareWithComment, LikedPosts, BookmarkedPosts)
-from post_templates import microblog, blog, timeline, poll, shareable, reshareWithComment, simpleReshare
-import random
+# from MicroBloggerCore import app, db
+# from MicroBloggerCore.models import (User, MicroBlogPost, BlogPost, TimelinePost, ShareablePost, PollPost,Comment,
+#  SimpleReshare, ReshareWithComment, LikedPosts, BookmarkedPosts)
+# from post_templates import microblog, blog, timeline, poll, shareable, reshareWithComment, simpleReshare
+# import random
 
-print("Creating Database")
-db.drop_all()
-db.create_all()
+# print("Creating Database")
+# db.drop_all()
+# db.create_all()
 
-print("Creating Users (25)")
-u1 = User(username="synapsecode", email="synapsex@gmail.com", password="qwerty")
-u2 = User(username="manashejmadi", email="manashejmadi@gmail.com", password="1qaz2wsx")
-u3 = User(username="3blue1brown", email="3b1b@gmail.com", password="12345")
-u4 = User(username="electroboom", email="mehdiboom@gmail.com", password="kaboom123")
-u5 = User(username="geekdom101", email="geekdombigd@gmail.com", password="kamehameha")
-u6 = User(username="totallynotmark", email="totallynotmark@gmail.com", password="dbsdbzgt")
-u7 = User(username="arvinash", email="arvinash@gmail.com", password="quantum123")
-u8 = User(username="unacademy", email="unacademy@gmail.com", password="jee123")
-u9 = User(username="ISC", email="indianschoolcertificate@gmail.com", password="isc123")
-u10 = User(username="synapsecode", email="synapsex@gmail.com", password="qwerty")
-u11 = User(username="slipknot", email="slipknot@gmail.com", password="slipknot123")
-u12 = User(username="systemofadown", email="systemofadown@gmail.com", password="byop")
-u13 = User(username="teamfourstar", email="tfs@gmail.com", password="senzubean")
-u14 = User(username="nikolatesla", email="nikolatesla@gmail.com", password="tesla123")
-u15 = User(username="aib", email="allindiabakchod@gmail.com", password="aib123")
-u16 = User(username="alberteinstein", email="alberteinstein@gmail.com", password="relativepassword")
-u17 = User(username="richardfeynman", email="richardfeynman@gmail.com", password="okayfeynman")
-u18 = User(username="edison", email="thomasedison@gmail.com", password="thomas123")
-u19 = User(username="flutter", email="googleflutter@gmail.com", password="flutter")
-u20 = User(username="elonmusk", email="elonmusk@gmail.com", password="spacex")
-u21 = User(username="coreytaylor", email="taylorcorey@gmail.com", password="slipknot123")
-u22 = User(username="nilered", email="nilered@gmail.com", password="chemistry")
-u23 = User(username="assassinscreed", email="acreed@gmail.com", password="ac4")
-u24 = User(username="sciencephiletheai", email="sciencephile@gmail.com", password="punymortals")
-u25 = User(username="kurzgesagt", email="kurzgesagt@gmail.com", password="inanutshell")
-addUsers()
-users = [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15, u16, u17, u18, u19, u20, u21, u22, u23, u24, u25]
-ul = list(range(1, users.length+1))
+# print("Creating Users (25)")
+# u1 = User(username="synapsecode", email="synapsex@gmail.com", password="qwerty")
+# u2 = User(username="manashejmadi", email="manashejmadi@gmail.com", password="1qaz2wsx")
+# u3 = User(username="3blue1brown", email="3b1b@gmail.com", password="12345")
+# u4 = User(username="electroboom", email="mehdiboom@gmail.com", password="kaboom123")
+# u5 = User(username="geekdom101", email="geekdombigd@gmail.com", password="kamehameha")
+# u6 = User(username="totallynotmark", email="totallynotmark@gmail.com", password="dbsdbzgt")
+# u7 = User(username="arvinash", email="arvinash@gmail.com", password="quantum123")
+# u8 = User(username="unacademy", email="unacademy@gmail.com", password="jee123")
+# u9 = User(username="ISC", email="indianschoolcertificate@gmail.com", password="isc123")
+# u10 = User(username="synapsecode", email="synapsex@gmail.com", password="qwerty")
+# u11 = User(username="slipknot", email="slipknot@gmail.com", password="slipknot123")
+# u12 = User(username="systemofadown", email="systemofadown@gmail.com", password="byop")
+# u13 = User(username="teamfourstar", email="tfs@gmail.com", password="senzubean")
+# u14 = User(username="nikolatesla", email="nikolatesla@gmail.com", password="tesla123")
+# u15 = User(username="aib", email="allindiabakchod@gmail.com", password="aib123")
+# u16 = User(username="alberteinstein", email="alberteinstein@gmail.com", password="relativepassword")
+# u17 = User(username="richardfeynman", email="richardfeynman@gmail.com", password="okayfeynman")
+# u18 = User(username="edison", email="thomasedison@gmail.com", password="thomas123")
+# u19 = User(username="flutter", email="googleflutter@gmail.com", password="flutter")
+# u20 = User(username="elonmusk", email="elonmusk@gmail.com", password="spacex")
+# u21 = User(username="coreytaylor", email="taylorcorey@gmail.com", password="slipknot123")
+# u22 = User(username="nilered", email="nilered@gmail.com", password="chemistry")
+# u23 = User(username="assassinscreed", email="acreed@gmail.com", password="ac4")
+# u24 = User(username="sciencephiletheai", email="sciencephile@gmail.com", password="punymortals")
+# u25 = User(username="kurzgesagt", email="kurzgesagt@gmail.com", password="inanutshell")
+# addUsers()
+# users = [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15, u16, u17, u18, u19, u20, u21, u22, u23, u24, u25]
+# ul = list(range(1, users.length+1))
 
-print("Adding Arbitrary Follow Relations")
-#Users following -> object
-for user in users:
-	for _ in range(1, random.choice(ul)+1):
-		rx = random.choice(user)
-		if(rx != user and (rx not in set(user.followed))):
-			user.followed.append(rx)
-			print(f"{rx} started following {user}")
-db.session.commit()
+# print("Adding Arbitrary Follow Relations")
+# #Users following -> object
+# for user in users:
+# 	for _ in range(1, random.choice(ul)+1):
+# 		rx = random.choice(user)
+# 		if(rx != user and (rx not in set(user.followed))):
+# 			user.followed.append(rx)
+# 			print(f"{rx} started following {user}")
+# db.session.commit()
 
-#Create MicroBlogs
-addMicroBlogs()
-#Create Blogs
-addBlogs()
-#Create Timelines
-addTimelines()
-#Create Shareables
-addShareables()
-#Create PollPosts
-addPolls()
-#Add Comments
-addComments()
-#ReshareWithComment
-addRWC()
-#SimpleReshare
-addSimpleReshare()
-#LikePosts
-db.session.commit()
-#Bookmark Posts
-db.session.commit()
-"""
+# #Create MicroBlogs
+# addMicroBlogs()
+# #Create Blogs
+# addBlogs()
+# #Create Timelines
+# addTimelines()
+# #Create Shareables
+# addShareables()
+# #Create PollPosts
+# addPolls()
+# #Add Comments
+# addComments()
+# #ReshareWithComment
+# addRWC()
+# #SimpleReshare
+# addSimpleReshare()
+# #LikePosts
+# db.session.commit()
+# #Bookmark Posts
+# db.session.commit()
+
 print("Creating Users")
 myuser = User(username="synapsecode", email="zydbhf@gg.com", password="1qzz2wsx")
 manas = User(username="manashejmadi", email="zydbhf@ff.com", password="1qzz2wsx")
@@ -331,57 +331,55 @@ print("\n\n")
 # db.session.add(v)
 # db.session.commit()
 
-"""
 
+# def addUsers():
+# 	db.session.add(u1)
+# 	db.session.add(u2)
+# 	db.session.add(u3)
+# 	db.session.add(u4)
+# 	db.session.add(u5)
+# 	db.session.add(u6)
+# 	db.session.add(u7)
+# 	db.session.add(u8)
+# 	db.session.add(u9)
+# 	db.session.add(u10)
+# 	db.session.add(u11)
+# 	db.session.add(u12)
+# 	db.session.add(u13)
+# 	db.session.add(u14)
+# 	db.session.add(u15)
+# 	db.session.add(u16)
+# 	db.session.add(u17)
+# 	db.session.add(u18)
+# 	db.session.add(u19)
+# 	db.session.add(u20)
+# 	db.session.add(u21)
+# 	db.session.add(u22)
+# 	db.session.add(u23)
+# 	db.session.add(u24)
+# 	db.session.add(u25)
+# 	db.session.commit()
 
-def addUsers():
-	db.session.add(u1)
-	db.session.add(u2)
-	db.session.add(u3)
-	db.session.add(u4)
-	db.session.add(u5)
-	db.session.add(u6)
-	db.session.add(u7)
-	db.session.add(u8)
-	db.session.add(u9)
-	db.session.add(u10)
-	db.session.add(u11)
-	db.session.add(u12)
-	db.session.add(u13)
-	db.session.add(u14)
-	db.session.add(u15)
-	db.session.add(u16)
-	db.session.add(u17)
-	db.session.add(u18)
-	db.session.add(u19)
-	db.session.add(u20)
-	db.session.add(u21)
-	db.session.add(u22)
-	db.session.add(u23)
-	db.session.add(u24)
-	db.session.add(u25)
-	db.session.commit()
+# def addMicroblog():
+# 	...
 
-def addMicroblog():
-	...
+# def addBlog():
+# 	...
 
-def addBlog():
-	...
+# def addTimeline():
+# 	...
 
-def addTimeline():
-	...
+# def addShareable():
+# 	...
 
-def addShareable():
-	...
+# def addPoll():
+# 	...
 
-def addPoll():
-	...
+# def addRWC():
+# 	...
 
-def addRWC():
-	...
+# def addComments():
+# 	...
 
-def addComments():
-	...
-
-def addSimpleReshare():
-	...
+# def addSimpleReshare():
+# 	...

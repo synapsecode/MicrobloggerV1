@@ -25,6 +25,9 @@ dependencies:
     sdk: flutter
   shared_preferences:
   webview_flutter:
+  font_awesome_flutter:
+  image_cropper: 1.0.2
+  image_picker: 0.6.0+17
   fluttertoast:
   http:
 

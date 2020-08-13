@@ -10,13 +10,13 @@ def userTemplate(user_record):
 		'email': user_record.email,
 		'icon': user_record.icon,
 		'background': user_record.background,
-		'reputation': user_record.reputation,
+		'reputation': user_record.reputation[0 : user_record.reputation.index(".")+2],
 		'followers' : len(user_record.my_followers),
 		'following' : len(user_record.my_following),
 		'created_on' : user_record.created_on,
 		'bio' : (user_record.bio) if (user_record.bio != "") else "Hey! I use MicroBlogger",
-		'location' : user_record.location,
-		#'website': user_record.website
+		'location' : (user_record.location),
+		'website': (user_record.website)
 	}
 
 def comment(user, c):

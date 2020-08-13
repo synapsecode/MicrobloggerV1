@@ -19,3 +19,8 @@ def calculate_post_age(created):
 		age = f"{x[0]} {x[2]}"
 	return age
 
+def caluclate_post_age_delta(created):
+	now = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
+	FMT = "%b %d, %Y %H:%M:%S"
+	tdelta = datetime.strptime(now, FMT) - datetime.strptime(str(created), FMT)
+	return tdelta

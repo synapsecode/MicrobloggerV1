@@ -1,0 +1,29 @@
+POINTS BY CATEGORY
+1. Extremely Low Gain
+	+0.05 : { LIKE, BOOKMARK }
+2. Low Gain
+	+0.1 : {VOTE, V_NEWS, V_PROFILE, OPENT, OPENP, LOGOUT, EXPLORE, SEARCHUSER}
+	+0.2 : {SR,V_SHAREABLE, OPENB }
+	+0.3 : {COMMENT}
+	+0.4 : {SHAREABLE, PERMINUTEUSAGEPOINT, }
+3. Medium Gain
+	+0.5 : {POLL}
+	+0.75: {MICROBLOG}
+4. High Gain
+	+0.9 : {RWC}
+	+1 : {DAILY_LOGIN, TIMELINE, FOLLOW}
+	+1.5 : {BLOG}
+5. Extremely High Gain:
+	+2 : {FOLLOWED}
+
+6. Loss:
+	-0.1: {LOGOUT}
+	-0.8: {UNRESHARE}
+	-1 : {DELETEPOST, DELETECOMMENT}
+	-1.5: {UNFOLLOW}
+	-3: {UNFOLLOWED}
+
+TODO: Future -> Based on following / unfollowing rate, No.of Tags, Search Trends
+BASE REPUTATION: (No of likes(X), Number of Followers(y), No of Reshares(z), No. of posts(w)) / 4
+f: you following
+((x/w) + (nf/f) + (z/w) + (c/w))/5

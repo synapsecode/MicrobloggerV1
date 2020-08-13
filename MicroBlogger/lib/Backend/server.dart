@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'datastore.dart';
+import 'package:http_parser/http_parser.dart';
+import '../Backend/datastore.dart';
 
 login(username, password) async {
   final response = await http.post(
@@ -77,7 +80,7 @@ loadMyProfile(username) async {
   }
 }
 
-updateProfile(name, location, bio, email) async {
+updateProfile(name, location, bio, email, website) async {
   final response = await http.post(
     '$serverURL/editprofile',
     headers: <String, String>{
@@ -88,12 +91,51 @@ updateProfile(name, location, bio, email) async {
       'email': email,
       'location': location,
       'bio': bio,
-      'name': name
+      'name': name,
+      'website': website,
     }),
   );
   if (response.statusCode == 200) {
     Map obj = json.decode(response.body);
     print("Saving User Object");
+    await saveUserLoginInfo(currentUser['user']['username']);
+  }
+}
+
+addDisplayPicture(dpFile) async {
+  var url = Uri.parse(
+      "$serverURL/updatedisplaypicture/${currentUser['user']['username']}");
+  var request = http.MultipartRequest('POST', url);
+  print("APTH: " + dpFile.path);
+  request.files.add(await http.MultipartFile.fromPath('picture', dpFile.path));
+  var response = await request.send();
+  if (response.statusCode == 200) {
+    print(response);
+    await saveUserLoginInfo(currentUser['user']['username']);
+  }
+}
+
+addCoverPicture(cFile) async {
+  var url = Uri.parse("$serverURL/uploadcover");
+  var request = http.MultipartRequest('POST', url);
+  print("APTH: " + cFile.path);
+  request.files.add(await http.MultipartFile.fromPath('picture', cFile.path));
+  var response = await request.send();
+  if (response.statusCode == 200) {
+    var rx = await http.Response.fromStream(response);
+    return jsonDecode(rx.body)['link'] ?? null;
+  }
+}
+
+addBackground(bgFile) async {
+  var url = Uri.parse(
+      "$serverURL/updatebackground/${currentUser['user']['username']}");
+  var request = http.MultipartRequest('POST', url);
+  print("APTH: " + bgFile.path);
+  request.files.add(await http.MultipartFile.fromPath('picture', bgFile.path));
+  var response = await request.send();
+  if (response.statusCode == 200) {
+    print(response);
     await saveUserLoginInfo(currentUser['user']['username']);
   }
 }
@@ -267,7 +309,7 @@ createMicroblog(content, category) async {
   print("${json.decode(response.body)}");
 }
 
-createBlog(content, blogName) async {
+createBlog(content, blogName, {cover}) async {
   final response = await http.post(
     '$serverURL/createblog',
     headers: <String, String>{
@@ -276,7 +318,10 @@ createBlog(content, blogName) async {
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
       'content': content,
-      'blog_name': blogName
+      'blog_name': blogName,
+      'cover': (cover != "")
+          ? cover
+          : 'https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg'
     }),
   );
   print("${json.decode(response.body)}");
@@ -313,7 +358,7 @@ createpoll(content, options) async {
   print("${json.decode(response.body)}");
 }
 
-createTimeline(timelineName, events) async {
+createTimeline(timelineName, events, {cover}) async {
   final response = await http.post(
     '$serverURL/createtimeline',
     headers: <String, String>{
@@ -322,7 +367,10 @@ createTimeline(timelineName, events) async {
     body: jsonEncode(<String, dynamic>{
       'username': currentUser['user']['username'],
       'timeline_name': timelineName,
-      'events': events
+      'events': events,
+      'cover': (cover != "")
+          ? cover
+          : 'https://res.cloudinary.com/krustel-inc/image/upload/v1597308143/daqawgcdcvuqorju2lug.jpg'
     }),
   );
   print("${json.decode(response.body)}");

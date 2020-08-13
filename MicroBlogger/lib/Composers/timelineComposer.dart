@@ -1,24 +1,33 @@
+import 'dart:io';
+
+import 'package:MicroBlogger/Screens/imageupload.dart';
 import 'package:flutter/material.dart';
 import '../Backend/server.dart';
 
 class TimelineComposer extends StatefulWidget {
-  const TimelineComposer({Key key}) : super(key: key);
+  final Map preExistingState;
+  TimelineComposer({Key key, this.preExistingState}) : super(key: key);
 
   @override
   _TimelineComposerState createState() => _TimelineComposerState();
 }
 
 class _TimelineComposerState extends State<TimelineComposer> {
+  Map state;
   String eventText = "";
   String eventName = "";
   String eventTiming = "";
-  String timelineTitle = "";
-  List events = [];
+
+  @override
+  void initState() {
+    state = widget.preExistingState;
+    super.initState();
+  }
 
   void updateEvent(tn, tx, et) {
     Map x = {'event_name': tn, 'description': tx, 'timestamp': et};
     setState(() {
-      events.add(x);
+      state['events'].add(x);
     });
   }
 
@@ -40,25 +49,19 @@ class _TimelineComposerState extends State<TimelineComposer> {
     });
   }
 
-  void updateTimelineTitle(x) {
-    setState(() {
-      timelineTitle = "$x";
-    });
-  }
-
   void updateTimelineName(x) {
     setState(() {
-      timelineTitle = x;
+      state['timelineTitle'] = x;
     });
   }
 
   void deleteEvent(x) {
     var y = [];
-    events.forEach((e) {
-      if (e['eventText'] != x) y.add(e);
+    state['events'].forEach((e) {
+      if (e['description'] != x) y.add(e);
     });
     setState(() {
-      events = y;
+      state['events'] = y;
     });
   }
 
@@ -78,17 +81,33 @@ class _TimelineComposerState extends State<TimelineComposer> {
             margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
             child: RaisedButton(
               onPressed: () async {
-                print(timelineTitle);
-                print(events);
-
+                print("TSTATE: $state");
                 //upload
-                await createTimeline(timelineTitle, events);
+                await createTimeline(state['timelineTitle'], state['events'],
+                    cover: state['cover']);
                 Navigator.pushNamed(context, '/HomePage');
               },
               child: Text("Publish"),
               color: Colors.black,
             ),
-          )
+          ),
+          Container(
+            margin: EdgeInsets.all(10.0),
+            child: RaisedButton(
+              onPressed: () async {
+                print(state);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ImageCapture(
+                              imageFor: 'TIMELINECOVER',
+                              preExistingState: widget.preExistingState,
+                            )));
+              },
+              child: Text("Add Cover Image"),
+              color: Color.fromARGB(200, 220, 20, 60),
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -102,12 +121,12 @@ class _TimelineComposerState extends State<TimelineComposer> {
             updateEvent(eventName, eventText, eventTiming);
           }),
       body: TComposer(
+        state,
         eventTextUpdater: updateDesc,
         eventNameUpdater: updateEventName,
         eventTimingUpdater: updateEventTiming,
         deleteEvent: deleteEvent,
         timelineNameUpdater: updateTimelineName,
-        events: events,
       ),
     );
   }
@@ -119,14 +138,13 @@ class TComposer extends StatefulWidget {
   final eventTimingUpdater;
   final deleteEvent;
   final timelineNameUpdater;
-  final events;
-  const TComposer(
+  final Map state;
+  const TComposer(this.state,
       {this.eventTextUpdater,
       this.eventNameUpdater,
       this.eventTimingUpdater,
       this.deleteEvent,
-      this.timelineNameUpdater,
-      this.events});
+      this.timelineNameUpdater});
 
   @override
   _TComposerState createState() => _TComposerState();
@@ -135,6 +153,13 @@ class TComposer extends StatefulWidget {
 class _TComposerState extends State<TComposer> {
   @override
   Widget build(BuildContext context) {
+    var tNController = new TextEditingController();
+    tNController.value = TextEditingValue(
+      text: widget.state['timelineTitle'],
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: widget.state['timelineTitle'].length),
+      ),
+    );
     return SingleChildScrollView(
       child: Container(
         color: Colors.black12,
@@ -146,6 +171,7 @@ class _TComposerState extends State<TComposer> {
               onChanged: (x) {
                 widget.timelineNameUpdater(x);
               },
+              controller: tNController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Timeline Name',
@@ -191,7 +217,7 @@ class _TComposerState extends State<TComposer> {
                       hintText: "Start Describing the Event!"),
                 ),
               )),
-          if (widget.events.length > 0) ...[
+          if (widget.state['events'].length > 0) ...[
             Card(
                 margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                 color: Colors.black12,
@@ -201,7 +227,7 @@ class _TComposerState extends State<TComposer> {
                       color: Colors.black12,
                       padding: EdgeInsets.all(10.0),
                       child: ListView.builder(
-                          itemCount: widget.events.length,
+                          itemCount: widget.state['events'].length,
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
@@ -218,7 +244,7 @@ class _TComposerState extends State<TComposer> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "${widget.events[index]['event_name']}",
+                                            "${widget.state['events'][index]['event_name']}",
                                             style: TextStyle(fontSize: 22.0),
                                           ),
                                           SizedBox(
@@ -229,7 +255,7 @@ class _TComposerState extends State<TComposer> {
                                             maxLines: 5,
                                             decoration: InputDecoration.collapsed(
                                                 hintText:
-                                                    "${widget.events[index]['description']}"),
+                                                    "${widget.state['events'][index]['description']}"),
                                           ),
                                           SizedBox(
                                             height: 5.0,
@@ -238,7 +264,7 @@ class _TComposerState extends State<TComposer> {
                                             padding: EdgeInsets.all(4.0),
                                             color: Colors.black12,
                                             child: Text(
-                                                "${widget.events[index]['timestamp']}"),
+                                                "${widget.state['events'][index]['timestamp']}"),
                                           ),
                                         ],
                                       ),
@@ -247,8 +273,8 @@ class _TComposerState extends State<TComposer> {
                                     icon: Icon(Icons.clear),
                                     onPressed: () {
                                       print("CLEAR");
-                                      widget.deleteEvent(
-                                          widget.events[index]['event_name']);
+                                      widget.deleteEvent(widget.state['events']
+                                          [index]['event_name']);
                                     }),
                               ),
                             );

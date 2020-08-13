@@ -4,6 +4,8 @@ from MicroBloggerCore.models import (User, MicroBlogPost, BlogPost, TimelinePost
  PollPost, ReshareWithComment, SimpleReshare, Comment, BookmarkedPosts, ResharedPosts)
 from post_templates import *
 import requests
+from MicroBloggerCore.fileuploader import upload_file_to_cloud
+import io
 
 #TODO: Unify functions and make it efficient
 
@@ -18,6 +20,7 @@ def loginpage():
 	password = data['password']
 	user_record = User.query.filter_by(username=username, password=password).first()
 	if(user_record):
+		addPoint('LOGIN', user_record)
 		return jsonify({
 			'code': 'S1',
 			'user': userTemplate(user_record)
@@ -39,6 +42,7 @@ def registerpage():
 	db.session.commit()
 	user_record = User.query.filter_by(username=username, password=password).first()
 	print(user_record)
+	addPoint('REGISTER', new_user)
 	return jsonify({
 		'code': 'S1',
 		'user': userTemplate(user_record)
@@ -87,11 +91,13 @@ def getprofile(myusername, username):
 		for i in user_record.my_followers:
 			if(i == my_user_record.username):
 				isFollowing = True
+	if(my_user_record.username != user_record.username):
+		addPoint('V_PROFILE', my_user_record)
 	if(user_record):
 		return jsonify({	
 			'code': 'S1',
-			'user': userTemplate(user_record),
 			'posts': getUserData(username, my_user_record),
+			'user': userTemplate(user_record),
 			'isFollowing': isFollowing
 		})
 	else:
@@ -118,6 +124,8 @@ def follow_profile():
 	following_user = User.query.filter_by(username=following_username).first()
 	myuser.followed.append(following_user)
 	db.session.commit()
+	addPoint('FOLLOW', myuser)
+	addPoint('FOLLOWED', following_user)
 	return jsonify({
 		'message' : 'Started Following!'
 	})
@@ -132,6 +140,8 @@ def unfollow_profile():
 	following_user = User.query.filter_by(username=following_username).first()
 	myuser.followed.remove(following_user)
 	db.session.commit()
+	addPoint('UNFOLLOW', myuser)
+	addPoint('UNFOLLOWED', following_user)
 	return jsonify({
 		'message' : 'Stopped Following!'
 	})
@@ -146,21 +156,64 @@ def editprofile():
 	location = data['location'] if('location' in data)else None
 	bio = data['bio'] if('bio' in data) else None
 	name = data['name'] if('name' in data) else None
-	#website = data['website'] if('website' in data) else None
-
+	website = data['website'] if('website' in data) else None
 	user = User.query.filter_by(username=username).first()
 	user.bio = bio if bio else user.bio
 	user.name = name if name else user.name
 	user.email = email if email else user.email
 	user.location = location if location else user.location
-	#user.website = website if website else user.website
+	user.website = website if website else user.website
 
 	db.session.commit()
-
+	addPoint('EDITPROFILE', user)
 	return jsonify({
 		'profile': userTemplate(user)
 	})
 	
+@app.route('/updatedisplaypicture/<username>', methods=['POST'])
+def updatedisplaypicture(username):
+	username = username
+	dpObj = request.files['picture']
+	print(dpObj)
+	user = User.query.filter_by(username=username).first()
+	dpBytes = io.BytesIO(dpObj.read())
+	uploaded_img = upload_file_to_cloud(dpBytes)
+	if(uploaded_img['STATUS'] == 'OK'):
+		user.icon = uploaded_img['URI']
+	db.session.commit()
+	addPoint('EDITPROFILE', user)
+	return jsonify({
+		'status': 'OK',
+		'link': str(user.icon)
+	})
+
+@app.route('/updatebackground/<username>', methods=['POST'])
+def updatebackground(username):
+	username = username
+	bgObj = request.files['picture']
+	print(bgObj)
+	user = User.query.filter_by(username=username).first()
+	bgBytes = io.BytesIO(bgObj.read())
+	uploaded_img = upload_file_to_cloud(bgBytes)
+	if(uploaded_img['STATUS'] == 'OK'):
+		user.background = uploaded_img['URI']
+	db.session.commit()
+	addPoint('EDITPROFILE', user)
+	return jsonify({
+		'status': 'OK',
+		'link': str(user.icon)
+	})
+
+@app.route('/uploadcover', methods=['POST'])
+def uploadcover():
+	coverImg = request.files['picture']
+	cBytes = io.BytesIO(coverImg.read())
+	uploaded_img = upload_file_to_cloud(cBytes)
+	if(uploaded_img['STATUS'] == 'OK'):
+		return jsonify({
+			'link': str(uploaded_img['URI'])
+		})
+
 @app.route('/feed', methods=['POST'])
 def feed():
 	#TODO: Make it more efficient!! URGENT!!!!
@@ -203,6 +256,7 @@ def create_microblog():
 	mxb = MicroBlogPost(author=user, category=category, content=content)
 	db.session.add(mxb)
 	db.session.commit()
+	addPoint('MICROBLOG', user)
 	return jsonify({
 		'message': 'created microblog',
 	})
@@ -213,12 +267,14 @@ def create_blog():
 	username = data['username']
 	content = data['content']
 	blog_name = data['blog_name']
+	cover = data['cover']
 
 	user = User.query.filter_by(username=username).first()
-	xb = BlogPost(author=user, blog_name=blog_name, content=content, background="https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg")
+	xb = BlogPost(author=user, blog_name=blog_name, content=content, background=cover)
 
 	db.session.add(xb)	
 	db.session.commit()
+	addPoint('BLOG', user)
 	return jsonify({
 		'message': 'created blog',
 	})
@@ -235,6 +291,7 @@ def create_shareable():
 	sb = ShareablePost(author=user, name=name, content=content, link=link)
 	db.session.add(sb)
 	db.session.commit()
+	addPoint('SHAREABLE', user)
 	return jsonify({
 		'message': 'created shareable',
 	})
@@ -250,6 +307,7 @@ def create_poll():
 	p = PollPost(author=user, content=content, options=options)
 	db.session.add(p)
 	db.session.commit()
+	addPoint('POLL', user)
 	return jsonify({
 		'message': 'created poll',
 	})
@@ -260,12 +318,14 @@ def create_timeline():
 	username = data['username']
 	timeline_name = data['timeline_name']
 	events = data['events']
+	cover = data['cover']
 
 	user = User.query.filter_by(username=username).first()
-	t = TimelinePost(author=user, timeline_name=timeline_name, events=events, background="https://i1.wp.com/regionweek.com/wp-content/uploads/2020/03/World-Map-2.jpg?fit=1920%2C1200&ssl=1")
+	t = TimelinePost(author=user, timeline_name=timeline_name, events=events, background=cover)
 
 	db.session.add(t)
 	db.session.commit()
+	addPoint('TIMELINE', user)
 	return jsonify({
 		'message': 'created timeline',
 	})
@@ -331,6 +391,7 @@ def getspecificmicroblog():
 		p = timeline(user, post)
 	elif(post_type == 'ResharedWithComment'):
 		p = reshareWithComment(user, post)
+	addPoint('OPENP', user)
 	return jsonify({
 			'post': p
 		})
@@ -342,6 +403,7 @@ def getblogbody():
 	post_id = data['post_id']
 	user = User.query.filter_by(username=username).first()
 	post = getPost('blog', post_id)
+	addPoint('OPENB', user)
 	return jsonify({
 		'blog': blog_body(user, post)
 	})
@@ -353,6 +415,7 @@ def gettimelinebody():
 	post_id = data['post_id']
 	user = User.query.filter_by(username=username).first()
 	post = getPost('timeline', post_id)
+	addPoint('OPENT', user)
 	return jsonify({
 		'timeline': timeline_body(user, post)
 	})
@@ -369,6 +432,7 @@ def likemicrobloggerpost():
 	post = getPost(post_type, post_id)
 	post.like(user)
 	print(f"{user} liked post: {post}")
+	addPoint('LIKE', user)
 	return jsonify({
 		'message':'Liked Post' 
 	})
@@ -383,6 +447,7 @@ def unlikemicrobloggerpost():
 	post = getPost(post_type, post_id)
 	post.unlike(user)
 	print(f"{user} unliked post: {post}")
+	addPoint('UNLIKE', user)
 	return jsonify({
 		'message':'Unliked Post' 
 	})
@@ -396,6 +461,7 @@ def bookmarkpost():
 	user = User.query.filter_by(username=username).first()
 	post = getPost(post_type, post_id)
 	user.add_bookmark(post, post_type)
+	addPoint('BOOKMARK', user)
 	return jsonify({
 		'message':'Bookmarked Post' 
 	})
@@ -409,6 +475,7 @@ def unbookmarkpost():
 	user = User.query.filter_by(username=username).first()
 	post = getPost(post_type, post_id)
 	user.remove_bookmark(post)
+	addPoint('UNBOOKMARK', user)
 	return jsonify({
 		'message':'UnBookmarked Post' 
 	})
@@ -434,6 +501,7 @@ def resharepost():
 		db.session.add(sr)
 		post.reshare(user=user, post=sr)
 		print(f"{user} reshared post: {post} => {sr}")
+	addPoint('RESHARE', user)
 	return jsonify({
 		'message':'Reshared Post' 
 	})
@@ -464,6 +532,7 @@ def unresharepost():
 				db.session.delete(sr)
 				db.session.commit()
 				print(f"{user} unreshared post: {post} => {sr}")
+	addPoint('UNRESHARE', user)	
 	return jsonify({
 		'message':'Unreshared Post' 
 	})
@@ -495,6 +564,7 @@ def addcomment():
 	db.session.add(c)
 	db.session.commit()
 	print(f"{user} commented on post: {post} => {c}")
+	addPoint('COMMENT', user)
 	return jsonify({
 		'message': 'comment added',
 	})
@@ -511,11 +581,12 @@ def deletecomment():
 	if(comment.author_id == user.id):
 		db.session.delete(comment)
 		db.session.commit()
+		addPoint('DELETECOMMENT', user)
 	else:
 		return jsonify({
 			'message':'Cannot delete comment as you do not have the rights to do so' 
 		})
-	print(f"{user} deleted commented on post: {post} => {comment}")
+	print(f"{user} deleted comment:  {comment}")
 	return jsonify({
 		'message':'Deleted Comment!' 
 	})
@@ -537,6 +608,7 @@ def deletepost():
 			db.session.commit()
 		db.session.delete(post)
 		db.session.commit()
+		addPoint('DELETEPOST', user)
 	else:
 		return jsonify({
 			'message':'Cannot delete post as you do not have the rights to do so' 
@@ -575,6 +647,8 @@ def submit_vote():
 	p.options = [x for x in px]
 	db.session.commit()
 
+	addPoint('VOTE', user)
+
 	return jsonify({
 		'myvoted': user.voted_polls,
 		'options': p.options
@@ -588,9 +662,11 @@ def submit_vote():
 
 @app.route('/exploremicroblogs/<username>')
 def exploremicroblogs(username):
+	user = User.query.filter_by(username=username).first()
+	addPoint('EXPLORE', user)
 	posts = []
-	[posts.append(microblog(x.author, x)) for x in MicroBlogPost.query.all()]
-	[posts.append(reshareWithComment(x.author, x)) for x in ReshareWithComment.query.all()]
+	[posts.append(microblog(user, x)) for x in MicroBlogPost.query.all()]
+	[posts.append(reshareWithComment(user, x)) for x in ReshareWithComment.query.all()]
 	return jsonify({
 		'length': len(posts),
 		'posts': posts
@@ -599,6 +675,7 @@ def exploremicroblogs(username):
 @app.route('/exploreblogs/<username>')
 def exploreblogs(username):
 	user = User.query.filter_by(username=username).first()
+	addPoint('EXPLORE', user)
 	posts = []
 	[posts.append(blog_skin(user, x)) for x in BlogPost.query.all()]
 	return jsonify({
@@ -609,6 +686,7 @@ def exploreblogs(username):
 @app.route('/exploretimelines/<username>')
 def exploretimelines(username):
 	user = User.query.filter_by(username=username).first()
+	addPoint('EXPLORE', user)
 	posts = []
 	[posts.append(timeline_skin(user, x)) for x in TimelinePost.query.all()]
 	return jsonify({
@@ -619,6 +697,7 @@ def exploretimelines(username):
 @app.route('/exploreshareablesandpolls/<username>')
 def exploreshareablesandpolls(username):
 	user = User.query.filter_by(username=username).first()
+	addPoint('EXPLORE', user)
 	posts = []
 	[posts.append(shareable(user, x)) for x in ShareablePost.query.all()]
 	[posts.append(poll(user, x)) for x in PollPost.query.all()]
@@ -647,12 +726,26 @@ def getUserData(username, currentuser):
 					reshared.append(reshareWithComment(user, post))
 
 	#Get posts
-	[mbandcomments.append(microblog(user, x)) for x in user.my_microblogs]
-	[mbandcomments.append(comment(user, x)) for x in Comment.query.filter_by(author=user).all()]
-	[blogandtimelines.append(blog_skin(user, x)) for x in user.my_blogs]
-	[blogandtimelines.append(timeline_skin(user, x)) for x in user.my_timelines]
-	[pollsandshareables.append(shareable(user, x)) for x in user.my_shareables]
-	[pollsandshareables.append(poll(currentuser, x)) for x in user.my_polls]
+	[mbandcomments.append(microblog(user, x)) for x in MicroBlogPost.query.filter_by(author=user).order_by(MicroBlogPost.id.desc())]
+	[mbandcomments.append(comment(user, x)) for x in Comment.query.filter_by(author=user).order_by(Comment.id.desc())]
+	[blogandtimelines.append(blog_skin(user, x)) for x in BlogPost.query.filter_by(author=user).order_by(BlogPost.id.desc())]
+	[blogandtimelines.append(timeline_skin(user, x)) for x in TimelinePost.query.filter_by(author=user).order_by(TimelinePost.id.desc())]
+	[pollsandshareables.append(shareable(user, x)) for x in ShareablePost.query.filter_by(author=user).order_by(ShareablePost.id.desc())]
+	[pollsandshareables.append(poll(currentuser, x)) for x in PollPost.query.filter_by(author=user).order_by(PollPost.id.desc())]
+
+	n = (len(mbandcomments)+len(blogandtimelines)+len(reshared)+len(pollsandshareables))
+	r = len(reshared)
+	l = 0
+	c = 0
+	f = len(user.followed.all())
+	nf = len(user.followers.all())
+	for p in [*mbandcomments, *reshared, *blogandtimelines, *pollsandshareables]:
+		if('isLiked' in p):
+			if(p['isLiked']):
+				l+=1
+		if('comments' in p):
+			c = p['comments']
+	calculate_base_points(n, l, c, r, f, nf, user)
 
 	return {
 		'mymicroblogsandcomments': mbandcomments,
@@ -681,5 +774,63 @@ def getPost(post_type, post_id):
 		post = Comment.query.filter_by(comment_id=post_id).first()
 	return post
 
-def delete_all_comments_in_post(post_id):
-	post = None
+# def delete_all_comments_in_post(post_id):
+# 	post = None
+
+def calculate_base_points(n, l, c, r, f, nf, user):
+	if(n!=0 and nf!=0 and f!=0):
+		basescore = ( l*((1/n) + (1/nf)) + c*((1/n) + (1/nf)) + r*((1/n) + (1/nf)) + (nf/f))
+		user.basepoints = f"{basescore}"
+		db.session.commit()
+		print(n, l, c, r, f, nf, user, basescore, user.secondarypoints)
+		user.reputation = f"{float(user.basepoints) + float(user.secondarypoints)}"
+		db.session.commit()
+	else:
+		user.basepoints = '0.0'
+		user.reputation = user.secondarypoints
+		db.session.commit()
+
+def addPoint(cmd, user):
+	point = 0
+	if(cmd == 'LIKE' or cmd == 'BOOKMARK'):
+		point = 0.05
+	elif(cmd == 'VOTE' or cmd == 'V_NEWS' or cmd == 'V_PROFILE' or cmd=='OPENT' or cmd=='OPENP' or cmd=='EXPLORE' or cmd=='SEARCHUSER'):
+		point = 0.05
+	elif(cmd == 'SR' or cmd == 'V_SHAREABLE' or cmd=='OPENB'):
+		point = 0.1
+	elif(cmd == 'COMMENT'):
+		point = 0.15
+	elif(cmd == 'SHAREABLE' or cmd=='PERMINUTEUSAGEPOINT'):
+		point = 0.18
+	elif(cmd == 'POLL'):
+		point = 0.2
+	elif(cmd == 'MICROBLOG'):
+		point = 0.55
+	elif(cmd == 'RWC'):
+		point = 0.75
+	elif(cmd == 'DAILY_LOGIN' or cmd=='TIMELINE' or cmd=='FOLLOW' or cmd == 'FOLLOWED'):
+		point = 0.5
+	elif(cmd == 'BLOG'):
+		point = 1
+	elif(cmd == 'LOGOUT'):
+		point = -0.06
+	elif(cmd == 'LOGIN'):
+		point = +0.2
+	elif(cmd == 'REGISTER'):
+		point = 2
+	elif(cmd == 'UNRESHARE'):
+		point = -0.8
+	elif(cmd == 'DELETEPOST' or cmd=='DELETECOMMENT'):
+		point = -1
+	elif(cmd == 'UNFOLLOW'):
+		point = -1.3
+	elif(cmd == 'UNFOLLOWED'):
+		point = -1.3
+	elif(cmd == 'EDITPROFILE'):
+		point = +0.25
+	elif(cmd == 'UNLIKE' or cmd == 'UNBOOKMARK'):
+		point = -0.08
+	
+	user.secondarypoints = f"{float(user.secondarypoints) + float(point)}"
+	user.reputation = f"{float(user.basepoints) + float(user.secondarypoints)}"
+	db.session.commit()

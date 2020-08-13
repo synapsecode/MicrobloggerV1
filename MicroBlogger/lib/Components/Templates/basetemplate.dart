@@ -256,6 +256,42 @@ class TopBar extends StatelessWidget {
                                   Navigator.pushReplacementNamed(
                                       context, '/HomePage');
                                   break;
+                                case "delcom":
+                                  showDialog(
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          content: Text(
+                                              "Are you sure you want to delete this comment? This action is irreversible and would result in the comment being permanantly erased"),
+                                          title: Text("Delete Comment"),
+                                          actions: [
+                                            FlatButton(
+                                              child: Text("Delete"),
+                                              onPressed: () async {
+                                                print("Deleting Comment");
+                                                await deleteCommentFromPost(
+                                                    postObject['cid']);
+                                                print("Deleted Comment");
+                                                Fluttertoast.showToast(
+                                                  msg: "Deleted Comment",
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                          200, 220, 20, 60),
+                                                );
+                                                Navigator.pushReplacementNamed(
+                                                    context, '/HomePage');
+                                              },
+                                            ),
+                                            FlatButton(
+                                              child: Text("Cancel"),
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                            )
+                                          ],
+                                        );
+                                      },
+                                      context: context);
+
+                                  break;
                                 default:
                                   print("Invalid option");
                               }
@@ -263,9 +299,13 @@ class TopBar extends StatelessWidget {
                             itemBuilder: (context) {
                               return [
                                 (postObject['type'] != "ResharedWithComment")
-                                    ? PopupMenuItem(
-                                        value: "del",
-                                        child: Text("Delete Post"))
+                                    ? (postObject['type'] == "comment")
+                                        ? PopupMenuItem(
+                                            value: "delcom",
+                                            child: Text("Delete Comment"))
+                                        : PopupMenuItem(
+                                            value: "del",
+                                            child: Text("Delete Post"))
                                     : PopupMenuItem(
                                         value: "unreshare",
                                         child: Text("Unreshare Post"))

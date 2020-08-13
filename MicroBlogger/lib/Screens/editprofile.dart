@@ -1,3 +1,4 @@
+import 'package:MicroBlogger/Screens/imageupload.dart';
 import 'package:flutter/material.dart';
 import '../Backend/datastore.dart';
 import '../Backend/server.dart';
@@ -25,6 +26,7 @@ class _EditCardState extends State<EditCard> {
   String profileIcon = "";
   String bio = "";
   String email = "";
+  String website = "";
 
   @override
   void initState() {
@@ -35,6 +37,7 @@ class _EditCardState extends State<EditCard> {
     name = user['name'];
     bio = user['bio'];
     email = user['email'];
+    website = user['website'];
   }
 
   @override
@@ -95,6 +98,16 @@ class _EditCardState extends State<EditCard> {
             SizedBox(
               height: 15.0,
             ),
+            TextFormField(
+              decoration: InputDecoration(labelText: 'Website:'),
+              initialValue: "$website",
+              onChanged: (x) => setState(() {
+                website = x;
+              }),
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
             Container(
               color: Colors.black12,
               padding: EdgeInsets.all(10.0),
@@ -115,6 +128,50 @@ class _EditCardState extends State<EditCard> {
               width: double.infinity,
               child: RaisedButton(
                 padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
+                color: Colors.black26,
+                child: Text(
+                  "Update Background Picture",
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ImageCapture(
+                                imageFor: 'BACKGROUND',
+                              )));
+                },
+              ),
+            ),
+            SizedBox(
+              height: 15.0,
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: RaisedButton(
+                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
+                color: Colors.black26,
+                child: Text(
+                  "Update Profile Picture",
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ImageCapture(
+                                imageFor: 'PROFILE',
+                              )));
+                },
+              ),
+            ),
+            SizedBox(
+              height: 15.0,
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: RaisedButton(
+                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
                 color: Color.fromARGB(200, 220, 20, 60),
                 child: Text(
                   "Update Profile",
@@ -124,7 +181,7 @@ class _EditCardState extends State<EditCard> {
                   print("Updating Profile");
                   print("$name, $location");
                   print(bio);
-                  await updateProfile(name, location, bio, email);
+                  await updateProfile(name, location, bio, email, website);
                   Navigator.pushReplacementNamed(context, '/ProfilePage');
                 },
               ),
