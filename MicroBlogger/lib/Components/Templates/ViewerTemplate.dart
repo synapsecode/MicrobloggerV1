@@ -27,6 +27,12 @@ class _BaseViewerState extends State<BaseViewer> {
       case "blog":
         post = BlogPost(widget.postObject);
         break;
+      case "carousel":
+        post = CarouselPost(
+          postObject: widget.postObject,
+          isInViewMode: true,
+        );
+        break;
       case "shareable":
         post = ShareablePost(postObject: widget.postObject);
         break;

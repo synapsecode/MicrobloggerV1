@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:MicroBlogger/Composers/blogComposer.dart';
+import 'package:MicroBlogger/Composers/mediacomposer.dart';
 import 'package:MicroBlogger/Composers/microblogComposer.dart';
 import 'package:MicroBlogger/Composers/pollComposer.dart';
 import 'package:MicroBlogger/Composers/shareableComposer.dart';
@@ -65,6 +66,9 @@ void main() {
                   'events': [],
                   'cover': ""
                 },
+              ),
+          '/MediaComposer': (BuildContext context) => new MediaComposer(
+                preExistingState: {'content': "", 'images': []},
               ),
         },
         home: MyApp()));

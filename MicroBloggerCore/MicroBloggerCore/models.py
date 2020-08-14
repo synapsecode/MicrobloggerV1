@@ -39,6 +39,7 @@ class User(db.Model):
 	my_simpleReshares = db.relationship('SimpleReshare', backref='author')
 	my_polls = db.relationship('PollPost', backref='author')
 	my_comments = db.relationship('Comment', backref='author')
+	my_carousels = db.relationship('CarouselPost', backref='author')
 	liked_posts = db.relationship('LikedPosts', backref='user')
 	reshared_posts = db.relationship('ResharedPosts', backref='user')
 	bookmarked_posts = db.relationship('BookmarkedPosts', backref='user')
@@ -381,8 +382,9 @@ class Comment(db.Model):
 	blog_pid =  db.Column(db.Integer, db.ForeignKey('blog_post.id'))
 	timeline_pid = db.Column(db.Integer, db.ForeignKey('timeline_post.id'))
 	rwc_pid = db.Column(db.Integer, db.ForeignKey('reshare_with_comment.id'))
+	carousel_pid = db.Column(db.Integer, db.ForeignKey('carousel_post.id'))
 
-	def __init__(self, author, content, category, microblog_parent=None, blog_parent=None, timeline_parent=None, rwc_parent=None):
+	def __init__(self, author, content, category, microblog_parent=None, blog_parent=None, timeline_parent=None, rwc_parent=None, carousel_parent=None):
 		self.post_type = 'comment'
 		self.comment_id = str(uuid.uuid4())
 		self.content = content
@@ -392,6 +394,7 @@ class Comment(db.Model):
 		if(blog_parent != None) : self.blog_parent = blog_parent
 		if(timeline_parent != None) : self.timeline_parent = timeline_parent
 		if(rwc_parent != None) : self.rwc_parent = rwc_parent
+		if(carousel_parent != None) : self.carousel_parent = carousel_parent
 
 		self.author = author
 		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
@@ -473,6 +476,59 @@ class ReshareWithComment(db.Model):
 		
 	def __repr__(self):
 		return f"ResharedWithComment({self.post_id} -> {self.host_id})"
+
+class CarouselPost(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	post_type = db.Column(db.String)
+	post_id = db.Column(db.String)
+	author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+	comments = db.relationship('Comment', backref='carousel_parent')
+	content = db.Column(db.String)
+	created_on = db.Column(db.String)
+	images = db.Column(db.PickleType(comparator=lambda *a: False))
+
+	@hybrid_property
+	def likes(self):
+		lx = LikedPosts.query.filter_by(post_id=self.post_id).all()
+		return [x for x in lx]
+
+	@hybrid_property
+	def reshares(self):
+		rx = ResharedPosts.query.filter_by(og_post_id=self.post_id).all()
+		return [x for x in rx]
+
+	def like(self, user):
+		obj = LikedPosts(user=user, post=self)
+		db.session.add(obj)
+		db.session.commit()
+
+	def unlike(self, user):
+		obj = LikedPosts.query.filter_by(user=user, post_id=self.post_id).first()
+		if(obj): 
+			db.session.delete(obj)
+			db.session.commit()
+
+	def reshare(self, user, post):
+		obj = ResharedPosts(user=user, host=self, post=post)
+		db.session.add(obj)
+		db.session.commit()
+
+	def unreshare(self, user, post):
+		obj = ResharedPosts.query.filter_by(user=user, og_post_id=self.post_id, reshared_post_id=post.post_id).first()
+		if(obj): 
+			db.session.delete(obj)
+			db.session.commit()
+
+	def __init__(self, author, content):
+		self.post_id = str(uuid.uuid4())
+		self.author = author
+		self.post_type = 'carousel'
+		self.images = []
+		self.content = content
+		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
+
+	def __repr__(self):
+		return f"CarouselPost({self.author_id}, {self.post_id})"
 
 class LikedPosts(db.Model):
 	id = db.Column(db.Integer, primary_key=True)

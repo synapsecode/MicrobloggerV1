@@ -229,10 +229,11 @@ class AddOptionsWidget extends StatelessWidget {
               Navigator.of(context).pushNamed('/TimelineComposer');
             }),
             ActionButton('Media', Icons.devices, () {
-              Fluttertoast.showToast(
-                msg: "Feature Coming Soon!",
-                backgroundColor: Color.fromARGB(200, 220, 20, 60),
-              );
+              // Fluttertoast.showToast(
+              //   msg: "Feature Coming Soon!",
+              //   backgroundColor: Color.fromARGB(200, 220, 20, 60),
+              // );
+              Navigator.of(context).pushNamed('/MediaComposer');
             }),
           ],
         );

@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify
 from MicroBloggerCore import app, db
 from MicroBloggerCore.models import (User, MicroBlogPost, BlogPost, TimelinePost, ShareablePost,
- PollPost, ReshareWithComment, SimpleReshare, Comment, BookmarkedPosts, ResharedPosts, ReportedBugs)
+ PollPost, ReshareWithComment, SimpleReshare, Comment, BookmarkedPosts, ResharedPosts, ReportedBugs, CarouselPost)
 from post_templates import *
 import requests
 from MicroBloggerCore.fileuploader import upload_file_to_cloud
@@ -245,6 +245,7 @@ def feed():
 			[feed.append(timeline_skin(myuser, x)) for x in TimelinePost.query.filter_by(author_id=ux.id).all()]
 			[feed.append(reshareWithComment(myuser, x)) for x in ReshareWithComment.query.filter_by(author_id=ux.id).all()]
 			[feed.append(simpleReshare(myuser, x)) for x in SimpleReshare.query.filter_by(author_id=ux.id).all()]
+			[feed.append(carousel(myuser, x)) for x in CarouselPost.query.filter_by(author_id=ux.id).all()]
 		
 		return jsonify({
 			'code': 'S1',
@@ -289,6 +290,26 @@ def create_blog():
 	addPoint('BLOG', user)
 	return jsonify({
 		'message': 'created blog',
+	})
+
+@app.route('/createcarousel', methods=['POST'])
+def create_carousel():
+	data = request.get_json()
+	username = data['username']
+	content = data['content']
+	images = data['images']
+	user = User.query.filter_by(username=username).first()
+	cx = CarouselPost(author=user, content=content)
+	db.session.add(cx)
+	db.session.commit()
+	#Adding Images
+	cx.images = []
+	db.session.commit()
+	cx.images = [*[i for i in images]]
+	db.session.commit()
+	addPoint('CAROUSEL', user)
+	return jsonify({
+		'message': 'created carousel',
 	})
 
 @app.route('/createshareable', methods=['POST'])
@@ -367,6 +388,8 @@ def get_my_blogs_and_timelines():
 					bookmarked.append(timeline_skin(user, post))
 				elif(post.post_type == 'ResharedWithComment'):
 					bookmarked.append(reshareWithComment(user, post))
+				elif(post.post_type == 'carousel'):
+					bookmarked.append(carousel(user, post))
 
 	return jsonify({
 		'length': len(bookmarked),
@@ -403,6 +426,8 @@ def getspecificmicroblog():
 		p = timeline(user, post)
 	elif(post_type == 'ResharedWithComment'):
 		p = reshareWithComment(user, post)
+	elif(post_type == 'carousel'):
+		p = carousel(user, post)
 	addPoint('OPENP', user)
 	return jsonify({
 			'post': p
@@ -572,7 +597,10 @@ def addcomment():
 	elif(post_type == 'ResharedWithComment'):
 		post = ReshareWithComment.query.filter_by(post_id=post_id).first()
 		c = Comment(author=user, content=content, category=category, rwc_parent=post)
-	
+	elif(post_type == 'carousel'):
+		post = CarouselPost.query.filter_by(post_id=post_id).first()
+		c = Comment(author=user, content=content, category=category, carousel_parent=post)
+
 	db.session.add(c)
 	db.session.commit()
 	print(f"{user} commented on post: {post} => {c}")
@@ -615,6 +643,7 @@ def deletepost():
 
 	if(post.author.id == user.id):
 		if(post_type != "poll" and post_type != "shareable"):
+			#Delete Comments of Post
 			for c in post.comments:
 				db.session.delete(c)
 			db.session.commit()
@@ -684,12 +713,13 @@ def exploremicroblogs(username):
 		'posts': posts
 	})
 
-@app.route('/exploreblogs/<username>')
-def exploreblogs(username):
+@app.route('/exploreblogsandcarousels/<username>')
+def exploreblogsandcarousels(username):
 	user = User.query.filter_by(username=username).first()
 	addPoint('EXPLORE', user)
 	posts = []
 	[posts.append(blog_skin(user, x)) for x in BlogPost.query.all()]
+	[posts.append(carousel(user, x)) for x in CarouselPost.query.all()]
 	return jsonify({
 		'length': len(posts),
 		'posts': posts
@@ -724,8 +754,8 @@ def getUserData(username, currentuser):
 	#Get Reshares
 	r_ids = [x.reshared_post_id for x in user.reshared_posts]
 	reshared = []
-	mbandcomments = []
-	blogandtimelines = []
+	microblogsandcomments = []
+	blogstimelinesandcarousels = []
 	pollsandshareables = []
 	for id in r_ids:
 		record = ResharedPosts.query.filter_by(reshared_post_id=id).first()
@@ -738,20 +768,21 @@ def getUserData(username, currentuser):
 					reshared.append(reshareWithComment(user, post))
 
 	#Get posts
-	[mbandcomments.append(microblog(user, x)) for x in MicroBlogPost.query.filter_by(author=user).order_by(MicroBlogPost.id.desc())]
-	[mbandcomments.append(comment(user, x)) for x in Comment.query.filter_by(author=user).order_by(Comment.id.desc())]
-	[blogandtimelines.append(blog_skin(user, x)) for x in BlogPost.query.filter_by(author=user).order_by(BlogPost.id.desc())]
-	[blogandtimelines.append(timeline_skin(user, x)) for x in TimelinePost.query.filter_by(author=user).order_by(TimelinePost.id.desc())]
+	[microblogsandcomments.append(microblog(user, x)) for x in MicroBlogPost.query.filter_by(author=user).order_by(MicroBlogPost.id.desc())]
+	[microblogsandcomments.append(comment(user, x)) for x in Comment.query.filter_by(author=user).order_by(Comment.id.desc())]
+	[blogstimelinesandcarousels.append(blog_skin(user, x)) for x in BlogPost.query.filter_by(author=user).order_by(BlogPost.id.desc())]
+	[blogstimelinesandcarousels.append(carousel(user, x)) for x in CarouselPost.query.filter_by(author=user).order_by(CarouselPost.id.desc())]
+	[blogstimelinesandcarousels.append(timeline_skin(user, x)) for x in TimelinePost.query.filter_by(author=user).order_by(TimelinePost.id.desc())]
 	[pollsandshareables.append(shareable(user, x)) for x in ShareablePost.query.filter_by(author=user).order_by(ShareablePost.id.desc())]
 	[pollsandshareables.append(poll(currentuser, x)) for x in PollPost.query.filter_by(author=user).order_by(PollPost.id.desc())]
 
-	n = (len(mbandcomments)+len(blogandtimelines)+len(reshared)+len(pollsandshareables))
+	n = (len(microblogsandcomments)+len(blogstimelinesandcarousels)+len(reshared)+len(pollsandshareables))
 	r = len(reshared)
 	l = 0
 	c = 0
 	f = len(user.followed.all())
 	nf = len(user.followers.all())
-	for p in [*mbandcomments, *reshared, *blogandtimelines, *pollsandshareables]:
+	for p in [*microblogsandcomments, *reshared, *blogstimelinesandcarousels, *pollsandshareables]:
 		if('isLiked' in p):
 			if(p['isLiked']):
 				l+=1
@@ -760,10 +791,10 @@ def getUserData(username, currentuser):
 	calculate_base_points(n, l, c, r, f, nf, user)
 
 	return {
-		'mymicroblogsandcomments': mbandcomments,
+		'mymicroblogsandcomments': microblogsandcomments,
 		'myreshares': reshared,
-		'myblogsandtimelines': blogandtimelines,
-		'mypollsandshareables': pollsandshareables
+		'myblogstimelinesandcarousels': blogstimelinesandcarousels,
+		'mypollsandshareables': pollsandshareables,
 	}
 
 def getPost(post_type, post_id):
@@ -772,6 +803,8 @@ def getPost(post_type, post_id):
 		post = MicroBlogPost.query.filter_by(post_id=post_id).first()
 	elif(post_type == 'blog'):
 		post = BlogPost.query.filter_by(post_id=post_id).first()
+	elif(post_type == 'carousel'):
+		post = CarouselPost.query.filter_by(post_id=post_id).first()
 	elif(post_type == 'shareable'):
 		post = ShareablePost.query.filter_by(post_id=post_id).first()
 	elif(post_type == 'poll'):
@@ -824,6 +857,8 @@ def addPoint(cmd, user):
 		point = 0.5
 	elif(cmd == 'BLOG'):
 		point = 1
+	elif(cmd == 'CAROUSEL'):
+		point = 1.5
 	elif(cmd == 'LOGOUT'):
 		point = -0.06
 	elif(cmd == 'LOGIN'):

@@ -66,6 +66,11 @@ class _BookmarksPageState extends State<BookmarksPage> {
                                 output =
                                     PollPost(postObject: snapshot.data[index]);
                                 break;
+                              case "carousel":
+                                output = CarouselPost(
+                                  postObject: snapshot.data[index],
+                                );
+                                break;
                               case "ResharedWithComment":
                                 output = ReshareWithComment(
                                   postObject: snapshot.data[index],

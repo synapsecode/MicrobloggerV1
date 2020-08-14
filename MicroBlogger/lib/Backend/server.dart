@@ -340,6 +340,21 @@ createBlog(content, blogName, {cover}) async {
   print("${json.decode(response.body)}");
 }
 
+createCarousel(content, images) async {
+  final response = await http.post(
+    '$serverURL/createcarousel',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'username': currentUser['user']['username'],
+      'content': content,
+      'images': images
+    }),
+  );
+  print("${json.decode(response.body)}");
+}
+
 createShareable(content, name, link) async {
   final response = await http.post(
     '$serverURL/createshareable',
@@ -562,8 +577,8 @@ exploreMicroblogs() async {
 }
 
 exploreBlogs() async {
-  http.Response response = await http
-      .get("$serverURL/exploreblogs/${currentUser['user']['username']}");
+  http.Response response = await http.get(
+      "$serverURL/exploreblogsandcarousels/${currentUser['user']['username']}");
   if (response.statusCode == 200) {
     var obj = jsonDecode(response.body);
     print("Number of Blogs to Explore: ${obj['length']}");

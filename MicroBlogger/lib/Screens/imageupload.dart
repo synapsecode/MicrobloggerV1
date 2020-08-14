@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:MicroBlogger/Backend/datastore.dart';
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/Composers/blogComposer.dart';
+import 'package:MicroBlogger/Composers/mediacomposer.dart';
 import 'package:MicroBlogger/Composers/timelineComposer.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -174,6 +175,18 @@ class _UploaderState extends State<Uploader> {
           context,
           MaterialPageRoute(
               builder: (context) => TimelineComposer(
+                    preExistingState: widget.preExistingState,
+                  )));
+    } else if (widget.imageFor == 'CAROUSEL') {
+      print(widget.file);
+      String link = await addCoverPicture(widget.file);
+      print(widget.preExistingState);
+      widget.preExistingState['images'].add(link);
+      Navigator.pop(context);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MediaComposer(
                     preExistingState: widget.preExistingState,
                   )));
     }

@@ -1,5 +1,5 @@
 #TODO Post Age helper function caluclator
-from MicroBloggerCore.models import db, MicroBlogPost, BlogPost, ShareablePost, PollPost, TimelinePost, ReshareWithComment
+from MicroBloggerCore.models import db, MicroBlogPost, BlogPost, ShareablePost, PollPost, TimelinePost, ReshareWithComment, CarouselPost
 from helperfunctions import calculate_post_age
 
 def userTemplate(user_record):
@@ -17,6 +17,26 @@ def userTemplate(user_record):
 		'bio' : (user_record.bio) if (user_record.bio != "") else "Hey! I use MicroBlogger",
 		'location' : (user_record.location),
 		'website': (user_record.website)
+	}
+
+def carousel(user, post):
+	return {
+		'type': 'carousel',
+		'id': post.post_id,
+		'author': {
+			'name': (post.author.name) if (post.author.name != None) else "Default User",
+			'username': post.author.username,
+			'icon': post.author.icon
+		},
+		'likes': len(post.likes),
+		'reshares': len(post.reshares),
+		'comments': len(post.comments),
+		'content': post.content,
+		'images': post.images,
+		'age': calculate_post_age(post.created_on),
+		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
+		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
+		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False
 	}
 
 def comment(user, c):
@@ -168,6 +188,8 @@ def simpleReshare(user, post):
 		child = shareable(user, ShareablePost.query.filter_by(post_id=post.host_id).first())
 	if(post.host_type == 'timeline'):
 		child = timeline(user, TimelinePost.query.filter_by(post_id=post.host_id).first())
+	if(post.host_type == 'carousel'):
+		child = carousel(user, CarouselPost.query.filter_by(post_id=post.host_id).first())
 
 	return {
 		'type':'SimpleReshare',
@@ -190,6 +212,8 @@ def reshareWithComment(user, post):
 		child = shareable(user, ShareablePost.query.filter_by(post_id=post.host_id).first())
 	if(post.host_type == 'timeline'):
 		child = timeline_skin(user, TimelinePost.query.filter_by(post_id=post.host_id).first())
+	if(post.host_type == 'carousel'):
+		child = carousel(user, CarouselPost.query.filter_by(post_id=post.host_id).first())
 	return {
 		'type':'ResharedWithComment',
 		'id': post.post_id,

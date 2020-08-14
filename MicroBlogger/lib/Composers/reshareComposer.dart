@@ -32,6 +32,9 @@ class _ReshareComposerState extends State<ReshareComposer> {
       case "shareable":
         post = ShareablePost(postObject: widget.postObject);
         break;
+      case "carousel":
+        post = CarouselPost(postObject: widget.postObject);
+        break;
       case "timeline":
         post = Timeline(widget.postObject);
         break;

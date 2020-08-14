@@ -34,6 +34,47 @@ class MicroBlogPost extends StatelessWidget {
   }
 }
 
+class CarouselPost extends StatelessWidget {
+  final postObject;
+  final isInViewMode;
+  final bool isHosted;
+  const CarouselPost(
+      {Key key,
+      this.postObject,
+      this.isHosted = false,
+      this.isInViewMode = false})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BasicTemplate(
+        postObject: postObject,
+        isHosted: isHosted,
+        isInViewMode: isInViewMode,
+        widgetComponent: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(postObject['content']),
+            ListView.builder(
+                itemCount: postObject['images'].length,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: 10.0),
+                    decoration: BoxDecoration(
+                        border: Border.all(width: 2.0, color: Colors.white30)),
+                    child: SizedBox(
+                        child: Image(
+                      image: NetworkImage(postObject['images'][index]),
+                    )),
+                  );
+                })
+          ],
+        ));
+  }
+}
+
 class LevelOneComment extends StatelessWidget {
   final commentObject;
   const LevelOneComment({Key key, this.commentObject}) : super(key: key);
@@ -204,6 +245,10 @@ class SimpleReshare extends StatelessWidget {
           ] else if (postObject['child']['type'] == "timeline") ...[
             Timeline(
               postObject['child'],
+            )
+          ] else if (postObject['child']['type'] == "carousel") ...[
+            CarouselPost(
+              postObject: postObject['child'],
             )
           ],
         ],
@@ -418,6 +463,10 @@ class ReshareWithComment extends StatelessWidget {
       hostChild = ShareablePost(
         postObject: postObject['child'],
         isHosted: true,
+      );
+    } else if (postObject['child']['type'] == "carousel") {
+      hostChild = CarouselPost(
+        postObject: postObject['child'],
       );
     }
     return BasicTemplate(

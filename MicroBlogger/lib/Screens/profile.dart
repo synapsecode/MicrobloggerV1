@@ -354,7 +354,8 @@ class _MyPostViewState extends State<MyPostView> {
   Widget build(BuildContext context) {
     List othersFeed = user['posts']['mypollsandshareables'] ?? [];
     List microblogFeed = user['posts']['mymicroblogsandcomments'] ?? [];
-    List blogandTimelineFeed = user['posts']['myblogsandtimelines'] ?? [];
+    List blogandTimelineFeed =
+        user['posts']['myblogstimelinesandcarousels'] ?? [];
     List reshareFeed = user['posts']['myreshares'] ?? [];
 
     return Column(
@@ -413,8 +414,13 @@ class _MyPostViewState extends State<MyPostView> {
                       itemBuilder: (context, index) {
                         if (blogandTimelineFeed[index]['type'] == 'blog')
                           return BlogPost(blogandTimelineFeed[index]);
-                        else
+                        else if (blogandTimelineFeed[index]['type'] ==
+                            'timeline')
                           return Timeline(blogandTimelineFeed[index]);
+                        else if (blogandTimelineFeed[index]['type'] ==
+                            'carousel')
+                          return CarouselPost(
+                              postObject: blogandTimelineFeed[index]);
                       }),
                 ),
                 Container(

@@ -53,6 +53,11 @@ class _BasicTemplateState extends State<BasicTemplate> {
                     postObject: widget.postObject,
                   );
                   break;
+                case 'carousel':
+                  page = BaseViewer(
+                    postObject: widget.postObject,
+                  );
+                  break;
               }
               //Redirect to Page
               if (page != null) {
@@ -398,8 +403,6 @@ class _ActionBarState extends State<ActionBar> {
           RaisedButton(
               onPressed: () async {
                 //Initiated a simple reshare from the server
-                await resharePost(
-                    widget.post['id'], widget.post['type'], "SimpleReshare");
                 setState(() {
                   _reshared = !_reshared;
                   reshareCounter =
@@ -407,6 +410,9 @@ class _ActionBarState extends State<ActionBar> {
                   widget.post['reshares'] = reshareCounter;
                   widget.post['isReshared'] = _reshared;
                 });
+                await resharePost(
+                    widget.post['id'], widget.post['type'], "SimpleReshare");
+
                 Fluttertoast.showToast(
                   msg: "Reshared Post",
                   backgroundColor: Color.fromARGB(200, 220, 20, 60),
@@ -600,7 +606,8 @@ class _ActionBarState extends State<ActionBar> {
                     print("POSTTT: $post");
                     if (widget.post['parent_post_type'] == 'microblog' ||
                         widget.post['parent_post_type'] ==
-                            'ResharedWithComment') {
+                            'ResharedWithComment' ||
+                        widget.post['parent_post_type'] == 'carousel') {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                         return BaseViewer(

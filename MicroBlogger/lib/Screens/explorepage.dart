@@ -66,9 +66,14 @@ class ExporeBlogs extends StatelessWidget {
                   shrinkWrap: true,
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
-                    return BlogPost(
-                      snapshot.data[index],
-                    );
+                    if (snapshot.data[index]['type'] == 'blog')
+                      return BlogPost(
+                        snapshot.data[index],
+                      );
+                    else
+                      return CarouselPost(
+                        postObject: snapshot.data[index],
+                      );
                   }),
             );
           } else {

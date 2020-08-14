@@ -90,6 +90,9 @@ class _FeedState extends State<Feed> {
                     case "blog":
                       output = BlogPost(snapshot.data[index]);
                       break;
+                    case "carousel":
+                      output = CarouselPost(postObject: snapshot.data[index]);
+                      break;
                     case "shareable":
                       output = ShareablePost(postObject: snapshot.data[index]);
                       break;
