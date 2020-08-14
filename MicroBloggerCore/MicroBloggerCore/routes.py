@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify
 from MicroBloggerCore import app, db
 from MicroBloggerCore.models import (User, MicroBlogPost, BlogPost, TimelinePost, ShareablePost,
- PollPost, ReshareWithComment, SimpleReshare, Comment, BookmarkedPosts, ResharedPosts)
+ PollPost, ReshareWithComment, SimpleReshare, Comment, BookmarkedPosts, ResharedPosts, ReportedBugs)
 from post_templates import *
 import requests
 from MicroBloggerCore.fileuploader import upload_file_to_cloud
@@ -48,6 +48,18 @@ def registerpage():
 		'user': userTemplate(user_record)
 	})
 
+@app.route('/reportbug', methods=['POST'])
+def report_bug():
+	data = request.get_json()
+	username = data['username']
+	desc = data['description']
+	rep = ReportedBugs(username=username, desc=desc)
+	db.session.add(rep)
+	db.session.commit()
+	print("New Bug Registered: ", rep)
+	return jsonify({
+		'message': 'The Bug Has been registered! Thank You'
+	})
 
 @app.route("/get_news_feed")
 def getnews():

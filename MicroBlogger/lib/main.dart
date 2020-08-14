@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:MicroBlogger/Composers/blogComposer.dart';
 import 'package:MicroBlogger/Composers/microblogComposer.dart';
 import 'package:MicroBlogger/Composers/pollComposer.dart';
@@ -15,65 +17,16 @@ import 'package:MicroBlogger/Screens/register.dart';
 import 'package:MicroBlogger/Screens/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'Components/Global/globalcomponents.dart';
 import 'Screens/login.dart';
 import 'Backend/datastore.dart';
+import 'package:shake/shake.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
-    runApp(new MyApp());
-  });
-}
-
-class MyApp extends StatefulWidget {
-  // This widget is the root of your application.
-  //TODO: CHECK IF USER ALREADY LOGGED IN THROUGH SHARED PREFERENCES
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  String user_id = "";
-  Widget payload = Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image(image: AssetImage('assets/env.png')),
-        SizedBox(
-          height: 10.0,
-        ),
-        CircularProgressIndicator(
-          valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
-          backgroundColor: Color.fromARGB(200, 220, 20, 60),
-        )
-      ],
-    ),
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    loadUser();
-  }
-
-  void loadUser() async {
-    String x = await loadSavedUsername();
-    setState(() {
-      if (x == "") {
-        payload = LoginPage();
-      }
-      user_id = x;
-    });
-    print("\nMAINSCREEN: $user_id");
-    setState(() {
-      if (user_id.isNotEmpty) payload = HomePage();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+    runApp(MaterialApp(
         title: 'MicroBlogger',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
@@ -114,6 +67,68 @@ class _MyAppState extends State<MyApp> {
                 },
               ),
         },
-        home: payload);
+        home: MyApp()));
+  });
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  String user_id = "";
+  Widget payload = Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image(image: AssetImage('assets/env.png')),
+        SizedBox(
+          height: 10.0,
+        ),
+        CircularProgressIndicator(
+          valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
+          backgroundColor: Color.fromARGB(200, 220, 20, 60),
+        )
+      ],
+    ),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+    ShakeDetector detector = ShakeDetector.autoStart(
+        shakeThresholdGravity: 4.5,
+        onPhoneShake: () {
+          print("Shook");
+          // Do stuff on phone shake
+          Timer.run(() {
+            showDialog(
+                builder: (context) {
+                  return BugReporterDialog();
+                },
+                context: context);
+          });
+        });
+  }
+
+  void loadUser() async {
+    String x = await loadSavedUsername();
+    setState(() {
+      if (x == "") {
+        payload = LoginPage();
+      }
+      user_id = x;
+    });
+    print("\nMAINSCREEN: $user_id");
+    setState(() {
+      if (user_id.isNotEmpty) payload = HomePage();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return payload;
   }
 }

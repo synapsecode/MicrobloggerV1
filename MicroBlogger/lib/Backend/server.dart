@@ -45,6 +45,19 @@ register(username, password, email) async {
   return {'code': 'ERR'};
 }
 
+reportBug(username, desc) async {
+  final response = await http.post(
+    '$serverURL/reportbug',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body:
+        jsonEncode(<String, String>{'username': username, 'description': desc}),
+  );
+  print(jsonDecode(response.body));
+  return {'code': 'ERR'};
+}
+
 getAllUsers() async {
   http.Response response = await http.get("$serverURL/all_users");
   if (response.statusCode == 200) {

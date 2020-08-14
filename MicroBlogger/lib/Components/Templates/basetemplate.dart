@@ -211,6 +211,8 @@ class TopBar extends StatelessWidget {
                                   showDialog(
                                       builder: (context) {
                                         return AlertDialog(
+                                          backgroundColor:
+                                              Color.fromARGB(230, 220, 20, 60),
                                           content: Text(
                                               "Are you sure you want to delete this post? This action is irreversible and would result in the post being permanantly erased"),
                                           title: Text("Delete Post"),
@@ -260,6 +262,8 @@ class TopBar extends StatelessWidget {
                                   showDialog(
                                       builder: (context) {
                                         return AlertDialog(
+                                          backgroundColor:
+                                              Color.fromARGB(230, 220, 20, 60),
                                           content: Text(
                                               "Are you sure you want to delete this comment? This action is irreversible and would result in the comment being permanantly erased"),
                                           title: Text("Delete Comment"),

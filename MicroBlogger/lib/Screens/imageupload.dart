@@ -33,7 +33,7 @@ class _ImageCaptureState extends State<ImageCapture> {
         // maxHeight: 512,
         toolbarColor: Colors.purple,
         toolbarWidgetColor: Colors.white,
-        toolbarTitle: 'Crop It');
+        toolbarTitle: 'Crop Image');
 
     setState(() {
       _imageFile = cropped ?? _imageFile;
@@ -130,17 +130,28 @@ class Uploader extends StatefulWidget {
 }
 
 class _UploaderState extends State<Uploader> {
-  // final FirebaseStorage _storage =
-  //     FirebaseStorage(storageBucket: 'gs://fireship-lessons.appspot.com');
-  // StorageUploadTask _uploadTask;
+  bool isUploading = false;
 
   /// Starts an upload task
   void _startUpload() async {
+    setState(() {
+      isUploading = true;
+    });
     print(widget.file);
     if (widget.imageFor == 'PROFILE') {
+      Fluttertoast.showToast(
+        toastLength: Toast.LENGTH_LONG,
+        msg: "Updating Profile Picture",
+        backgroundColor: Color.fromARGB(200, 220, 20, 60),
+      );
       await addDisplayPicture(widget.file);
       Navigator.pushReplacementNamed(context, '/ProfilePage');
     } else if (widget.imageFor == 'BACKGROUND') {
+      Fluttertoast.showToast(
+        toastLength: Toast.LENGTH_LONG,
+        msg: "Updating Background Picture",
+        backgroundColor: Color.fromARGB(200, 220, 20, 60),
+      );
       await addBackground(widget.file);
       Navigator.pushReplacementNamed(context, '/ProfilePage');
     } else if (widget.imageFor == 'BLOGCOVER') {
@@ -171,52 +182,15 @@ class _UploaderState extends State<Uploader> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      child: FlatButton.icon(
-        padding: EdgeInsets.all(10.0),
-        color: Color.fromARGB(200, 220, 20, 60),
-        label: Text('Upload to Server'),
-        icon: Icon(Icons.cloud_upload),
-        onPressed: _startUpload,
-      ),
-    );
-    // return CirclularLoader();
-    // //if (_uploadTask != null) {
-    //   /// Manage the task state and event subscription with a StreamBuilder
-    //   // return StreamBuilder<StorageTaskEvent>(
-    //   //     stream: _uploadTask.events,
-    //   //     builder: (_, snapshot) {
-    //   //       var event = snapshot?.data?.snapshot;
-
-    //   //       double progressPercent = event != null
-    //   //           ? event.bytesTransferred / event.totalByteCount
-    //   //           : 0;
-
-    //   //       return Column(
-    //   //         children: [
-    //   //           if (_uploadTask.isComplete) Text('🎉🎉🎉'),
-
-    //   //           if (_uploadTask.isPaused)
-    //   //             FlatButton(
-    //   //               child: Icon(Icons.play_arrow),
-    //   //               onPressed: _uploadTask.resume,
-    //   //             ),
-
-    //   //           if (_uploadTask.isInProgress)
-    //   //             FlatButton(
-    //   //               child: Icon(Icons.pause),
-    //   //               onPressed: _uploadTask.pause,
-    //   //             ),
-
-    //   //           // Progress bar
-    //   //           LinearProgressIndicator(value: progressPercent),
-    //   //           Text('${(progressPercent * 100).toStringAsFixed(2)} % '),
-    //   //         ],
-    //   //       );
-    //   //     });
-    // } else {
-    //   // Allows user to decide when to start the upload
-
-    // }
+        margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        child: (!isUploading)
+            ? FlatButton.icon(
+                padding: EdgeInsets.all(10.0),
+                color: Color.fromARGB(200, 220, 20, 60),
+                label: Text('Upload to Server'),
+                icon: Icon(Icons.cloud_upload),
+                onPressed: _startUpload,
+              )
+            : CirclularLoader());
   }
 }

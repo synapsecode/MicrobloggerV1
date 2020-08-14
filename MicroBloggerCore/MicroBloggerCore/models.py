@@ -524,6 +524,20 @@ class BookmarkedPosts(db.Model):
 		user = User.query.filter_by(id=self.user_id).first()
 		return f"BookmarkedPosts(post: {self.post_id} -> user: {user.username})"
 
+class ReportedBugs(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	username = db.Column(db.String)
+	description = db.Column(db.String)
+	created_on = db.Column(db.String)
+
+	def __init__(self, username, desc):
+		self.username = username
+		self.description = desc
+		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
+
+	def __repr__(self):
+	 return f"ReportedBug({self.username}, {self.description}, {self.created_on})"
+
 # class VotedPolls(db.Model):
 # 	id = db.Column(db.Integer, primary_key=True)
 # 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

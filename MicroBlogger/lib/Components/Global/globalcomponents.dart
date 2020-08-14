@@ -1,3 +1,4 @@
+import 'package:MicroBlogger/Backend/server.dart';
 import 'package:MicroBlogger/Screens/editprofile.dart';
 import 'package:MicroBlogger/Screens/homepage.dart';
 import 'package:MicroBlogger/Screens/profile.dart';
@@ -152,6 +153,21 @@ class MainAppDrawer extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
+            new ListTile(
+              onTap: () => showDialog(
+                  builder: (context) {
+                    return BugReporterDialog();
+                  },
+                  context: context),
+              title: Text(
+                "Report Bug",
+                style: TextStyle(color: Colors.white),
+              ),
+              trailing: Icon(
+                Icons.report,
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
       ),
@@ -288,6 +304,81 @@ class ErrorPage extends StatelessWidget {
                   "https://cdn.vox-cdn.com/thumbor/eHhAQHDvAi3sjMeylWgzqnqJP2w=/0x0:1800x1200/1200x0/filters:focal(0x0:1800x1200):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13272825/The_Verge_Hysteresis_Wallpaper_Small.0.jpg"),
               fit: BoxFit.cover)),
       child: child,
+    );
+  }
+}
+
+class BugReporterDialog extends StatefulWidget {
+  const BugReporterDialog({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _BugReporterDialogState createState() => _BugReporterDialogState();
+}
+
+class _BugReporterDialogState extends State<BugReporterDialog> {
+  String description = "";
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        child: AlertDialog(
+          backgroundColor: Color.fromARGB(230, 220, 20, 60),
+          content: Column(
+            children: [
+              Text(
+                  "MicroBlogger is in its early stages! There will be several bugs in the Platform. Please describe the bug or inconsistency that you found! If possible, please add your contact information so that we can discuss the issue elaborately! Thank you for your time!"),
+              SizedBox(
+                height: 15.0,
+              ),
+              Container(
+                color: Colors.black38,
+                padding: EdgeInsets.all(10.0),
+                child: TextFormField(
+                  keyboardType: TextInputType.multiline,
+                  maxLines: 6,
+                  maxLength: 1000,
+                  onChanged: (x) {
+                    setState(() {
+                      description = x;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          title: Row(children: [
+            Icon(
+              Icons.report,
+              color: Colors.white,
+            ),
+            SizedBox(
+              width: 5.0,
+            ),
+            Text("Report a Bug")
+          ]),
+          actions: [
+            FlatButton(
+              child: Text("Report"),
+              onPressed: () async {
+                await reportBug(
+                    currentUser['user']['username'] ?? 'defaultuser',
+                    description);
+                Fluttertoast.showToast(
+                  msg: "The bug was reported! Thank You",
+                  backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                );
+                Navigator.pop(context);
+              },
+            ),
+            FlatButton(
+              child: Text("Cancel"),
+              onPressed: () => Navigator.pop(context),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
