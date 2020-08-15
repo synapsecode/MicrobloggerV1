@@ -5,6 +5,7 @@ import 'package:MicroBlogger/Screens/profile.dart';
 import 'package:MicroBlogger/Views/blog_viewer.dart';
 import 'package:MicroBlogger/Views/shareableWebViewer.dart';
 import 'package:MicroBlogger/Views/timeline_viewer.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'basetemplate.dart';
@@ -34,7 +35,7 @@ class MicroBlogPost extends StatelessWidget {
   }
 }
 
-class CarouselPost extends StatelessWidget {
+class CarouselPost extends StatefulWidget {
   final postObject;
   final isInViewMode;
   final bool isHosted;
@@ -46,30 +47,88 @@ class CarouselPost extends StatelessWidget {
       : super(key: key);
 
   @override
+  _CarouselPostState createState() => _CarouselPostState();
+}
+
+class _CarouselPostState extends State<CarouselPost> {
+  List<T> map<T>(List list, Function handler) {
+    List<T> result = [];
+    for (var i = 0; i < list.length; i++) {
+      result.add(handler(i, list[i]));
+    }
+    return result;
+  }
+
+  int _current = 0;
+
+  @override
   Widget build(BuildContext context) {
     return BasicTemplate(
-        postObject: postObject,
-        isHosted: isHosted,
-        isInViewMode: isInViewMode,
+        postObject: widget.postObject,
+        isHosted: widget.isHosted,
+        isInViewMode: widget.isInViewMode,
         widgetComponent: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(postObject['content']),
-            ListView.builder(
-                itemCount: postObject['images'].length,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(vertical: 10.0),
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 2.0, color: Colors.white30)),
-                    child: SizedBox(
-                        child: Image(
-                      image: NetworkImage(postObject['images'][index]),
-                    )),
+          children: <Widget>[
+            Text(widget.postObject['content']),
+            SizedBox(
+              height: 15,
+            ),
+            Container(
+              padding: EdgeInsets.all(5.0),
+              decoration: BoxDecoration(
+                  color: Colors.black12,
+                  border: Border.all(color: Colors.white30, width: 0.1)),
+              child: CarouselSlider(
+                aspectRatio: 1 / 1,
+                initialPage: 0,
+                //enlargeCenterPage: true,
+                viewportFraction: 1.1,
+                height: 300,
+                reverse: false,
+                enableInfiniteScroll: false,
+                scrollDirection: Axis.horizontal,
+                onPageChanged: (index) {
+                  setState(() {
+                    _current = index;
+                  });
+                },
+                items: widget.postObject['images'].map<Widget>((imgUrl) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Container(
+                        width: 300,
+                        margin: EdgeInsets.symmetric(horizontal: 5.0),
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            border:
+                                Border.all(color: Colors.white30, width: 1.0)),
+                        child: Image.network(
+                          imgUrl,
+                          fit: BoxFit.contain,
+                        ),
+                      );
+                    },
                   );
-                })
+                }).toList(),
+              ),
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: map<Widget>(widget.postObject['images'], (index, url) {
+                return Container(
+                  width: 8.0,
+                  height: 8.0,
+                  margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _current == index ? Colors.red : Colors.white24),
+                );
+              }),
+            )
           ],
         ));
   }
