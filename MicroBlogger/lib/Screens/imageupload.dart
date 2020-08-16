@@ -125,6 +125,7 @@ class Uploader extends StatefulWidget {
   final file;
   final imageFor;
   Map preExistingState;
+
   Uploader(this.imageFor, {this.file, this.preExistingState});
   @override
   _UploaderState createState() => _UploaderState();
@@ -156,6 +157,7 @@ class _UploaderState extends State<Uploader> {
       await addBackground(widget.file);
       Navigator.pushReplacementNamed(context, '/ProfilePage');
     } else if (widget.imageFor == 'BLOGCOVER') {
+      print("COVER: ${widget.preExistingState['cover']}");
       String link = await addCoverPicture(widget.file);
       print("The Generated Link is: $link");
       widget.preExistingState['cover'] = link;
@@ -165,9 +167,10 @@ class _UploaderState extends State<Uploader> {
           MaterialPageRoute(
               builder: (context) => BlogComposer(
                     preExistingState: widget.preExistingState,
-                    isEditing: false,
+                    isEditing: widget.preExistingState['isEditing'],
                   )));
     } else if (widget.imageFor == 'TIMELINECOVER') {
+      print("COVER: ${widget.preExistingState['cover']}");
       String link = await addCoverPicture(widget.file);
       print("The Generated Link is: $link");
       widget.preExistingState['cover'] = link;
@@ -176,10 +179,11 @@ class _UploaderState extends State<Uploader> {
           context,
           MaterialPageRoute(
               builder: (context) => TimelineComposer(
-                    isEditing: false,
+                    isEditing: widget.preExistingState['isEditing'],
                     preExistingState: widget.preExistingState,
                   )));
     } else if (widget.imageFor == 'CAROUSEL') {
+      print("IMGS: ${widget.preExistingState['images']}");
       print(widget.file);
       String link = await addCoverPicture(widget.file);
       print(widget.preExistingState);
@@ -189,7 +193,7 @@ class _UploaderState extends State<Uploader> {
           context,
           MaterialPageRoute(
               builder: (context) => MediaComposer(
-                    isEditing: false,
+                    isEditing: widget.preExistingState['isEditing'],
                     preExistingState: widget.preExistingState,
                   )));
     }

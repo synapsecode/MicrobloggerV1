@@ -106,13 +106,16 @@ class _TimelineComposerState extends State<TimelineComposer> {
             child: RaisedButton(
               onPressed: () async {
                 print(state);
+                (widget.isEditing)
+                    ? state.putIfAbsent('isEditing', () => true)
+                    : state.putIfAbsent('isEditing', () => false);
+                print(state);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => ImageCapture(
-                              imageFor: 'TIMELINECOVER',
-                              preExistingState: widget.preExistingState,
-                            )));
+                            imageFor: 'TIMELINECOVER',
+                            preExistingState: state)));
               },
               child: Text("Add Cover Image"),
               color: Color.fromARGB(200, 220, 20, 60),

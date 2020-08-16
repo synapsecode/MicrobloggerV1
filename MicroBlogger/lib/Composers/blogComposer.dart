@@ -46,6 +46,7 @@ class _BlogComposerState extends State<BlogComposer> {
     content = state['content'];
     blogName = state['blogName'];
     cover = state['cover'];
+    print("COVER OF POST: $cover");
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -78,7 +79,11 @@ class _BlogComposerState extends State<BlogComposer> {
               margin: EdgeInsets.all(10.0),
               child: RaisedButton(
                 onPressed: () async {
-                  print("OLD: $state");
+                  print(state);
+                  (widget.isEditing)
+                      ? state.putIfAbsent('isEditing', () => true)
+                      : state.putIfAbsent('isEditing', () => false);
+                  print(state);
                   Navigator.push(
                       context,
                       MaterialPageRoute(

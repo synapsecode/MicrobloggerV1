@@ -54,11 +54,16 @@ class _MediaComposerState extends State<MediaComposer> {
                 );
                 print(state['content']);
                 print(state['images']);
-                await createCarousel(state['content'], state['images']);
+                if (!widget.isEditing) {
+                  await createCarousel(state['content'], state['images']);
+                } else {
+                  print("Updating Carousel");
+                }
+
                 Navigator.pushNamed(context, '/HomePage');
                 //upload
               },
-              child: Text("Publish"),
+              child: Text((widget.isEditing) ? "Update" : "Publish"),
               color: Colors.black,
             ),
           ),
@@ -86,13 +91,17 @@ class _MediaComposerState extends State<MediaComposer> {
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () async {
+                      print(state);
+                      (widget.isEditing)
+                          ? state.putIfAbsent('isEditing', () => true)
+                          : state.putIfAbsent('isEditing', () => false);
+                      print(state);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => ImageCapture(
-                                    imageFor: 'CAROUSEL',
-                                    preExistingState: state,
-                                  )));
+                                  imageFor: 'CAROUSEL',
+                                  preExistingState: state)));
                     },
                   ),
                 ),

@@ -1,7 +1,12 @@
 import 'package:MicroBlogger/Components/Templates/ViewerTemplate.dart';
 import 'package:MicroBlogger/Components/Templates/postTemplates.dart';
+import 'package:MicroBlogger/Composers/blogComposer.dart';
 import 'package:MicroBlogger/Composers/commentComposer.dart';
+import 'package:MicroBlogger/Composers/mediaComposer.dart';
+import 'package:MicroBlogger/Composers/microblogComposer.dart';
 import 'package:MicroBlogger/Composers/reshareComposer.dart';
+import 'package:MicroBlogger/Composers/shareableComposer.dart';
+import 'package:MicroBlogger/Composers/timelineComposer.dart';
 import 'package:MicroBlogger/Screens/editprofile.dart';
 import 'package:MicroBlogger/Screens/homepage.dart';
 import 'package:MicroBlogger/Screens/profile.dart';
@@ -301,23 +306,33 @@ class TopBar extends StatelessWidget {
                                       context: context);
 
                                   break;
+                                case "edit":
+                                  print(postObject['type']);
+                                  editRouter(context);
+                                  break;
                                 default:
                                   print("Invalid option");
                               }
                             },
                             itemBuilder: (context) {
                               return [
-                                (postObject['type'] != "ResharedWithComment")
-                                    ? (postObject['type'] == "comment")
+                                if (postObject['type'] == "ResharedWithComment")
+                                  PopupMenuItem(
+                                      value: "unreshare",
+                                      child: Text("Unreshare Post")),
+                                (postObject['type'] == "comment")
+                                    ? PopupMenuItem(
+                                        value: "delcom",
+                                        child: Text("Delete Comment"))
+                                    : (postObject['type'] !=
+                                            "ResharedWithComment")
                                         ? PopupMenuItem(
-                                            value: "delcom",
-                                            child: Text("Delete Comment"))
-                                        : PopupMenuItem(
                                             value: "del",
                                             child: Text("Delete Post"))
-                                    : PopupMenuItem(
-                                        value: "unreshare",
-                                        child: Text("Unreshare Post"))
+                                        : null,
+                                if (postObject['type'] != "poll")
+                                  PopupMenuItem(
+                                      value: "edit", child: Text("Edit Post")),
                               ];
                             })),
                   ],
@@ -328,6 +343,110 @@ class TopBar extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void editRouter(BuildContext context) async {
+    switch (postObject['type']) {
+      case "microblog":
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MicroBlogComposer(
+                      isEditing: true,
+                      preExistingState: {
+                        'pid': postObject['id'],
+                        'content': postObject['content'],
+                        'isFact':
+                            (postObject['category'] == 'Fact') ? true : false
+                      },
+                    )));
+        break;
+      case "blog":
+        Map blogData = await getBlogData(postObject);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => BlogComposer(
+                      isEditing: true,
+                      preExistingState: {
+                        'pid': postObject['id'],
+                        'content': blogData['content'],
+                        'blogName': blogData['blog_name'],
+                        'cover': postObject['background']
+                      },
+                    )));
+        break;
+      case "shareable":
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ShareableComposer(
+                      isEditing: true,
+                      preExistingState: {
+                        'pid': postObject['id'],
+                        'content': postObject['content'],
+                        'link': postObject['link'],
+                        'name': postObject['name']
+                      },
+                    )));
+        break;
+      case "timeline":
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => TimelineComposer(
+                      isEditing: true,
+                      preExistingState: {
+                        'pid': postObject['id'],
+                        'timelineTitle': postObject['timeline_name'],
+                        'events': postObject['events'],
+                        'cover': postObject['background']
+                      },
+                    )));
+        break;
+      case "carousel":
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MediaComposer(
+                      isEditing: true,
+                      preExistingState: {
+                        'pid': postObject['id'],
+                        'images': postObject['images'],
+                        'content': postObject['content'],
+                      },
+                    )));
+        break;
+      case "comment":
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CommentComposer(
+                      isEditing: true,
+                      preExistingState: {
+                        'pid': postObject['id'],
+                        'comment': postObject['content'],
+                        'isFact':
+                            (postObject['category'] == 'Fact') ? true : false,
+                      },
+                    )));
+        break;
+      case "ResharedWithComment":
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ReshareComposer(
+                      postObject: postObject,
+                      isEditing: true,
+                      preExistingState: {
+                        'pid': postObject['id'],
+                        'content': postObject['content'],
+                        'isFact':
+                            (postObject['category'] == 'Fact') ? true : false,
+                      },
+                    )));
+        break;
+    }
   }
 }
 
