@@ -36,7 +36,8 @@ def carousel(user, post):
 		'age': calculate_post_age(post.created_on),
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
-		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False
+		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False,
+		# 'isEdited': post.isEdited
 	}
 
 def comment(user, c):
@@ -68,7 +69,8 @@ def comment(user, c):
 		'category': c.category,
 		'likes': len(c.likes),
 		'age': calculate_post_age(c.created_on),
-		'isLiked': True if (c.comment_id in [x.post_id for x in user.liked_posts] ) else False
+		'isLiked': True if (c.comment_id in [x.post_id for x in user.liked_posts] ) else False,
+		# 'isEdited': post.isEdited
 	}
 
 def microblog(user, post):
@@ -88,7 +90,8 @@ def microblog(user, post):
 		'age': calculate_post_age(post.created_on),
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
-		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False
+		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False,
+		# 'isEdited': post.isEdited
 	}
 
 def blog(user, post):
@@ -109,7 +112,8 @@ def blog(user, post):
 		'age': calculate_post_age(post.created_on),
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
-		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False
+		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False,
+		# 'isEdited': post.isEdited
 	}
 
 def poll(user, post):
@@ -154,7 +158,8 @@ def shareable(user, post):
 		'link': post.link,
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
-		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False
+		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False,
+		# 'isEdited': post.isEdited
 	}
 
 def timeline(user, post):
@@ -175,7 +180,8 @@ def timeline(user, post):
 		'events': post.events,
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
-		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False
+		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False,
+		# 'isEdited': post.isEdited
 	}
 
 def simpleReshare(user, post):
@@ -229,7 +235,8 @@ def reshareWithComment(user, post):
 		'age': calculate_post_age(post.created_on),
 		'child': child,
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
-		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False
+		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False,
+		# 'isEdited': post.isEdited
 	}
 
 def newsArticle(headline, url, background, source="internet"):
@@ -262,6 +269,7 @@ def timeline_body(user, post):
 		'type':'timeline',
 		'id': post.post_id,
 		'timeline_name': post.timeline_name,
+		'background': post.background,
 		'author': {
 			'name': (post.author.name) if (post.author.name != None) else "Default User",
 			'username': post.author.username,
@@ -274,7 +282,8 @@ def timeline_body(user, post):
 		'events': post.events,
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
-		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False
+		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False,
+		# 'isEdited': post.isEdited
 	}
 
 def blog_skin(user, post):
@@ -296,6 +305,7 @@ def blog_body(user, post):
 		'type':'blog',
 		'id': post.post_id,
 		'blog_name': post.blog_name,
+		'background': post.background,
 		'author': {
 			'name': (post.author.name) if (post.author.name != None) else "Default User",
 			'username': post.author.username,
@@ -308,7 +318,8 @@ def blog_body(user, post):
 		'age': calculate_post_age(post.created_on),
 		'isLiked': True if (post.post_id in [x.post_id for x in user.liked_posts] ) else False,
 		'isReshared': True if (post.post_id in [x.og_post_id for x in user.reshared_posts] ) else False,
-		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False
+		'isBookmarked': True if (post.post_id in [x.post_id for x in user.bookmarked_posts] ) else False,
+		# 'isEdited': post.isEdited
 	}
 
 def get_comments_from_post(user, post):

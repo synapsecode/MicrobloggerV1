@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
 
 class CommentComposer extends StatefulWidget {
@@ -52,15 +53,26 @@ class _CommentComposerState extends State<CommentComposer> {
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
               onPressed: () async {
-                print(widget.post);
-                print(state['isFact']);
-                print(state['comment']);
                 String category = (state['isFact']) ? "Fact" : "Opinion";
                 if (!widget.isEditing) {
+                  Fluttertoast.showToast(
+                    msg: "Adding Comment",
+                    backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                  );
                   await addCommentToPost(widget.post['id'], widget.post['type'],
                       state['comment'], category);
                 } else {
-                  print("Editing Comment");
+                  print("Updating Comment");
+                  Fluttertoast.showToast(
+                    msg: "Updating Comment",
+                    backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                  );
+                  if (state.containsKey('cid')) {
+                    print("POST_ID: ${state['cid']}");
+                    print("COMMENT: ${state['comment']}");
+                    print(
+                        "CATEGORY: ${(state['isFact']) ? 'Fact' : 'Opinion'}");
+                  }
                 }
                 //upload
                 Navigator.pushNamed(context, '/HomePage');
@@ -93,7 +105,6 @@ class _ComposerComponentState extends State<ComposerComponent> {
   Widget build(BuildContext context) {
     var commentController = new TextEditingController();
     commentController.text = widget.state['comment'];
-    print(widget.state);
     commentController.value = TextEditingValue(
       text: widget.state['comment'],
       selection: TextSelection.fromPosition(

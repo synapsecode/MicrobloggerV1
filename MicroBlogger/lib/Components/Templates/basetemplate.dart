@@ -424,7 +424,7 @@ class TopBar extends StatelessWidget {
                 builder: (context) => CommentComposer(
                       isEditing: true,
                       preExistingState: {
-                        'pid': postObject['id'],
+                        'cid': postObject['cid'],
                         'comment': postObject['content'],
                         'isFact':
                             (postObject['category'] == 'Fact') ? true : false,

@@ -61,7 +61,6 @@ class _ReshareComposerState extends State<ReshareComposer> {
 
     var contentController = new TextEditingController();
     contentController.text = state['content'];
-    print(state);
     contentController.value = TextEditingValue(
       text: state['content'],
       selection: TextSelection.fromPosition(
@@ -95,8 +94,8 @@ class _ReshareComposerState extends State<ReshareComposer> {
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
               onPressed: () async {
-                String category = (state['isFact']) ? "Fact" : "Opinion";
                 if (!widget.isEditing) {
+                  String category = (state['isFact']) ? "Fact" : "Opinion";
                   await resharePost(widget.postObject['id'],
                       widget.postObject['type'], "ResharedWithComment",
                       content: state['content'], category: category);
@@ -105,7 +104,17 @@ class _ReshareComposerState extends State<ReshareComposer> {
                     backgroundColor: Color.fromARGB(200, 220, 20, 60),
                   );
                 } else {
+                  Fluttertoast.showToast(
+                    msg: "Updadting Post",
+                    backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                  );
                   print("Updating RWC");
+                  if (state.containsKey('pid')) {
+                    print("POST_ID: ${state['pid']}");
+                    print("CONTENT: ${state['content']}");
+                    print(
+                        "CATEGORY: ${(state['isFact']) ? 'Fact' : 'Opinion'}");
+                  }
                 }
                 Navigator.pushNamed(context, '/HomePage');
               },

@@ -701,39 +701,188 @@ def submit_vote():
 
 #-----------------------------------------------EDIT POSTS------------------------------------------------------
 @app.route('/editmicroblog', methods=['POST'])
-def editmicroblog(username):
+def editmicroblog():
 	data = request.get_json()
 	username = data['username']
 	post_id = data['post_id']
-	pass
+	content = data['content']
+	category = data['category']
+	user = User.query.filter_by(username=username).first()
+	post = getPost('microblog', post_id)
+	if(post.author.id == user.id):
+		post.content = content
+		post.category = category
+		db.session.commit()
+		return jsonify({
+			'code': 'S',
+			'message': 'Edited MicroBlog Successfully!'
+		})
+	else:
+		return jsonify({
+			'code': 'ERR',
+			'message': 'Permission Denied'
+		})
+	
 
 @app.route('/editrwc', methods=['POST'])
-def edit_rwc(username):
+def edit_rwc():
 	data = request.get_json()
 	username = data['username']
 	post_id = data['post_id']
-	pass
+	user = User.query.filter_by(username=username).first()
+	post = getPost('ResharedWithComment', post_id)
+
+	content = data['content']
+	category = data['category']
+
+	if(post.author.id == user.id):
+		post.content = content
+		post.category = category
+		db.session.commit()
+		return jsonify({
+			'code': 'S',
+			'message': 'Edited ResharedWithComment Successfully!'
+		})
+	else:
+		return jsonify({
+			'code': 'ERR',
+			'message': 'Permission Denied'
+		})
+
 
 @app.route('/editblog', methods=['POST'])
-def editblog(username):
+def editblog():
 	data = request.get_json()
 	username = data['username']
 	post_id = data['post_id']
-	pass
+	content = data['content']
+	blog_name = data['blog_name']
+	cover = data['cover'] if data['cover'] else None
+
+	user = User.query.filter_by(username=username).first()
+	post = getPost('blog', post_id)
+
+	if(post.author.id == user.id):
+		post.content = content
+		post.blog_name = blog_name
+		if(cover != None):
+			post.background = cover
+		db.session.commit()
+		return jsonify({
+			'code': 'S',
+			'message': 'Edited Blog Successfully!'
+		})
+	else:
+		return jsonify({
+			'code': 'ERR',
+			'message': 'Permission Denied'
+		})
 
 @app.route('/edittimeline', methods=['POST'])
-def edit_timeline(username):
+def edit_timeline():
 	data = request.get_json()
 	username = data['username']
 	post_id = data['post_id']
-	pass
+	user = User.query.filter_by(username=username).first()
+	post = getPost('timeline', post_id)
+
+	#content = data['content']
+	title = data['title']
+	events = data['events']
+	cover = data['cover']
+
+	if(post.author.id == user.id):
+		post.timeline_name = title
+		post.events = []
+		db.session.commit()
+		post.events = [*events]
+		#post.content = content
+		post.background = cover
+		db.session.commit()
+		return jsonify({
+			'code': 'S',
+			'message': 'Edited Timeline Successfully!'
+		})
+	else:
+		return jsonify({
+			'code': 'ERR',
+			'message': 'Permission Denied'
+		})
 
 @app.route('/editshareable', methods=['POST'])
-def editshareable(username):
+def editshareable():
 	data = request.get_json()
 	username = data['username']
 	post_id = data['post_id']
-	pass
+	user = User.query.filter_by(username=username).first()
+	post = getPost('shareable', post_id)
+	content = data['content']
+	link = data['link']
+	name = data['name']
+	if(post.author.id == user.id):
+		post.link = link
+		post.name = name
+		post.content = content
+		db.session.commit()
+		return jsonify({
+			'code': 'S',
+			'message': 'Edited Shareable Successfully!'
+		})
+	else:
+		return jsonify({
+			'code': 'ERR',
+			'message': 'Permission Denied'
+		})
+
+@app.route('/editcomment', methods=['POST'])
+def editcomment():
+	data = request.get_json()
+	username = data['username']
+	comment_id = data['comment_id']
+	user = User.query.filter_by(username=username).first()
+	post = getPost('comment', comment_id)
+	comment = data['comment']
+	category = data['category']
+
+	if(post.author.id == user.id):
+		post.content = comment
+		post.category = category
+		db.session.commit()
+		return jsonify({
+			'code': 'S',
+			'message': 'Edited Comment Successfully!'
+		})
+	else:
+		return jsonify({
+			'code': 'ERR',
+			'message': 'Permission Denied'
+		})
+
+@app.route('/editcarousel', methods=['POST'])
+def editcarousel():
+	data = request.get_json()
+	username = data['username']
+	post_id = data['post_id']
+	user = User.query.filter_by(username=username).first()
+	post = getPost('carousel', post_id)
+	content = data['content']
+	images = data['images']
+
+	if(post.author.id == user.id):
+		post.content = content
+		post.images = []
+		db.session.commit()
+		post.images = [*images]
+		db.session.commit()
+		return jsonify({
+			'code': 'S',
+			'message': 'Edited Carousel Successfully!'
+		})
+	else:
+		return jsonify({
+			'code': 'ERR',
+			'message': 'Permission Denied'
+		})
 
 #-----------------------------------------------EDIT POSTS------------------------------------------------------
 #--------------------------------------------------EXPLORE--------------------------------------------------

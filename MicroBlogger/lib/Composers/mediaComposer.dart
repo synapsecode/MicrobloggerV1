@@ -47,19 +47,26 @@ class _MediaComposerState extends State<MediaComposer> {
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
               onPressed: () async {
-                Fluttertoast.showToast(
-                  toastLength: Toast.LENGTH_LONG,
-                  msg: "Creating Carousel",
-                  backgroundColor: Color.fromARGB(200, 220, 20, 60),
-                );
-                print(state['content']);
-                print(state['images']);
                 if (!widget.isEditing) {
+                  Fluttertoast.showToast(
+                    toastLength: Toast.LENGTH_LONG,
+                    msg: "Creating Carousel",
+                    backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                  );
                   await createCarousel(state['content'], state['images']);
                 } else {
+                  Fluttertoast.showToast(
+                    toastLength: Toast.LENGTH_LONG,
+                    msg: "Updating Carousel",
+                    backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                  );
                   print("Updating Carousel");
+                  if (state.containsKey('pid')) {
+                    print("POST_ID: ${state['pid']}");
+                    print("IMAGES: ${state['images']}");
+                    print("CONTENT: ${state['content']}");
+                  }
                 }
-
                 Navigator.pushNamed(context, '/HomePage');
                 //upload
               },

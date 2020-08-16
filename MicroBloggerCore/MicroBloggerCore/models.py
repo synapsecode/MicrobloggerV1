@@ -110,6 +110,7 @@ class MicroBlogPost(db.Model):
 	content = db.Column(db.String)
 	created_on = db.Column(db.String)
 	category = db.Column(db.String)
+	# isEdited = db.Column(db.Boolean)
 
 	#Constructor
 	def __init__(self, content, category, author):
@@ -119,6 +120,7 @@ class MicroBlogPost(db.Model):
 		self.category = category
 		self.author = author
 		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
+		# self.isEdited = False
 
 	@hybrid_property
 	def likes(self):
@@ -165,6 +167,7 @@ class BlogPost(db.Model):
 	comments = db.relationship('Comment', backref='blog_parent')
 	content = db.Column(db.String)
 	created_on = db.Column(db.String)
+	# isEdited = db.Column(db.Boolean)
 
 	#Constructor
 	def __init__(self, author, blog_name, content, background):
@@ -175,6 +178,7 @@ class BlogPost(db.Model):
 		self.background = background
 		self.author = author
 		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
+		# self.isEdited = False
 
 	@hybrid_property
 	def likes(self):
@@ -258,6 +262,7 @@ class ShareablePost(db.Model):
 	link = db.Column(db.String)
 	name = db.Column(db.String)
 	created_on = db.Column(db.String)
+	# isEdited = db.Column(db.Boolean)
 
 	def __init__(self, name, content, link, author):
 		self.post_type = 'shareable'
@@ -267,6 +272,7 @@ class ShareablePost(db.Model):
 		self.link = link
 		self.author = author
 		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
+		# self.isEdited = False
 
 	@hybrid_property
 	def likes(self):
@@ -314,6 +320,7 @@ class TimelinePost(db.Model):
 	events = db.Column(db.PickleType)
 	created_on = db.Column(db.String)
 	comments = db.relationship('Comment', backref='timeline_parent')
+	# isEdited = db.Column(db.Boolean)
 
 	"""
 	SCHEMA(events): [
@@ -334,6 +341,7 @@ class TimelinePost(db.Model):
 		self.background = background
 		self.author = author
 		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
+		# self.isEdited = false
 
 	@hybrid_property
 	def likes(self):
@@ -383,6 +391,7 @@ class Comment(db.Model):
 	timeline_pid = db.Column(db.Integer, db.ForeignKey('timeline_post.id'))
 	rwc_pid = db.Column(db.Integer, db.ForeignKey('reshare_with_comment.id'))
 	carousel_pid = db.Column(db.Integer, db.ForeignKey('carousel_post.id'))
+	# isEdited = db.Column(db.Boolean)
 
 	def __init__(self, author, content, category, microblog_parent=None, blog_parent=None, timeline_parent=None, rwc_parent=None, carousel_parent=None):
 		self.post_type = 'comment'
@@ -398,6 +407,7 @@ class Comment(db.Model):
 
 		self.author = author
 		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
+		# self.isEdited = False
 
 	@hybrid_property
 	def likes(self):
@@ -447,6 +457,7 @@ class ReshareWithComment(db.Model):
 	created_on = db.Column(db.String)
 	category = db.Column(db.String)
 	host_type = db.Column(db.String)
+	# isEdited = db.Column(db.Boolean)
 
 	def __init__(self, content, category, author, host):
 		self.post_type = 'ResharedWithComment'
@@ -457,6 +468,7 @@ class ReshareWithComment(db.Model):
 		self.host_id = host.post_id
 		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
 		self.host_type = host.post_type
+		# self.isEdited = False
 
 	@hybrid_property
 	def likes(self):
@@ -486,6 +498,7 @@ class CarouselPost(db.Model):
 	content = db.Column(db.String)
 	created_on = db.Column(db.String)
 	images = db.Column(db.PickleType(comparator=lambda *a: False))
+	# isEdited = db.Column(db.Boolean)
 
 	@hybrid_property
 	def likes(self):
@@ -526,6 +539,7 @@ class CarouselPost(db.Model):
 		self.images = []
 		self.content = content
 		self.created_on = str(datetime.today().strftime("%b %d, %Y %H:%M:%S"))
+		# self.isEdited = False
 
 	def __repr__(self):
 		return f"CarouselPost({self.author_id}, {self.post_id})"

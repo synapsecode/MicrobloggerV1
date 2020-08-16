@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
 
 class MicroBlogComposer extends StatefulWidget {
@@ -49,14 +50,26 @@ class _MicroBlogComposerState extends State<MicroBlogComposer> {
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
               onPressed: () async {
-                print("Fact: ${state['isFact']}");
-                print(state['content']);
                 //upload
                 String category = (state['isFact']) ? "Fact" : "Opinion";
                 if (!widget.isEditing) {
+                  Fluttertoast.showToast(
+                    msg: "Creating MicroBlog",
+                    backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                  );
                   await createMicroblog(state['content'], category);
                 } else {
                   print("Updating MicroBlog");
+                  Fluttertoast.showToast(
+                    msg: "Updating MicroBlog",
+                    backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                  );
+                  if (state.containsKey('pid')) {
+                    print("POST_ID: ${state['pid']}");
+                    print("CONTENT: ${state['content']}");
+                    print(
+                        "CATEGORY: ${(state['isFact']) ? 'Fact' : 'Opinion'}");
+                  }
                 }
                 Navigator.pushNamed(context, '/HomePage');
               },
@@ -85,7 +98,6 @@ class _ComposerComponentState extends State<ComposerComponent> {
   Widget build(BuildContext context) {
     var contentController = new TextEditingController();
     contentController.text = widget.state['content'];
-    print(widget.state);
     contentController.value = TextEditingValue(
       text: widget.state['content'],
       selection: TextSelection.fromPosition(

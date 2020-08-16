@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:MicroBlogger/Screens/imageupload.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
 
 class BlogComposer extends StatefulWidget {
@@ -15,38 +16,29 @@ class BlogComposer extends StatefulWidget {
 }
 
 class _BlogComposerState extends State<BlogComposer> {
-  String content;
-  String blogName;
-  String cover;
   Map state;
 
   @override
   void initState() {
+    super.initState();
     print("BLOGCOMPOSER: ${widget.preExistingState}");
     state = widget.preExistingState;
-    super.initState();
   }
 
-  void updateComment(x) {
+  void updateContent(x) {
     setState(() {
-      content = x;
       state['content'] = x;
     });
   }
 
   void blogNameUpdater(x) {
     setState(() {
-      blogName = x;
       state['blogName'] = x;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    content = state['content'];
-    blogName = state['blogName'];
-    cover = state['cover'];
-    print("COVER OF POST: $cover");
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -60,16 +52,27 @@ class _BlogComposerState extends State<BlogComposer> {
               margin: EdgeInsets.symmetric(vertical: 10.0),
               child: RaisedButton(
                 onPressed: () async {
-                  print(blogName);
-                  print(content);
-                  print(cover);
+                  print("Updating Blog");
+                  Fluttertoast.showToast(
+                    msg: "Updating Blog",
+                    backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                  );
                   if (widget.isEditing) {
-                    print("Updated the blog!");
+                    if (state.containsKey('pid')) {
+                      print("POST_ID: ${state['pid']}");
+                      print("CONTENT: ${state['content']}");
+                      print("BLOG_NAME: ${state['blogName']}");
+                      print("COVER: ${state['cover']}");
+                    }
                   } else {
-                    await createBlog(content, blogName, cover: cover);
+                    Fluttertoast.showToast(
+                      msg: "Creating Blog",
+                      backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                    );
+                    await createBlog(state['content'], state['blogName'],
+                        cover: state['cover']);
                   }
                   Navigator.pushNamed(context, '/HomePage');
-                  //upload
                 },
                 child: (widget.isEditing) ? Text("Update") : Text("Publish"),
                 color: Colors.black,
@@ -107,7 +110,7 @@ class _BlogComposerState extends State<BlogComposer> {
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               ComposerComponent(
                 state,
-                contentUpdater: updateComment,
+                contentUpdater: updateContent,
                 blogNameUpdater: blogNameUpdater,
               ),
             ]),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
 
 class PollComposer extends StatefulWidget {
@@ -51,6 +52,10 @@ class _PollComposerState extends State<PollComposer> {
               onPressed: () async {
                 print(pollItems);
                 print(content);
+                Fluttertoast.showToast(
+                  msg: "Creating Poll",
+                  backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                );
                 await createpoll(content, pollItems);
                 Navigator.pushNamed(context, '/HomePage');
               },

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:MicroBlogger/Screens/imageupload.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
 
 class TimelineComposer extends StatefulWidget {
@@ -26,6 +27,7 @@ class _TimelineComposerState extends State<TimelineComposer> {
   @override
   void initState() {
     state = widget.preExistingState;
+    print(state);
     super.initState();
   }
 
@@ -89,10 +91,24 @@ class _TimelineComposerState extends State<TimelineComposer> {
                 print("TSTATE: $state");
                 //upload
                 if (!widget.isEditing) {
+                  Fluttertoast.showToast(
+                    msg: "Creating Timeline",
+                    backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                  );
                   await createTimeline(state['timelineTitle'], state['events'],
                       cover: state['cover']);
                 } else {
-                  print("Editing Timeline");
+                  print("Updating Timeline");
+                  Fluttertoast.showToast(
+                    msg: "Updating Timeline",
+                    backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                  );
+                  if (state.containsKey('pid')) {
+                    print("POST_ID: ${state['pid']}");
+                    print("TIMELINE_NAME: ${state['timelineTitle']}");
+                    print("EVENTS: ${state['events']}");
+                    print("COVER: ${state['cover']}");
+                  }
                 }
 
                 Navigator.pushNamed(context, '/HomePage');
@@ -286,8 +302,9 @@ class _TComposerState extends State<TComposer> {
                                     icon: Icon(Icons.clear),
                                     onPressed: () {
                                       print("CLEAR");
+                                      print(index);
                                       widget.deleteEvent(widget.state['events']
-                                          [index]['event_name']);
+                                          [index]['description']);
                                     }),
                               ),
                             );
