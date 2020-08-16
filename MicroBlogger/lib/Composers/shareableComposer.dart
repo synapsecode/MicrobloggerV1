@@ -65,7 +65,7 @@ class _ShareableComposerState extends State<ShareableComposer> {
                 } else {
                   print("Updating Shareable");
                   Fluttertoast.showToast(
-                    msg: "Updating Poll",
+                    msg: "Updating Shareable",
                     backgroundColor: Color.fromARGB(200, 220, 20, 60),
                   );
                   if (state.containsKey('pid')) {
@@ -73,6 +73,8 @@ class _ShareableComposerState extends State<ShareableComposer> {
                     print("NAME: ${state['name']}");
                     print("LINK: ${state['link']}");
                     print("CONTENT: ${state['content']}");
+                    await editShareable(state['pid'], state['content'],
+                        state['link'], state['name']);
                   }
                 }
                 Navigator.pushNamed(context, '/HomePage');
@@ -106,9 +108,13 @@ class ComposerComponent extends StatefulWidget {
 }
 
 class _ComposerComponentState extends State<ComposerComponent> {
+  TextEditingController contentController;
+  TextEditingController nameController;
+  TextEditingController linkController;
   @override
-  Widget build(BuildContext context) {
-    var contentController = new TextEditingController();
+  void initState() {
+    super.initState();
+    contentController = new TextEditingController();
     contentController.text = widget.state['content'];
     contentController.value = TextEditingValue(
       text: widget.state['content'],
@@ -116,7 +122,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
         TextPosition(offset: widget.state['content'].length),
       ),
     );
-    var linkController = new TextEditingController();
+    linkController = new TextEditingController();
     linkController.text = widget.state['link'];
     linkController.value = TextEditingValue(
       text: widget.state['link'],
@@ -124,7 +130,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
         TextPosition(offset: widget.state['link'].length),
       ),
     );
-    var nameController = new TextEditingController();
+    nameController = new TextEditingController();
     nameController.text = widget.state['name'];
     nameController.value = TextEditingValue(
       text: widget.state['name'],
@@ -132,6 +138,10 @@ class _ComposerComponentState extends State<ComposerComponent> {
         TextPosition(offset: widget.state['name'].length),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(children: [
       Container(
         padding: EdgeInsets.all(10.0),

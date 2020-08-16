@@ -72,6 +72,8 @@ class _CommentComposerState extends State<CommentComposer> {
                     print("COMMENT: ${state['comment']}");
                     print(
                         "CATEGORY: ${(state['isFact']) ? 'Fact' : 'Opinion'}");
+                    await editComment(state['cid'], state['comment'],
+                        (state['isFact']) ? 'Fact' : 'Opinion');
                   }
                 }
                 //upload
@@ -101,9 +103,11 @@ class ComposerComponent extends StatefulWidget {
 }
 
 class _ComposerComponentState extends State<ComposerComponent> {
+  TextEditingController commentController;
   @override
-  Widget build(BuildContext context) {
-    var commentController = new TextEditingController();
+  void initState() {
+    super.initState();
+    commentController = new TextEditingController();
     commentController.text = widget.state['comment'];
     commentController.value = TextEditingValue(
       text: widget.state['comment'],
@@ -111,6 +115,10 @@ class _ComposerComponentState extends State<ComposerComponent> {
         TextPosition(offset: widget.state['comment'].length),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(children: [
       Expanded(
         child: Card(

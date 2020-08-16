@@ -63,6 +63,8 @@ class _BlogComposerState extends State<BlogComposer> {
                       print("CONTENT: ${state['content']}");
                       print("BLOG_NAME: ${state['blogName']}");
                       print("COVER: ${state['cover']}");
+                      await editBlog(state['pid'], state['content'],
+                          state['blogName'], state['cover']);
                     }
                   } else {
                     Fluttertoast.showToast(
@@ -131,10 +133,13 @@ class ComposerComponent extends StatefulWidget {
 }
 
 class _ComposerComponentState extends State<ComposerComponent> {
+  TextEditingController nameController;
+  TextEditingController contentController;
   @override
-  Widget build(BuildContext context) {
-    var nameController = new TextEditingController();
-    var contentController = new TextEditingController();
+  void initState() {
+    super.initState();
+    nameController = new TextEditingController();
+    contentController = new TextEditingController();
     contentController.text = widget.state['content'];
     nameController.value = TextEditingValue(
       text: widget.state['blogName'],
@@ -148,6 +153,10 @@ class _ComposerComponentState extends State<ComposerComponent> {
         TextPosition(offset: widget.state['content'].length),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(children: [
       Container(
         padding: EdgeInsets.all(10.0),

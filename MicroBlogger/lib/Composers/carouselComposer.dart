@@ -5,22 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
 
-class MediaComposer extends StatefulWidget {
+class CarouselComposer extends StatefulWidget {
   final Map preExistingState;
   final bool isEditing;
-  MediaComposer({Key key, this.isEditing, this.preExistingState})
+  CarouselComposer({Key key, this.isEditing, this.preExistingState})
       : super(key: key);
 
   @override
-  _MediaComposerState createState() => _MediaComposerState();
+  _CarouselComposerState createState() => _CarouselComposerState();
 }
 
-class _MediaComposerState extends State<MediaComposer> {
+class _CarouselComposerState extends State<CarouselComposer> {
   Map state;
 
   @override
   void initState() {
-    print("MediaComposer: ${widget.preExistingState}");
+    print("CarouselComposer: ${widget.preExistingState}");
     state = widget.preExistingState;
     super.initState();
     print(state);
@@ -65,6 +65,8 @@ class _MediaComposerState extends State<MediaComposer> {
                     print("POST_ID: ${state['pid']}");
                     print("IMAGES: ${state['images']}");
                     print("CONTENT: ${state['content']}");
+                    await editCarousel(
+                        state['pid'], state['content'], state['images']);
                   }
                 }
                 Navigator.pushNamed(context, '/HomePage');
@@ -120,7 +122,7 @@ class _MediaComposerState extends State<MediaComposer> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Media",
+                        "Images",
                         style: TextStyle(fontSize: 40.0, color: Colors.white24),
                       ),
                       ListView.builder(
@@ -177,9 +179,11 @@ class ComposerComponent extends StatefulWidget {
 }
 
 class _ComposerComponentState extends State<ComposerComponent> {
+  TextEditingController contentController;
   @override
-  Widget build(BuildContext context) {
-    var contentController = new TextEditingController();
+  void initState() {
+    super.initState();
+    contentController = new TextEditingController();
     contentController.text = widget.state['content'];
     contentController.value = TextEditingValue(
       text: widget.state['content'],
@@ -187,6 +191,10 @@ class _ComposerComponentState extends State<ComposerComponent> {
         TextPosition(offset: widget.state['content'].length),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(children: [
       Card(
           color: Colors.black12,

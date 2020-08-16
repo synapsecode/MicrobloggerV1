@@ -69,6 +69,8 @@ class _MicroBlogComposerState extends State<MicroBlogComposer> {
                     print("CONTENT: ${state['content']}");
                     print(
                         "CATEGORY: ${(state['isFact']) ? 'Fact' : 'Opinion'}");
+                    await editMicroblog(state['pid'], state['content'],
+                        (state['isFact']) ? 'Fact' : 'Opinion');
                   }
                 }
                 Navigator.pushNamed(context, '/HomePage');
@@ -94,9 +96,11 @@ class ComposerComponent extends StatefulWidget {
 }
 
 class _ComposerComponentState extends State<ComposerComponent> {
+  TextEditingController contentController;
   @override
-  Widget build(BuildContext context) {
-    var contentController = new TextEditingController();
+  void initState() {
+    super.initState();
+    contentController = new TextEditingController();
     contentController.text = widget.state['content'];
     contentController.value = TextEditingValue(
       text: widget.state['content'],
@@ -104,6 +108,10 @@ class _ComposerComponentState extends State<ComposerComponent> {
         TextPosition(offset: widget.state['content'].length),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(children: [
       Expanded(
         child: Card(

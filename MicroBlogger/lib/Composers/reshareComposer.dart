@@ -21,6 +21,7 @@ class _ReshareComposerState extends State<ReshareComposer> {
   String postType;
   Widget post = Container();
   Map state;
+  TextEditingController contentController;
   @override
   void initState() {
     super.initState();
@@ -49,6 +50,14 @@ class _ReshareComposerState extends State<ReshareComposer> {
         break;
     }
     state = widget.preExistingState;
+    contentController = new TextEditingController();
+    contentController.text = state['content'];
+    contentController.value = TextEditingValue(
+      text: state['content'],
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: state['content'].length),
+      ),
+    );
   }
 
   @override
@@ -58,15 +67,6 @@ class _ReshareComposerState extends State<ReshareComposer> {
         state['content'] = x;
       });
     }
-
-    var contentController = new TextEditingController();
-    contentController.text = state['content'];
-    contentController.value = TextEditingValue(
-      text: state['content'],
-      selection: TextSelection.fromPosition(
-        TextPosition(offset: state['content'].length),
-      ),
-    );
 
     return Scaffold(
       backgroundColor: Colors.black87,
@@ -114,6 +114,8 @@ class _ReshareComposerState extends State<ReshareComposer> {
                     print("CONTENT: ${state['content']}");
                     print(
                         "CATEGORY: ${(state['isFact']) ? 'Fact' : 'Opinion'}");
+                    editResharedWithComment(state['pid'], state['content'],
+                        (state['isFact']) ? 'Fact' : 'Opinion');
                   }
                 }
                 Navigator.pushNamed(context, '/HomePage');

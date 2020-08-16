@@ -108,6 +108,8 @@ class _TimelineComposerState extends State<TimelineComposer> {
                     print("TIMELINE_NAME: ${state['timelineTitle']}");
                     print("EVENTS: ${state['events']}");
                     print("COVER: ${state['cover']}");
+                    await editTimeline(state['pid'], state['timelineTitle'],
+                        state['events'], state['cover']);
                   }
                 }
 
@@ -133,7 +135,8 @@ class _TimelineComposerState extends State<TimelineComposer> {
                             imageFor: 'TIMELINECOVER',
                             preExistingState: state)));
               },
-              child: Text("Add Cover Image"),
+              child: Text(
+                  (widget.isEditing) ? "Edit Cover Image" : "Add Cover Image"),
               color: Color.fromARGB(200, 220, 20, 60),
             ),
           ),
@@ -180,15 +183,21 @@ class TComposer extends StatefulWidget {
 }
 
 class _TComposerState extends State<TComposer> {
+  TextEditingController tNController;
   @override
-  Widget build(BuildContext context) {
-    var tNController = new TextEditingController();
+  void initState() {
+    super.initState();
+    tNController = new TextEditingController();
     tNController.value = TextEditingValue(
       text: widget.state['timelineTitle'],
       selection: TextSelection.fromPosition(
         TextPosition(offset: widget.state['timelineTitle'].length),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
         color: Colors.black12,

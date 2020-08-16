@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:MicroBlogger/Backend/datastore.dart';
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/Composers/blogComposer.dart';
-import 'package:MicroBlogger/Composers/mediacomposer.dart';
+import 'package:MicroBlogger/Composers/carouselComposer.dart';
 import 'package:MicroBlogger/Composers/timelineComposer.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -192,7 +192,7 @@ class _UploaderState extends State<Uploader> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => MediaComposer(
+              builder: (context) => CarouselComposer(
                     isEditing: widget.preExistingState['isEditing'],
                     preExistingState: widget.preExistingState,
                   )));

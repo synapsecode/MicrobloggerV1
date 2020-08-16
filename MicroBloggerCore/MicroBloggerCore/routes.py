@@ -739,6 +739,7 @@ def edit_rwc():
 		post.content = content
 		post.category = category
 		db.session.commit()
+		addPoint('EDITPOST', user)
 		return jsonify({
 			'code': 'S',
 			'message': 'Edited ResharedWithComment Successfully!'
@@ -768,6 +769,7 @@ def editblog():
 		if(cover != None):
 			post.background = cover
 		db.session.commit()
+		addPoint('EDITPOST', user)
 		return jsonify({
 			'code': 'S',
 			'message': 'Edited Blog Successfully!'
@@ -799,6 +801,7 @@ def edit_timeline():
 		#post.content = content
 		post.background = cover
 		db.session.commit()
+		addPoint('EDITPOST', user)
 		return jsonify({
 			'code': 'S',
 			'message': 'Edited Timeline Successfully!'
@@ -824,6 +827,7 @@ def editshareable():
 		post.name = name
 		post.content = content
 		db.session.commit()
+		addPoint('EDITPOST', user)
 		return jsonify({
 			'code': 'S',
 			'message': 'Edited Shareable Successfully!'
@@ -848,6 +852,7 @@ def editcomment():
 		post.content = comment
 		post.category = category
 		db.session.commit()
+		addPoint('EDITPOST', user)
 		return jsonify({
 			'code': 'S',
 			'message': 'Edited Comment Successfully!'
@@ -874,6 +879,7 @@ def editcarousel():
 		db.session.commit()
 		post.images = [*images]
 		db.session.commit()
+		addPoint('EDITPOST', user)
 		return jsonify({
 			'code': 'S',
 			'message': 'Edited Carousel Successfully!'
@@ -1059,7 +1065,7 @@ def addPoint(cmd, user):
 		point = -1.3
 	elif(cmd == 'UNFOLLOWED'):
 		point = -1.3
-	elif(cmd == 'EDITPROFILE'):
+	elif(cmd == 'EDITPROFILE' or cmd == 'EDITPOST'):
 		point = +0.25
 	elif(cmd == 'UNLIKE' or cmd == 'UNBOOKMARK'):
 		point = -0.08

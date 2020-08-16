@@ -2,7 +2,7 @@ import 'package:MicroBlogger/Components/Templates/ViewerTemplate.dart';
 import 'package:MicroBlogger/Components/Templates/postTemplates.dart';
 import 'package:MicroBlogger/Composers/blogComposer.dart';
 import 'package:MicroBlogger/Composers/commentComposer.dart';
-import 'package:MicroBlogger/Composers/mediaComposer.dart';
+import 'package:MicroBlogger/Composers/carouselComposer.dart';
 import 'package:MicroBlogger/Composers/microblogComposer.dart';
 import 'package:MicroBlogger/Composers/reshareComposer.dart';
 import 'package:MicroBlogger/Composers/shareableComposer.dart';
@@ -408,7 +408,7 @@ class TopBar extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => MediaComposer(
+                builder: (context) => CarouselComposer(
                       isEditing: true,
                       preExistingState: {
                         'pid': postObject['id'],

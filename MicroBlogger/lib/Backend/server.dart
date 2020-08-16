@@ -565,6 +565,144 @@ submitVote(poll_id, selected) async {
 
 //------------------------------------------POST ACTIONS-------------------------------------------
 
+//-----------------------------------------EDIT POSTS------------------------------------------------
+editMicroblog(post_id, content, category) async {
+  final response = await http.post(
+    '$serverURL/editmicroblog',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'username': currentUser['user']['username'],
+      'post_id': post_id,
+      'content': content,
+      'category': category
+    }),
+  );
+  if (response.statusCode == 200)
+    print(json.decode(response.body)['message']);
+  else
+    print("Server Error");
+}
+
+editBlog(post_id, content, blog_name, cover) async {
+  final response = await http.post(
+    '$serverURL/editblog',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'username': currentUser['user']['username'],
+      'post_id': post_id,
+      'content': content,
+      'blog_name': blog_name,
+      'cover': cover
+    }),
+  );
+  if (response.statusCode == 200)
+    print(json.decode(response.body)['message']);
+  else
+    print("Server Error");
+}
+
+editTimeline(post_id, title, events, cover) async {
+  final response = await http.post(
+    '$serverURL/edittimeline',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'username': currentUser['user']['username'],
+      'post_id': post_id,
+      'title': title,
+      'events': events,
+      'cover': cover
+    }),
+  );
+  if (response.statusCode == 200)
+    print(json.decode(response.body)['message']);
+  else
+    print("Server Error");
+}
+
+editResharedWithComment(post_id, content, category) async {
+  final response = await http.post(
+    '$serverURL/editrwc',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'username': currentUser['user']['username'],
+      'post_id': post_id,
+      'content': content,
+      'category': category
+    }),
+  );
+  if (response.statusCode == 200)
+    print(json.decode(response.body)['message']);
+  else
+    print("Server Error");
+}
+
+editShareable(post_id, content, link, name) async {
+  final response = await http.post(
+    '$serverURL/editshareable',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'username': currentUser['user']['username'],
+      'post_id': post_id,
+      'content': content,
+      'link': link,
+      'name': name
+    }),
+  );
+  if (response.statusCode == 200)
+    print(json.decode(response.body)['message']);
+  else
+    print("Server Error");
+}
+
+editComment(post_id, comment, category) async {
+  final response = await http.post(
+    '$serverURL/editcomment',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'username': currentUser['user']['username'],
+      'comment_id': post_id,
+      'comment': comment,
+      'category': category
+    }),
+  );
+  if (response.statusCode == 200)
+    print(json.decode(response.body)['message']);
+  else
+    print("Server Error");
+}
+
+editCarousel(post_id, content, images) async {
+  final response = await http.post(
+    '$serverURL/editcarousel',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'username': currentUser['user']['username'],
+      'post_id': post_id,
+      'content': content,
+      'images': images,
+    }),
+  );
+  if (response.statusCode == 200)
+    print(json.decode(response.body)['message']);
+  else
+    print("Server Error");
+}
+//-----------------------------------------EDIT POSTS------------------------------------------------
+
 //-----------------------------------------EXPLORE-------------------------------------------------
 exploreMicroblogs() async {
   http.Response response = await http

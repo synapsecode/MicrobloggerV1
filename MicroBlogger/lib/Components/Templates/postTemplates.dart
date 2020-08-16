@@ -94,21 +94,16 @@ class _CarouselPostState extends State<CarouselPost> {
                   });
                 },
                 items: widget.postObject['images'].map<Widget>((imgUrl) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return Container(
-                        width: 300,
-                        margin: EdgeInsets.symmetric(horizontal: 5.0),
-                        decoration: BoxDecoration(
-                            color: Colors.black,
-                            border:
-                                Border.all(color: Colors.white30, width: 1.0)),
-                        child: Image.network(
-                          imgUrl,
-                          fit: BoxFit.contain,
-                        ),
-                      );
-                    },
+                  return Container(
+                    width: 300,
+                    margin: EdgeInsets.symmetric(horizontal: 5.0),
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        border: Border.all(color: Colors.white30, width: 1.0)),
+                    child: Image.network(
+                      imgUrl,
+                      fit: BoxFit.cover,
+                    ),
                   );
                 }).toList(),
               ),
