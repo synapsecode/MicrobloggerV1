@@ -6,7 +6,12 @@ import '../Backend/server.dart';
 
 class TimelineComposer extends StatefulWidget {
   final Map preExistingState;
-  TimelineComposer({Key key, this.preExistingState}) : super(key: key);
+  final bool isEditing;
+  TimelineComposer({
+    Key key,
+    this.preExistingState,
+    this.isEditing,
+  }) : super(key: key);
 
   @override
   _TimelineComposerState createState() => _TimelineComposerState();
@@ -83,11 +88,16 @@ class _TimelineComposerState extends State<TimelineComposer> {
               onPressed: () async {
                 print("TSTATE: $state");
                 //upload
-                await createTimeline(state['timelineTitle'], state['events'],
-                    cover: state['cover']);
+                if (!widget.isEditing) {
+                  await createTimeline(state['timelineTitle'], state['events'],
+                      cover: state['cover']);
+                } else {
+                  print("Editing Timeline");
+                }
+
                 Navigator.pushNamed(context, '/HomePage');
               },
-              child: Text("Publish"),
+              child: Text((widget.isEditing) ? "Update" : "Publish"),
               color: Colors.black,
             ),
           ),

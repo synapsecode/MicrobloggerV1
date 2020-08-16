@@ -699,6 +699,43 @@ def submit_vote():
 
 #-------------------------------------------------POSTACTIONS-----------------------------------------------
 
+#-----------------------------------------------EDIT POSTS------------------------------------------------------
+@app.route('/editmicroblog', methods=['POST'])
+def editmicroblog(username):
+	data = request.get_json()
+	username = data['username']
+	post_id = data['post_id']
+	pass
+
+@app.route('/editrwc', methods=['POST'])
+def edit_rwc(username):
+	data = request.get_json()
+	username = data['username']
+	post_id = data['post_id']
+	pass
+
+@app.route('/editblog', methods=['POST'])
+def editblog(username):
+	data = request.get_json()
+	username = data['username']
+	post_id = data['post_id']
+	pass
+
+@app.route('/edittimeline', methods=['POST'])
+def edit_timeline(username):
+	data = request.get_json()
+	username = data['username']
+	post_id = data['post_id']
+	pass
+
+@app.route('/editshareable', methods=['POST'])
+def editshareable(username):
+	data = request.get_json()
+	username = data['username']
+	post_id = data['post_id']
+	pass
+
+#-----------------------------------------------EDIT POSTS------------------------------------------------------
 #--------------------------------------------------EXPLORE--------------------------------------------------
 
 @app.route('/exploremicroblogs/<username>')

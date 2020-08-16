@@ -7,7 +7,11 @@ import 'package:flutter/rendering.dart';
 
 class ReshareComposer extends StatefulWidget {
   final postObject;
-  ReshareComposer({Key key, this.postObject}) : super(key: key);
+  final Map preExistingState;
+  final bool isEditing;
+  ReshareComposer(
+      {this.preExistingState, this.isEditing, Key key, this.postObject})
+      : super(key: key);
 
   @override
   _ReshareComposerState createState() => _ReshareComposerState();
@@ -16,8 +20,7 @@ class ReshareComposer extends StatefulWidget {
 class _ReshareComposerState extends State<ReshareComposer> {
   String postType;
   Widget post = Container();
-  bool isFact = false;
-  String content = "";
+  Map state;
   @override
   void initState() {
     super.initState();
@@ -45,15 +48,26 @@ class _ReshareComposerState extends State<ReshareComposer> {
         );
         break;
     }
+    state = widget.preExistingState;
   }
 
   @override
   Widget build(BuildContext context) {
     void updateContent(x) {
       setState(() {
-        content = x;
+        state['content'] = x;
       });
     }
+
+    var contentController = new TextEditingController();
+    contentController.text = state['content'];
+    print(state);
+    contentController.value = TextEditingValue(
+      text: state['content'],
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: state['content'].length),
+      ),
+    );
 
     return Scaffold(
       backgroundColor: Colors.black87,
@@ -70,28 +84,32 @@ class _ReshareComposerState extends State<ReshareComposer> {
             child: RaisedButton(
               onPressed: () {
                 setState(() {
-                  isFact = !isFact;
+                  state['isFact'] = !state['isFact'];
                 });
               },
-              child: (isFact) ? Text("Fact") : Text("Opinion"),
-              color: (isFact) ? Colors.green : Colors.red,
+              child: (state['isFact']) ? Text("Fact") : Text("Opinion"),
+              color: (state['isFact']) ? Colors.green : Colors.red,
             ),
           ),
           Container(
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
               onPressed: () async {
-                String category = (isFact) ? "Fact" : "Opinion";
-                await resharePost(widget.postObject['id'],
-                    widget.postObject['type'], "ResharedWithComment",
-                    content: content, category: category);
-                Fluttertoast.showToast(
-                  msg: "Reshared Post",
-                  backgroundColor: Color.fromARGB(200, 220, 20, 60),
-                );
+                String category = (state['isFact']) ? "Fact" : "Opinion";
+                if (!widget.isEditing) {
+                  await resharePost(widget.postObject['id'],
+                      widget.postObject['type'], "ResharedWithComment",
+                      content: state['content'], category: category);
+                  Fluttertoast.showToast(
+                    msg: "Reshared Post",
+                    backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                  );
+                } else {
+                  print("Updating RWC");
+                }
                 Navigator.pushNamed(context, '/HomePage');
               },
-              child: Text("Publish"),
+              child: Text((widget.isEditing) ? "Update" : "Publish"),
               color: Colors.black,
             ),
           )
@@ -112,6 +130,7 @@ class _ReshareComposerState extends State<ReshareComposer> {
                   child: Padding(
                     padding: EdgeInsets.all(12.0),
                     child: TextField(
+                      controller: contentController,
                       onChanged: (x) {
                         updateContent(x);
                       },

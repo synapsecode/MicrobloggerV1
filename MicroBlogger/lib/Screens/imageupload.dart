@@ -165,6 +165,7 @@ class _UploaderState extends State<Uploader> {
           MaterialPageRoute(
               builder: (context) => BlogComposer(
                     preExistingState: widget.preExistingState,
+                    isEditing: false,
                   )));
     } else if (widget.imageFor == 'TIMELINECOVER') {
       String link = await addCoverPicture(widget.file);
@@ -175,6 +176,7 @@ class _UploaderState extends State<Uploader> {
           context,
           MaterialPageRoute(
               builder: (context) => TimelineComposer(
+                    isEditing: false,
                     preExistingState: widget.preExistingState,
                   )));
     } else if (widget.imageFor == 'CAROUSEL') {
@@ -187,6 +189,7 @@ class _UploaderState extends State<Uploader> {
           context,
           MaterialPageRoute(
               builder: (context) => MediaComposer(
+                    isEditing: false,
                     preExistingState: widget.preExistingState,
                   )));
     }

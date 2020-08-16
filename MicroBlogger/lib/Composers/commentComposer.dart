@@ -3,19 +3,28 @@ import '../Backend/server.dart';
 
 class CommentComposer extends StatefulWidget {
   final post;
-  const CommentComposer({Key key, this.post}) : super(key: key);
+  final Map preExistingState;
+  final bool isEditing;
+  const CommentComposer(
+      {this.isEditing, this.preExistingState, Key key, this.post})
+      : super(key: key);
 
   @override
   _CommentComposerState createState() => _CommentComposerState();
 }
 
 class _CommentComposerState extends State<CommentComposer> {
-  String commentContent = "";
-  bool isFact = false;
+  Map state;
+
+  @override
+  void initState() {
+    super.initState();
+    state = widget.preExistingState;
+  }
 
   void updateComment(x) {
     setState(() {
-      commentContent = x;
+      state['comment'] = x;
     });
   }
 
@@ -33,9 +42,10 @@ class _CommentComposerState extends State<CommentComposer> {
           Container(
             margin: EdgeInsets.only(top: 10.0, left: 10.0, bottom: 10.0),
             child: RaisedButton(
-              onPressed: () => setState(() => isFact = !isFact),
-              child: (isFact) ? Text("Fact") : Text("Opinion"),
-              color: (isFact) ? Colors.green : Colors.red,
+              onPressed: () =>
+                  setState(() => state['isFact'] = !state['isFact']),
+              child: (state['isFact']) ? Text("Fact") : Text("Opinion"),
+              color: (state['isFact']) ? Colors.green : Colors.red,
             ),
           ),
           Container(
@@ -43,21 +53,26 @@ class _CommentComposerState extends State<CommentComposer> {
             child: RaisedButton(
               onPressed: () async {
                 print(widget.post);
-                print(isFact);
-                print(commentContent);
-                String category = (isFact) ? "Fact" : "Opinion";
-                await addCommentToPost(widget.post['id'], widget.post['type'],
-                    commentContent, category);
+                print(state['isFact']);
+                print(state['comment']);
+                String category = (state['isFact']) ? "Fact" : "Opinion";
+                if (!widget.isEditing) {
+                  await addCommentToPost(widget.post['id'], widget.post['type'],
+                      state['comment'], category);
+                } else {
+                  print("Editing Comment");
+                }
                 //upload
                 Navigator.pushNamed(context, '/HomePage');
               },
-              child: Text("Publish"),
+              child: Text((widget.isEditing) ? "Update Comment" : "Publish"),
               color: Colors.black,
             ),
           )
         ],
       ),
       body: ComposerComponent(
+        state,
         commentUpdater: updateComment,
       ),
     );
@@ -66,7 +81,8 @@ class _CommentComposerState extends State<CommentComposer> {
 
 class ComposerComponent extends StatefulWidget {
   final commentUpdater;
-  const ComposerComponent({this.commentUpdater});
+  final Map state;
+  const ComposerComponent(this.state, {this.commentUpdater});
 
   @override
   _ComposerComponentState createState() => _ComposerComponentState();
@@ -75,6 +91,15 @@ class ComposerComponent extends StatefulWidget {
 class _ComposerComponentState extends State<ComposerComponent> {
   @override
   Widget build(BuildContext context) {
+    var commentController = new TextEditingController();
+    commentController.text = widget.state['comment'];
+    print(widget.state);
+    commentController.value = TextEditingValue(
+      text: widget.state['comment'],
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: widget.state['comment'].length),
+      ),
+    );
     return Column(children: [
       Expanded(
         child: Card(
@@ -82,6 +107,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
             child: Padding(
               padding: EdgeInsets.all(12.0),
               child: TextField(
+                controller: commentController,
                 onChanged: (x) {
                   widget.commentUpdater("$x");
                 },

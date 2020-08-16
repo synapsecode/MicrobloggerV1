@@ -2,32 +2,39 @@ import 'package:flutter/material.dart';
 import '../Backend/server.dart';
 
 class ShareableComposer extends StatefulWidget {
-  const ShareableComposer({Key key}) : super(key: key);
+  final Map preExistingState;
+  final bool isEditing;
+  const ShareableComposer({this.preExistingState, this.isEditing, Key key})
+      : super(key: key);
 
   @override
   _ShareableComposerState createState() => _ShareableComposerState();
 }
 
 class _ShareableComposerState extends State<ShareableComposer> {
-  String content = "";
-  String link = "";
-  String name = "";
+  Map state;
+
+  @override
+  void initState() {
+    super.initState();
+    state = widget.preExistingState;
+  }
 
   void updateComment(x) {
     setState(() {
-      content = x;
+      state['content'] = x;
     });
   }
 
   void updateLink(x) {
     setState(() {
-      link = x;
+      state['link'] = x;
     });
   }
 
   void updateName(x) {
     setState(() {
-      name = x;
+      state['name'] = x;
     });
   }
 
@@ -46,20 +53,27 @@ class _ShareableComposerState extends State<ShareableComposer> {
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
               onPressed: () async {
-                print(name);
-                print(link);
-                print(content);
+                print(state['name']);
+                print(state['link']);
+                print(state['content']);
                 //upload
-                await createShareable(content, name, link);
+                if (!widget.isEditing) {
+                  await createShareable(
+                      state['content'], state['link'], state['name']);
+                } else {
+                  print("Editing Shareable");
+                }
+
                 Navigator.pushNamed(context, '/HomePage');
               },
-              child: Text("Publish"),
+              child: Text((widget.isEditing) ? "Update" : "Publish"),
               color: Colors.black,
             ),
           )
         ],
       ),
       body: ComposerComponent(
+        state,
         contentUpdater: updateComment,
         linkUpdater: updateLink,
         nameUpdater: updateName,
@@ -72,7 +86,8 @@ class ComposerComponent extends StatefulWidget {
   final contentUpdater;
   final linkUpdater;
   final nameUpdater;
-  const ComposerComponent(
+  final Map state;
+  const ComposerComponent(this.state,
       {this.contentUpdater, this.linkUpdater, this.nameUpdater});
 
   @override
@@ -82,10 +97,35 @@ class ComposerComponent extends StatefulWidget {
 class _ComposerComponentState extends State<ComposerComponent> {
   @override
   Widget build(BuildContext context) {
+    var contentController = new TextEditingController();
+    contentController.text = widget.state['content'];
+    contentController.value = TextEditingValue(
+      text: widget.state['content'],
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: widget.state['content'].length),
+      ),
+    );
+    var linkController = new TextEditingController();
+    linkController.text = widget.state['link'];
+    linkController.value = TextEditingValue(
+      text: widget.state['link'],
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: widget.state['link'].length),
+      ),
+    );
+    var nameController = new TextEditingController();
+    nameController.text = widget.state['name'];
+    nameController.value = TextEditingValue(
+      text: widget.state['name'],
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: widget.state['name'].length),
+      ),
+    );
     return Column(children: [
       Container(
         padding: EdgeInsets.all(10.0),
         child: TextField(
+          controller: nameController,
           onChanged: (x) {
             widget.nameUpdater(x);
           },
@@ -98,6 +138,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
       Container(
         padding: EdgeInsets.all(10.0),
         child: TextField(
+          controller: linkController,
           onChanged: (x) {
             widget.linkUpdater(x);
           },
@@ -113,6 +154,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
             child: Padding(
               padding: EdgeInsets.all(12.0),
               child: TextField(
+                controller: contentController,
                 style: TextStyle(fontSize: 19.0),
                 onChanged: (x) {
                   widget.contentUpdater("$x");

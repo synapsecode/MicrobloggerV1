@@ -2,19 +2,26 @@ import 'package:flutter/material.dart';
 import '../Backend/server.dart';
 
 class MicroBlogComposer extends StatefulWidget {
-  const MicroBlogComposer({Key key}) : super(key: key);
+  final Map preExistingState;
+  final bool isEditing;
+  const MicroBlogComposer({this.preExistingState, this.isEditing, key})
+      : super(key: key);
 
   @override
   _MicroBlogComposerState createState() => _MicroBlogComposerState();
 }
 
 class _MicroBlogComposerState extends State<MicroBlogComposer> {
-  bool isFact = false;
-  String content = "";
+  Map state;
+  @override
+  void initState() {
+    super.initState();
+    state = widget.preExistingState;
+  }
 
   void updateComment(x) {
     setState(() {
-      content = x;
+      state['content'] = x;
     });
   }
 
@@ -32,36 +39,42 @@ class _MicroBlogComposerState extends State<MicroBlogComposer> {
           Container(
             margin: EdgeInsets.only(top: 10.0, left: 10.0, bottom: 10.0),
             child: RaisedButton(
-              onPressed: () => setState(() => isFact = !isFact),
-              child: (isFact) ? Text("Fact") : Text("Opinion"),
-              color: (isFact) ? Colors.green : Colors.red,
+              onPressed: () =>
+                  setState(() => state['isFact'] = !state['isFact']),
+              child: (state['isFact']) ? Text("Fact") : Text("Opinion"),
+              color: (state['isFact']) ? Colors.green : Colors.red,
             ),
           ),
           Container(
             margin: EdgeInsets.all(10.0),
             child: RaisedButton(
               onPressed: () async {
-                print("Fact: $isFact");
-                print(content);
+                print("Fact: ${state['isFact']}");
+                print(state['content']);
                 //upload
-                String category = (isFact) ? "Fact" : "Opinion";
-                await createMicroblog(content, category);
+                String category = (state['isFact']) ? "Fact" : "Opinion";
+                if (!widget.isEditing) {
+                  await createMicroblog(state['content'], category);
+                } else {
+                  print("Updating MicroBlog");
+                }
                 Navigator.pushNamed(context, '/HomePage');
               },
-              child: Text("Publish"),
+              child: Text((widget.isEditing) ? "Update" : "Publish"),
               color: Colors.black,
             ),
           )
         ],
       ),
-      body: ComposerComponent(contentUpdater: updateComment),
+      body: ComposerComponent(state, contentUpdater: updateComment),
     );
   }
 }
 
 class ComposerComponent extends StatefulWidget {
   final contentUpdater;
-  const ComposerComponent({this.contentUpdater});
+  final Map state;
+  const ComposerComponent(this.state, {this.contentUpdater});
 
   @override
   _ComposerComponentState createState() => _ComposerComponentState();
@@ -70,6 +83,15 @@ class ComposerComponent extends StatefulWidget {
 class _ComposerComponentState extends State<ComposerComponent> {
   @override
   Widget build(BuildContext context) {
+    var contentController = new TextEditingController();
+    contentController.text = widget.state['content'];
+    print(widget.state);
+    contentController.value = TextEditingValue(
+      text: widget.state['content'],
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: widget.state['content'].length),
+      ),
+    );
     return Column(children: [
       Expanded(
         child: Card(
@@ -77,6 +99,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: TextField(
+                controller: contentController,
                 onChanged: (x) {
                   widget.contentUpdater("$x");
                 },

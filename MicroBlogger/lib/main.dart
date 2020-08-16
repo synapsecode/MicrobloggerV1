@@ -52,15 +52,21 @@ void main() {
           '/Notifications': (BuildContext context) => new NotificationsPage(),
 
           //Composers
-          '/MicroBlogComposer': (BuildContext context) =>
-              new MicroBlogComposer(),
-          '/ShareableComposer': (BuildContext context) =>
-              new ShareableComposer(),
+          '/MicroBlogComposer': (BuildContext context) => new MicroBlogComposer(
+                isEditing: false,
+                preExistingState: {'content': '', 'isFact': false},
+              ),
+          '/ShareableComposer': (BuildContext context) => new ShareableComposer(
+                isEditing: false,
+                preExistingState: {'content': '', 'link': '', 'name': ''},
+              ),
           '/BlogComposer': (BuildContext context) => new BlogComposer(
+                isEditing: false,
                 preExistingState: {'content': "", 'blogName': "", 'cover': ""},
               ),
           '/PollComposer': (BuildContext context) => new PollComposer(),
           '/TimelineComposer': (BuildContext context) => new TimelineComposer(
+                isEditing: false,
                 preExistingState: {
                   'timelineTitle': "",
                   'events': [],
@@ -68,6 +74,7 @@ void main() {
                 },
               ),
           '/MediaComposer': (BuildContext context) => new MediaComposer(
+                isEditing: false,
                 preExistingState: {'content': "", 'images': []},
               ),
         },

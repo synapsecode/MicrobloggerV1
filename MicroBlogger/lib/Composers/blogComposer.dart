@@ -6,7 +6,9 @@ import '../Backend/server.dart';
 
 class BlogComposer extends StatefulWidget {
   final Map preExistingState;
-  BlogComposer({Key key, this.preExistingState}) : super(key: key);
+  final bool isEditing;
+  BlogComposer({this.isEditing, Key key, this.preExistingState})
+      : super(key: key);
 
   @override
   _BlogComposerState createState() => _BlogComposerState();
@@ -60,11 +62,15 @@ class _BlogComposerState extends State<BlogComposer> {
                   print(blogName);
                   print(content);
                   print(cover);
-                  await createBlog(content, blogName, cover: cover);
+                  if (widget.isEditing) {
+                    print("Updated the blog!");
+                  } else {
+                    await createBlog(content, blogName, cover: cover);
+                  }
                   Navigator.pushNamed(context, '/HomePage');
                   //upload
                 },
-                child: Text("Publish"),
+                child: (widget.isEditing) ? Text("Update") : Text("Publish"),
                 color: Colors.black,
               ),
             ),
@@ -82,7 +88,9 @@ class _BlogComposerState extends State<BlogComposer> {
                               )));
                   print("NEW: $state");
                 },
-                child: Text("Add Cover Image"),
+                child: Text((widget.isEditing)
+                    ? "Edit Cover Image"
+                    : "Add Cover Image"),
                 color: Color.fromARGB(200, 220, 20, 60),
               ),
             ),

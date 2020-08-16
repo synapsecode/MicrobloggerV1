@@ -435,6 +435,11 @@ class _ActionBarState extends State<ActionBar> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => ReshareComposer(
+                              isEditing: false,
+                              preExistingState: {
+                                'content': "",
+                                'isFact': false
+                              },
                               postObject: widget.post,
                             )));
               });
@@ -456,6 +461,8 @@ class _ActionBarState extends State<ActionBar> {
         context,
         MaterialPageRoute(
             builder: (context) => CommentComposer(
+                  isEditing: false,
+                  preExistingState: {'comment': '', 'isFact': false},
                   post: widget.post,
                 )));
     print("Commented on Post ID: ${widget.post['id']}");

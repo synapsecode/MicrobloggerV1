@@ -7,7 +7,9 @@ import '../Backend/server.dart';
 
 class MediaComposer extends StatefulWidget {
   final Map preExistingState;
-  MediaComposer({Key key, this.preExistingState}) : super(key: key);
+  final bool isEditing;
+  MediaComposer({Key key, this.isEditing, this.preExistingState})
+      : super(key: key);
 
   @override
   _MediaComposerState createState() => _MediaComposerState();
@@ -111,15 +113,33 @@ class _MediaComposerState extends State<MediaComposer> {
                           physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             return Container(
-                              margin: EdgeInsets.symmetric(vertical: 10.0),
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      width: 2.0, color: Colors.white30)),
-                              child: SizedBox(
-                                  child: Image(
-                                image: NetworkImage(state['images'][index]),
-                              )),
-                            );
+                                margin: EdgeInsets.symmetric(vertical: 10.0),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 2.0, color: Colors.white30)),
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      child: SizedBox(
+                                          child: Image(
+                                        image: NetworkImage(
+                                            state['images'][index]),
+                                      )),
+                                    ),
+                                    Positioned(
+                                        top: 5.0,
+                                        right: 5.0,
+                                        child: IconButton(
+                                          icon: Icon(Icons.clear),
+                                          onPressed: () {
+                                            print(index);
+                                            setState(() {
+                                              state['images'].removeAt(index);
+                                            });
+                                          },
+                                        )),
+                                  ],
+                                ));
                           })
                     ],
                   ),
