@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show Platform;
 import 'server.dart';
 
 Map currentUser = {};
-String serverURL = "https://71b455529bc8.ngrok.io";
+Map currentPallete = {};
+String serverURL = "https://d6ecf81ead61.ngrok.io";
 
 saveUserLoginInfo(username) async {
   if (!Platform.isWindows) {
@@ -46,4 +48,42 @@ loadSavedUsername() async {
     return username;
   }
   return "";
+}
+
+applyColourPallete() async {
+  if (!Platform.isWindows) {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String key = (prefs.getString('colourpallete')) ?? "LIGHT";
+    ThemeData theme;
+    switch (key) {
+      case "LIGHT":
+        theme = ThemeData(
+            primarySwatch: Colors.red,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+            brightness: Brightness.light,
+            appBarTheme: AppBarTheme(color: Colors.black12),
+            bottomAppBarTheme: BottomAppBarTheme(color: Colors.black12),
+            backgroundColor: Colors.white);
+        break;
+      case "DARK":
+        break;
+    }
+    return theme;
+  }
+}
+
+toggleColourPallete(String key) async {
+  if (!Platform.isWindows) {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    switch (key) {
+      case "LIGHT":
+        await prefs.setString('colourpallete', 'DARK');
+        break;
+      case "DARK":
+        await prefs.setString('colourpallete', 'LIGHT');
+        break;
+      default:
+        break;
+    }
+  }
 }

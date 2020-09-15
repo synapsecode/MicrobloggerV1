@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/Screens/imageupload.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -28,6 +29,7 @@ class _TimelineComposerState extends State<TimelineComposer> {
   void initState() {
     state = widget.preExistingState;
     print(state);
+    checkConnection(context);
     super.initState();
   }
 
@@ -183,6 +185,7 @@ class TComposer extends StatefulWidget {
 }
 
 class _TComposerState extends State<TComposer> {
+  TextEditingController eventController;
   TextEditingController tNController;
   @override
   void initState() {
@@ -192,6 +195,13 @@ class _TComposerState extends State<TComposer> {
       text: widget.state['timelineTitle'],
       selection: TextSelection.fromPosition(
         TextPosition(offset: widget.state['timelineTitle'].length),
+      ),
+    );
+    eventController = new TextEditingController();
+    eventController.value = TextEditingValue(
+      text: "",
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: "".length),
       ),
     );
   }
@@ -245,16 +255,28 @@ class _TComposerState extends State<TComposer> {
               margin: EdgeInsets.symmetric(horizontal: 10.0),
               child: Padding(
                 padding: EdgeInsets.all(12.0),
-                child: TextField(
-                  style: TextStyle(fontSize: 19.0),
-                  onChanged: (x) {
-                    widget.eventTextUpdater(x);
-                  },
-                  maxLines: 10,
-                  decoration: InputDecoration.collapsed(
-                      hintText: "Start Describing the Event!"),
+                child: HashTagEnabledUserTaggableTextField(
+                  controller: eventController,
+                  onChange: widget.eventTextUpdater,
+                  maxlines: 10,
+                  hint: "Start Describing the Event!",
                 ),
               )),
+          // Card(
+          //     color: Colors.black12,
+          //     margin: EdgeInsets.symmetric(horizontal: 10.0),
+          //     child: Padding(
+          //       padding: EdgeInsets.all(12.0),
+          //       child: TextField(
+          //         style: TextStyle(fontSize: 19.0),
+          //         onChanged: (x) {
+          //           widget.eventTextUpdater(x);
+          //         },
+          //         maxLines: 10,
+          //         decoration: InputDecoration.collapsed(
+          //             hintText: "Start Describing the Event!"),
+          //       ),
+          //     )),
           if (widget.state['events'].length > 0) ...[
             Card(
                 margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),

@@ -1,9 +1,11 @@
 import 'package:MicroBlogger/Backend/server.dart';
-import 'package:MicroBlogger/Screens/editprofile.dart';
 import 'package:MicroBlogger/Screens/homepage.dart';
 import 'package:MicroBlogger/Screens/profile.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:async';
 import '../../Backend/datastore.dart';
 
 class BottomNavigator extends StatelessWidget {
@@ -103,9 +105,7 @@ class MainAppDrawer extends StatelessWidget {
                 Icons.settings,
                 color: Colors.white,
               ),
-              onTap: () => Fluttertoast.showToast(
-                  msg: "Feature Coming Soon!",
-                  backgroundColor: Color.fromARGB(200, 220, 20, 60)),
+              onTap: () => Navigator.of(context).pushNamed('/Settings'),
             ),
             new ListTile(
               title: Text(
@@ -204,7 +204,7 @@ class AddOptionsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 250.0,
+      height: 370.0,
       color: Colors.black,
       padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0),
       child: OrientationBuilder(builder: (context, orientation) {
@@ -228,11 +228,13 @@ class AddOptionsWidget extends StatelessWidget {
             ActionButton('Timeline', Icons.check_box, () {
               Navigator.of(context).pushNamed('/TimelineComposer');
             }),
-            ActionButton('Media', Icons.devices, () {
-              // Fluttertoast.showToast(
-              //   msg: "Feature Coming Soon!",
-              //   backgroundColor: Color.fromARGB(200, 220, 20, 60),
-              // );
+            ActionButton('Image Carousel', Icons.image, () {
+              Navigator.of(context).pushNamed('/MediaComposer');
+            }),
+            ActionButton('Video Carousel', Icons.video_library, () {
+              Navigator.of(context).pushNamed('/MediaComposer');
+            }),
+            ActionButton('Youtube Element', Icons.videocam, () {
               Navigator.of(context).pushNamed('/MediaComposer');
             }),
           ],
@@ -380,6 +382,400 @@ class _BugReporterDialogState extends State<BugReporterDialog> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class OfflineAlert extends StatelessWidget {
+  const OfflineAlert({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: Color.fromARGB(230, 220, 20, 60),
+      content: Text(
+          "You are currently Offline! Please Check your network connection and try again!"),
+      title: Row(children: [
+        Icon(
+          Icons.signal_cellular_connected_no_internet_4_bar,
+          color: Colors.white,
+        ),
+        SizedBox(
+          width: 5.0,
+        ),
+        Text("Offline Alert!")
+      ]),
+      actions: [
+        FlatButton(
+          child: Text("Close"),
+          onPressed: () => Navigator.pop(context),
+        )
+      ],
+    );
+  }
+}
+
+checkConnection(context) async {
+  // bool x = await DataConnectionChecker().hasConnection;
+  // if (!x) {
+  //   print("NOT CONNECTED OR ERROR");
+  //   Timer.run(() {
+  //     showDialog(
+  //         builder: (context) {
+  //           return OfflineAlert();
+  //         },
+  //         context: context);
+  //   });
+  // }
+}
+
+void dataLogger(String type, String content) {
+  print("\n\n[$type] ::: :: $content");
+}
+
+class UserTaggingWidget extends StatefulWidget {
+  UserTaggingWidget({Key key}) : super(key: key);
+
+  @override
+  _UserTaggingWidgetState createState() => _UserTaggingWidgetState();
+}
+
+class _UserTaggingWidgetState extends State<UserTaggingWidget> {
+  TextEditingController ctrl;
+  List<String> users = ['Naveen', 'Ram', 'Satish', 'Some Other'], words = [];
+  String str = '';
+  List<String> coments = [];
+
+  @override
+  void initState() {
+    super.initState();
+    ctrl = TextEditingController();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        color: Colors.white,
+        padding: EdgeInsets.all(20),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          TextField(
+              controller: ctrl,
+              decoration: InputDecoration(
+                hintText: 'Comment',
+                hintStyle: TextStyle(color: Colors.black),
+                suffixIcon: IconButton(
+                    icon: Icon(Icons.send, color: Colors.blue),
+                    onPressed: () {
+                      if (ctrl.text.isNotEmpty)
+                        setState(() {
+                          coments.add(ctrl.text);
+                        });
+                    }),
+              ),
+              style: TextStyle(
+                color: Colors.black,
+              ),
+              onChanged: (val) {
+                setState(() {
+                  words = val.split(' ');
+                  str = words.length > 0 &&
+                          words[words.length - 1].startsWith('@')
+                      ? words[words.length - 1]
+                      : '';
+                });
+              }),
+
+          //USERBOX
+          str.length > 1
+              ? ListView(
+                  shrinkWrap: true,
+                  children: users.map((s) {
+                    if (('@' + s).contains(str))
+                      return ListTile(
+                          title: Text(
+                            s,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          onTap: () {
+                            String tmp = str.substring(1, str.length);
+                            setState(() {
+                              str = '';
+                              ctrl.text += s
+                                  .substring(
+                                      s.indexOf(tmp) + tmp.length, s.length)
+                                  .replaceAll(' ', '_');
+                            });
+                          });
+                    else
+                      return SizedBox();
+                  }).toList())
+              : SizedBox(),
+
+          //PRINTING
+          SizedBox(height: 25),
+          coments.length > 0
+              ? ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: coments.length,
+                  itemBuilder: (con, ind) {
+                    return Text.rich(
+                      TextSpan(
+                          text: '',
+                          children: coments[ind].split(' ').map((w) {
+                            return w.startsWith('@') && w.length > 1
+                                ? TextSpan(
+                                    text: ' ' + w,
+                                    style: TextStyle(color: Colors.blue),
+                                    recognizer: new TapGestureRecognizer()
+                                      ..onTap = () => showProfile(w),
+                                  )
+                                : TextSpan(
+                                    text: ' ' + w,
+                                    style: TextStyle(color: Colors.black));
+                          }).toList()),
+                    );
+                  },
+                )
+              : SizedBox()
+        ]));
+  }
+
+  showProfile(String s) {
+    showDialog(
+        context: context,
+        builder: (con) => AlertDialog(
+            title: Text('Profile of $s'),
+            content: Text('Show the user profile !')));
+  }
+}
+
+class HashTagEnabledUserTaggableTextField extends StatefulWidget {
+  final TextEditingController controller;
+  final int maxlines;
+  final Function onChange;
+  final List usernames;
+  final List hashtags;
+  final TextStyle style;
+  final String hint;
+
+  HashTagEnabledUserTaggableTextField(
+      {@required this.controller,
+      @required this.maxlines,
+      this.style,
+      this.usernames,
+      this.hashtags,
+      this.onChange,
+      this.hint,
+      Key key})
+      : super(key: key);
+
+  @override
+  _HashTagEnabledUserTaggableTextFieldState createState() =>
+      _HashTagEnabledUserTaggableTextFieldState();
+}
+
+class _HashTagEnabledUserTaggableTextFieldState
+    extends State<HashTagEnabledUserTaggableTextField> {
+  List words = [];
+  String selectedUser = '';
+  List usernames = [
+    'manashejmadi',
+    'synapsecode',
+    'nikolatesla',
+    'thomasedison',
+    'electroboom',
+    'modichowkidar',
+    'ampere',
+    'erwinshrodinger',
+    'alberteinstein',
+    'louispascal',
+    'viratkohli'
+  ];
+  List hashtags = [
+    "coding",
+    "devinitelyhealthy",
+    "buildupdevs",
+    "worldcode",
+    "code",
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.usernames != null) usernames = widget.usernames;
+    if (widget.hashtags != null) hashtags = widget.hashtags;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      //-----------------------------SUGGESTIONS-------------------------------
+      selectedUser.length > 1
+          ? Container(
+              padding: EdgeInsets.all(5.0),
+              decoration: BoxDecoration(
+                  border: Border.all(width: 1.0, color: Colors.white)),
+              child: SizedBox(
+                height: 110.0,
+                child: ListView(
+                    controller: ScrollController(),
+                    shrinkWrap: true,
+                    children: [
+                      //USERTAGGING
+                      ...usernames.map((s) {
+                        if (('@' + s).contains(selectedUser)) {
+                          if (widget.onChange != null)
+                            return ListTile(
+                                tileColor: Colors.white10,
+                                title: Text(
+                                  '@$s',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onTap: () {
+                                  String tmp = selectedUser.substring(
+                                      0, selectedUser.length);
+                                  setState(() {
+                                    selectedUser = '';
+                                    widget.controller.text += s.substring(
+                                            s.indexOf(tmp) + tmp.length,
+                                            s.length) +
+                                        " ";
+
+                                    //Fixing Cursor
+                                    widget.controller.value = TextEditingValue(
+                                        text: widget.controller.text,
+                                        selection: TextSelection.fromPosition(
+                                          TextPosition(
+                                              offset: widget
+                                                  .controller.text.length),
+                                        ));
+                                    widget.onChange(widget
+                                        .controller.text); //update appended tag
+                                    // .replaceAll(' ', '_');
+                                  });
+                                });
+                        } else
+                          return SizedBox();
+                      }),
+                      //TOPICS<HASHTAGS>
+                      ...hashtags.map((s) {
+                        if (('#' + s).contains(selectedUser)) {
+                          if (widget.onChange != null)
+                            return ListTile(
+                                tileColor: Colors.white10,
+                                title: Text(
+                                  '#$s',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onTap: () {
+                                  String tmp = selectedUser.substring(
+                                      0, selectedUser.length);
+                                  setState(() {
+                                    selectedUser = '';
+                                    widget.controller.text += s.substring(
+                                            s.indexOf(tmp) + tmp.length,
+                                            s.length) +
+                                        " ";
+
+                                    //Fixing Cursor
+                                    widget.controller.value = TextEditingValue(
+                                        text: widget.controller.text,
+                                        selection: TextSelection.fromPosition(
+                                          TextPosition(
+                                              offset: widget
+                                                  .controller.text.length),
+                                        ));
+                                    widget.onChange(widget
+                                        .controller.text); //update appended tag
+                                    // .replaceAll(' ', '_');
+                                  });
+                                });
+                        } else
+                          return SizedBox();
+                      })
+                    ]),
+              ),
+            )
+          : SizedBox(),
+      //-----------------------------SUGGESTIONS-------------------------------
+      SizedBox(
+        height: 5.0,
+      ),
+      //-----------------------------INPUT-------------------------------
+      TextField(
+          controller: widget.controller,
+          decoration: InputDecoration.collapsed(
+            hintText: (widget.hint == null) ? 'Type Here!' : widget.hint,
+          ),
+          maxLines: widget.maxlines,
+          style:
+              (widget.style == null) ? TextStyle(fontSize: 19.0) : widget.style,
+          onChanged: (val) {
+            setState(() {
+              val = val.replaceAll("\n", " ");
+              words = val.split(' ');
+              //Notifying
+              if (words.length > 0) {
+                if (words[words.length - 1].startsWith('@') ||
+                    words[words.length - 1].startsWith('#')) {
+                  selectedUser = words[words.length - 1];
+                } else {
+                  selectedUser = '';
+                }
+              }
+              // selectedUser =
+              //     words.length > 0 && words[words.length - 1].startsWith('@')
+              //         ? words[words.length - 1]
+              //         : '';
+            });
+            if (widget.onChange != null)
+              widget.onChange(widget.controller.text);
+          }),
+    ]);
+    //-----------------------------INPUT-------------------------------
+  }
+}
+
+class HashTagEnabledUserTaggableTextDisplay extends StatelessWidget {
+  final String text;
+  final TextStyle style;
+  const HashTagEnabledUserTaggableTextDisplay(this.text, {Key key, this.style})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      text: TextSpan(
+          style: (style == null) ? DefaultTextStyle.of(context).style : style,
+          children: text.replaceAll("\n", "\n ").split(" ").map((w) {
+            return w.startsWith('@') && w.length > 1
+                ? TextSpan(
+                    text: w + ' ',
+                    style: TextStyle(color: Colors.blue),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        print(w.substring(1));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProfilePage(
+                                      w.substring(1),
+                                    )));
+                      })
+                : w.startsWith('#') && w.length > 1
+                    ? TextSpan(
+                        text: w + ' ',
+                        style: TextStyle(color: Colors.blue),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            print("Clicked on Topic: ${w.substring(1)}");
+                          })
+                    : TextSpan(
+                        text: w + ' ',
+                        style: (style == null)
+                            ? DefaultTextStyle.of(context).style
+                            : style);
+          }).toList()),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:MicroBlogger/Backend/datastore.dart';
 import 'package:MicroBlogger/Screens/editprofile.dart';
-import 'package:MicroBlogger/Screens/homepage.dart';
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/Screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:MicroBlogger/Backend/server.dart';
@@ -31,6 +31,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Text("Back"))
               ],
             ));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkConnection(context);
   }
 
   @override

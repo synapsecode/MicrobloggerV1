@@ -1,3 +1,4 @@
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
@@ -61,7 +62,7 @@ class _ShareableComposerState extends State<ShareableComposer> {
                     backgroundColor: Color.fromARGB(200, 220, 20, 60),
                   );
                   await createShareable(
-                      state['content'], state['link'], state['name']);
+                      state['content'], state['name'], state['link']);
                 } else {
                   print("Updating Shareable");
                   Fluttertoast.showToast(
@@ -114,6 +115,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
   @override
   void initState() {
     super.initState();
+    checkConnection(context);
     contentController = new TextEditingController();
     contentController.text = widget.state['content'];
     contentController.value = TextEditingValue(
@@ -122,6 +124,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
         TextPosition(offset: widget.state['content'].length),
       ),
     );
+
     linkController = new TextEditingController();
     linkController.text = widget.state['link'];
     linkController.value = TextEditingValue(
@@ -130,6 +133,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
         TextPosition(offset: widget.state['link'].length),
       ),
     );
+
     nameController = new TextEditingController();
     nameController.text = widget.state['name'];
     nameController.value = TextEditingValue(
@@ -142,49 +146,45 @@ class _ComposerComponentState extends State<ComposerComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Container(
-        padding: EdgeInsets.all(10.0),
-        child: TextField(
-          controller: nameController,
-          onChanged: (x) {
-            widget.nameUpdater(x);
-          },
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Shareable Name',
+    return SingleChildScrollView(
+      child: Column(children: [
+        Container(
+          padding: EdgeInsets.all(10.0),
+          child: TextField(
+            controller: nameController,
+            onChanged: (x) {
+              widget.nameUpdater(x);
+            },
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Shareable Name',
+            ),
           ),
         ),
-      ),
-      Container(
-        padding: EdgeInsets.all(10.0),
-        child: TextField(
-          controller: linkController,
-          onChanged: (x) {
-            widget.linkUpdater(x);
-          },
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Shareable Link',
+        Container(
+          padding: EdgeInsets.all(10.0),
+          child: TextField(
+            controller: linkController,
+            onChanged: (x) {
+              widget.linkUpdater(x);
+            },
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Shareable Link',
+            ),
           ),
         ),
-      ),
-      Expanded(
-        child: Card(
-            color: Colors.black12,
-            child: Padding(
-              padding: EdgeInsets.all(12.0),
-              child: TextField(
+        Card(
+          color: Colors.black12,
+          child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: HashTagEnabledUserTaggableTextField(
                 controller: contentController,
-                style: TextStyle(fontSize: 19.0),
-                onChanged: (x) {
-                  widget.contentUpdater("$x");
-                },
-                maxLines: 15,
-                decoration: InputDecoration.collapsed(hintText: "Description"),
-              ),
-            )),
-      ),
-    ]);
+                onChange: widget.contentUpdater,
+                maxlines: 21,
+              )),
+        ),
+      ]),
+    );
   }
 }

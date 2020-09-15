@@ -92,16 +92,22 @@ class _TimelineViewerState extends State<TimelineViewer> {
                                               SizedBox(
                                                 height: 10.0,
                                               ),
-                                              TextField(
-                                                enabled: false,
-                                                minLines: 5,
-                                                maxLines: 30,
-                                                decoration:
-                                                    InputDecoration.collapsed(
-                                                  hintText:
-                                                      "${snapshot.data['events'][index]['description']}",
-                                                ),
-                                              ),
+                                              HashTagEnabledUserTaggableTextDisplay(
+                                                  snapshot.data['events'][index]
+                                                      ['description'],
+                                                  style: TextStyle(
+                                                      color: Colors.white54,
+                                                      fontSize: 18.0)),
+                                              // TextField(
+                                              //   enabled: false,
+                                              //   minLines: 5,
+                                              //   maxLines: 30,
+                                              //   decoration:
+                                              //       InputDecoration.collapsed(
+                                              //     hintText:
+                                              //         "${snapshot.data['events'][index]['description']}",
+                                              //   ),
+                                              // ),
                                               SizedBox(
                                                 height: 10.0,
                                               ),

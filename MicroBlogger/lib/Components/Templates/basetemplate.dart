@@ -1,3 +1,4 @@
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/Components/Templates/ViewerTemplate.dart';
 import 'package:MicroBlogger/Components/Templates/postTemplates.dart';
 import 'package:MicroBlogger/Composers/blogComposer.dart';
@@ -12,6 +13,7 @@ import 'package:MicroBlogger/Screens/homepage.dart';
 import 'package:MicroBlogger/Screens/profile.dart';
 import 'package:MicroBlogger/Views/blog_viewer.dart';
 import 'package:MicroBlogger/Views/timeline_viewer.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../Backend/datastore.dart';
@@ -110,7 +112,9 @@ class _BasicTemplateState extends State<BasicTemplate> {
                               Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("${widget.postObject['content']}"),
+                                    HashTagEnabledUserTaggableTextDisplay(
+                                        widget.postObject['content']),
+                                    //Text("${widget.postObject['content']}"),
                                   ]),
                               SizedBox(
                                 height: 8.0,

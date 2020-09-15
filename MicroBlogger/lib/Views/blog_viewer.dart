@@ -67,12 +67,17 @@ class _BlogViewerState extends State<BlogViewer> {
                                 ),
                               ),
                               Container(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text(
-                                    "${snapshot.data['content']}",
+                                padding: EdgeInsets.all(10.0),
+                                child: HashTagEnabledUserTaggableTextDisplay(
+                                    snapshot.data['content'],
                                     style: TextStyle(
-                                        color: Colors.white54, fontSize: 18.0),
-                                  )),
+                                        color: Colors.white54, fontSize: 18.0)),
+                                // child: Text(
+                                //   "${snapshot.data['content']}",
+                                //   style: TextStyle(
+                                //       color: Colors.white54, fontSize: 18.0),
+                                // )),
+                              )
                             ],
                           )),
                     ),

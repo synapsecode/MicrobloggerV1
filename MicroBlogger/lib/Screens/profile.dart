@@ -25,6 +25,7 @@ class _ProfileState extends State<ProfilePage>
   void initState() {
     super.initState();
     _controller = new TabController(length: 4, vsync: this);
+    checkConnection(context);
     profileData = getProfile(widget.username);
   }
 

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/Screens/imageupload.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -183,6 +184,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
   @override
   void initState() {
     super.initState();
+    checkConnection(context);
     contentController = new TextEditingController();
     contentController.text = widget.state['content'];
     contentController.value = TextEditingValue(
@@ -196,19 +198,30 @@ class _ComposerComponentState extends State<ComposerComponent> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
+      // Card(
+      //     color: Colors.black12,
+      //     child: Padding(
+      //       padding: EdgeInsets.all(12.0),
+      //       child: TextField(
+      //         controller: contentController,
+      //         style: TextStyle(fontSize: 19.0),
+      //         onChanged: (x) {
+      //           widget.contentUpdater("$x");
+      //         },
+      //         maxLines: 15,
+      //         decoration: InputDecoration.collapsed(
+      //             hintText: "Start Describing the Images!"),
+      //       ),
+      //     )),
       Card(
           color: Colors.black12,
           child: Padding(
             padding: EdgeInsets.all(12.0),
-            child: TextField(
+            child: HashTagEnabledUserTaggableTextField(
               controller: contentController,
-              style: TextStyle(fontSize: 19.0),
-              onChanged: (x) {
-                widget.contentUpdater("$x");
-              },
-              maxLines: 15,
-              decoration: InputDecoration.collapsed(
-                  hintText: "Start Describing the Images!"),
+              onChange: widget.contentUpdater,
+              maxlines: 15,
+              hint: "Start Describing the Images!",
             ),
           )),
     ]);

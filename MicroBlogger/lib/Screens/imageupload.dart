@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:MicroBlogger/Backend/datastore.dart';
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/Composers/blogComposer.dart';
 import 'package:MicroBlogger/Composers/carouselComposer.dart';
@@ -27,7 +25,6 @@ class _ImageCaptureState extends State<ImageCapture> {
   Future<void> _cropImage() async {
     File cropped = await ImageCropper.cropImage(
         sourcePath: _imageFile.path,
-
         // ratioX: 1.0,
         // ratioY: 1.0,
         // maxWidth: 512,
@@ -125,7 +122,6 @@ class Uploader extends StatefulWidget {
   final file;
   final imageFor;
   Map preExistingState;
-
   Uploader(this.imageFor, {this.file, this.preExistingState});
   @override
   _UploaderState createState() => _UploaderState();
@@ -157,7 +153,6 @@ class _UploaderState extends State<Uploader> {
       await addBackground(widget.file);
       Navigator.pushReplacementNamed(context, '/ProfilePage');
     } else if (widget.imageFor == 'BLOGCOVER') {
-      print("COVER: ${widget.preExistingState['cover']}");
       String link = await addCoverPicture(widget.file);
       print("The Generated Link is: $link");
       widget.preExistingState['cover'] = link;
@@ -170,7 +165,6 @@ class _UploaderState extends State<Uploader> {
                     isEditing: widget.preExistingState['isEditing'],
                   )));
     } else if (widget.imageFor == 'TIMELINECOVER') {
-      print("COVER: ${widget.preExistingState['cover']}");
       String link = await addCoverPicture(widget.file);
       print("The Generated Link is: $link");
       widget.preExistingState['cover'] = link;
@@ -179,11 +173,10 @@ class _UploaderState extends State<Uploader> {
           context,
           MaterialPageRoute(
               builder: (context) => TimelineComposer(
-                    isEditing: widget.preExistingState['isEditing'],
                     preExistingState: widget.preExistingState,
+                    isEditing: widget.preExistingState['isEditing'],
                   )));
     } else if (widget.imageFor == 'CAROUSEL') {
-      print("IMGS: ${widget.preExistingState['images']}");
       print(widget.file);
       String link = await addCoverPicture(widget.file);
       print(widget.preExistingState);
@@ -193,8 +186,8 @@ class _UploaderState extends State<Uploader> {
           context,
           MaterialPageRoute(
               builder: (context) => CarouselComposer(
-                    isEditing: widget.preExistingState['isEditing'],
                     preExistingState: widget.preExistingState,
+                    isEditing: widget.preExistingState['isEditing'],
                   )));
     }
   }

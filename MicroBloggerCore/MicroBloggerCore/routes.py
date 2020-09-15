@@ -246,6 +246,9 @@ def feed():
 			[feed.append(reshareWithComment(myuser, x)) for x in ReshareWithComment.query.filter_by(author_id=ux.id).all()]
 			[feed.append(simpleReshare(myuser, x)) for x in SimpleReshare.query.filter_by(author_id=ux.id).all()]
 			[feed.append(carousel(myuser, x)) for x in CarouselPost.query.filter_by(author_id=ux.id).all()]
+		feed.append(FollowSuggestion())
+		feed.append(YoutubeElement())
+		feed.append(VideoCarousel())
 		
 		return jsonify({
 			'code': 'S1',

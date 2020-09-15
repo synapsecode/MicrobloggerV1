@@ -18,6 +18,7 @@ class _ExplorePageState extends State<ExplorePage>
   @override
   void initState() {
     super.initState();
+    checkConnection(context);
     _controller = new TabController(length: 4, vsync: this);
   }
 

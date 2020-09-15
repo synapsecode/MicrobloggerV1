@@ -1,3 +1,4 @@
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
@@ -73,6 +74,7 @@ class _MicroBlogComposerState extends State<MicroBlogComposer> {
                         (state['isFact']) ? 'Fact' : 'Opinion');
                   }
                 }
+                //TODO: Navigate to Post
                 Navigator.pushNamed(context, '/HomePage');
               },
               child: Text((widget.isEditing) ? "Update" : "Publish"),
@@ -100,6 +102,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
   @override
   void initState() {
     super.initState();
+    //checkConnection(context);
     contentController = new TextEditingController();
     contentController.text = widget.state['content'];
     contentController.value = TextEditingValue(
@@ -112,24 +115,19 @@ class _ComposerComponentState extends State<ComposerComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Expanded(
-        child: Card(
-            color: Colors.black12,
-            child: Padding(
+    return SingleChildScrollView(
+      child: Column(children: [
+        Card(
+          color: Colors.black12,
+          child: Padding(
               padding: EdgeInsets.all(8.0),
-              child: TextField(
+              child: HashTagEnabledUserTaggableTextField(
                 controller: contentController,
-                onChanged: (x) {
-                  widget.contentUpdater("$x");
-                },
-                maxLines: 1000,
-                style: TextStyle(fontSize: 19.0),
-                decoration:
-                    InputDecoration.collapsed(hintText: "What's happening?"),
-              ),
-            )),
-      ),
-    ]);
+                onChange: widget.contentUpdater,
+                maxlines: 20,
+              )),
+        ),
+      ]),
+    );
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/Screens/imageupload.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -21,6 +22,7 @@ class _BlogComposerState extends State<BlogComposer> {
   @override
   void initState() {
     super.initState();
+    checkConnection(context);
     print("BLOGCOMPOSER: ${widget.preExistingState}");
     state = widget.preExistingState;
   }
@@ -76,7 +78,9 @@ class _BlogComposerState extends State<BlogComposer> {
                   }
                   Navigator.pushNamed(context, '/HomePage');
                 },
-                child: (widget.isEditing) ? Text("Update") : Text("Publish"),
+                child: (widget.isEditing) ?? (widget.isEditing)
+                    ? Text("Update")
+                    : Text("Publish"),
                 color: Colors.black,
               ),
             ),
@@ -157,7 +161,8 @@ class _ComposerComponentState extends State<ComposerComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
+    return SingleChildScrollView(
+        child: Column(children: [
       Container(
         padding: EdgeInsets.all(10.0),
         child: TextField(
@@ -174,18 +179,13 @@ class _ComposerComponentState extends State<ComposerComponent> {
       Card(
           color: Colors.black12,
           child: Padding(
-            padding: EdgeInsets.all(12.0),
-            child: TextField(
+            padding: EdgeInsets.all(8.0),
+            child: HashTagEnabledUserTaggableTextField(
               controller: contentController,
-              style: TextStyle(fontSize: 19.0),
-              onChanged: (x) {
-                widget.contentUpdater("$x");
-              },
-              maxLines: 45,
-              decoration:
-                  InputDecoration.collapsed(hintText: "Start Blogging!"),
+              onChange: widget.contentUpdater,
+              maxlines: 25,
             ),
           )),
-    ]);
+    ]));
   }
 }

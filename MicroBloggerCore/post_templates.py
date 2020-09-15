@@ -19,6 +19,65 @@ def userTemplate(user_record):
 		'website': (user_record.website)
 	}
 
+def FollowSuggestion():
+	return {
+		'type': 'FollowSuggestions',
+		'suggestions': [
+			{}
+		]
+	}
+
+
+def YoutubeElement():
+	return {
+		'type': 'YoutubeElement',
+		'id': "0x14141414abcabc",
+		'author':  {
+			'name': 'Default User',
+			'username': 'microbloggerbot',
+			'icon': 'https://res.cloudinary.com/krustel-inc/image/upload/v1598958728/nabvmp35j9kc6ldbjr7c.png'
+		},
+		'content': 'How to build an Instagram Clone by Gaurav Sen!',
+		'videoID': 'QmX2NPkJTKg'
+	}
+
+def YoutubeElement():
+	return {
+		'type': 'YoutubeElement',
+		'id': "0x14141414abcabc",
+		'author':  {
+			'name': 'Default User',
+			'username': 'microbloggerbot',
+			'icon': 'https://res.cloudinary.com/krustel-inc/image/upload/v1598958728/nabvmp35j9kc6ldbjr7c.png'
+		},
+		'content': 'How to build an Instagram Clone by Gaurav Sen!',
+		'videoID': 'QmX2NPkJTKg'
+	}
+
+def VideoCarousel():
+	return {
+		'type': 'Video',
+		'id': "0x14141414abcabc",
+		'author':  {
+			'name': 'Kurzgesagt',
+			'username': 'kurzgesagt',
+			'icon': 'https://i.pinimg.com/originals/d9/d8/f4/d9d8f45382406a1708dea5069bdb6630.png'
+		},
+		'videoURLs':[
+			"https://res.cloudinary.com/krustel-inc/video/upload/v1558949722/wgvfn8ssg63ouq01xwg3.mp4",
+			"https://res.cloudinary.com/krustel-inc/video/upload/v1558949722/wgvfn8ssg63ouq01xwg3.mp4",
+			"https://res.cloudinary.com/krustel-inc/video/upload/v1558949722/wgvfn8ssg63ouq01xwg3.mp4",
+		],
+		'age': '10s',
+		'content': 'Learn about Leptons, Bosons, Mesons and more through this short but amazing video that we put out!',
+		'isLiked': False,
+		'isReshared': False,
+		'isBookmarked': False,
+		'likes': 10,
+		'reshares': 2,
+		'comments': 0,
+	}
+
 def carousel(user, post):
 	return {
 		'type': 'carousel',
@@ -326,3 +385,10 @@ def get_comments_from_post(user, post):
 	return [comment(user, c) for c in post.comments]
 
 #'commenfts': [comment(user, c) for c in post.comments],
+
+
+
+
+
+
+

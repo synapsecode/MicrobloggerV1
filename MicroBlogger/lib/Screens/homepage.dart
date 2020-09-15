@@ -1,16 +1,20 @@
 import 'dart:async';
 import 'package:MicroBlogger/Backend/server.dart';
+import 'package:MicroBlogger/Components/Templates/followsuggestions.dart';
+import 'package:MicroBlogger/Components/Templates/nativeVideoPlayer.dart';
+import 'package:MicroBlogger/Components/Templates/youtubePlayer.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/datastore.dart';
 import '../Components/Global/globalcomponents.dart';
 import 'dart:developer';
-
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter/material.dart';
 import '../Components/Templates/postTemplates.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    checkConnection(context);
     return Scaffold(
       backgroundColor: Colors.black87,
       appBar: AppBar(
@@ -109,6 +113,17 @@ class _FeedState extends State<Feed> {
                       break;
                     case "SimpleReshare":
                       output = SimpleReshare(
+                        postObject: snapshot.data[index],
+                      );
+                      break;
+                    case "FollowSuggestions":
+                      output = FollowSuggestions(snapshot.data[index]);
+                      break;
+                    case "YoutubeElement":
+                      output = YoutubeElement(snapshot.data[index]);
+                      break;
+                    case "Video":
+                      output = VideoCarouselPost(
                         postObject: snapshot.data[index],
                       );
                       break;

@@ -1,4 +1,5 @@
 import 'package:MicroBlogger/Backend/server.dart';
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../Components/Templates/postTemplates.dart';
@@ -25,6 +26,7 @@ class _ReshareComposerState extends State<ReshareComposer> {
   @override
   void initState() {
     super.initState();
+    checkConnection(context);
     postType = widget.postObject['type'];
     switch (widget.postObject['type']) {
       case "microblog":
@@ -137,20 +139,32 @@ class _ReshareComposerState extends State<ReshareComposer> {
             Container(
               margin: EdgeInsets.only(left: 6.0, right: 6.0, bottom: 6.0),
               child: Card(
-                  color: Colors.white10,
+                  color: Colors.black12,
                   child: Padding(
                     padding: EdgeInsets.all(12.0),
-                    child: TextField(
+                    child: HashTagEnabledUserTaggableTextField(
                       controller: contentController,
-                      onChanged: (x) {
-                        updateContent(x);
-                      },
-                      maxLines: 25,
-                      style: TextStyle(fontSize: 19.0),
-                      decoration: InputDecoration.collapsed(
-                          hintText: "What are your views regarding this?"),
+                      onChange: updateContent,
+                      maxlines: 25,
+                      hint: "What are your views regarding this?",
                     ),
                   )),
+
+              //  Card(
+              //     color: Colors.white10,
+              //     child: Padding(
+              //       padding: EdgeInsets.all(12.0),
+              //       child: TextField(
+              //         controller: contentController,
+              //         onChanged: (x) {
+              //           updateContent(x);
+              //         },
+              //         maxLines: 25,
+              //         style: TextStyle(fontSize: 19.0),
+              //         decoration: InputDecoration.collapsed(
+              //             hintText: "What are your views regarding this?"),
+              //       ),
+              //     )),
             ),
           ],
         ),

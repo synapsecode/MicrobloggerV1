@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:MicroBlogger/Composers/blogComposer.dart';
 import 'package:MicroBlogger/Composers/carouselComposer.dart';
 import 'package:MicroBlogger/Composers/microblogComposer.dart';
@@ -15,7 +15,7 @@ import 'package:MicroBlogger/Screens/newsfeedpage.dart';
 import 'package:MicroBlogger/Screens/notifications.dart';
 import 'package:MicroBlogger/Screens/profile.dart';
 import 'package:MicroBlogger/Screens/register.dart';
-import 'package:MicroBlogger/Screens/settings.dart';
+import 'package:MicroBlogger/Screens/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'Components/Global/globalcomponents.dart';
@@ -40,7 +40,7 @@ void main() {
           '/NewsFeed': (BuildContext context) => new NewsFeedPage(),
           '/Login': (BuildContext context) => new LoginPage(),
           '/Register': (BuildContext context) => new RegisterPage(),
-          '/Settings': (BuildContext context) => new SettingsPage(),
+          '/Settings': (BuildContext context) => new Settings(),
           '/Explore': (BuildContext context) => new ExplorePage(),
 
           //User screens
@@ -109,19 +109,22 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     loadUser();
-    ShakeDetector detector = ShakeDetector.autoStart(
-        shakeThresholdGravity: 4.5,
-        onPhoneShake: () {
-          print("Shook");
-          // Do stuff on phone shake
-          Timer.run(() {
-            showDialog(
-                builder: (context) {
-                  return BugReporterDialog();
-                },
-                context: context);
+    //checkConnection(context);
+    if (Platform.isAndroid) {
+      ShakeDetector detector = ShakeDetector.autoStart(
+          shakeThresholdGravity: 4.5,
+          onPhoneShake: () {
+            print("Shook");
+            // Do stuff on phone shake
+            Timer.run(() {
+              showDialog(
+                  builder: (context) {
+                    return BugReporterDialog();
+                  },
+                  context: context);
+            });
           });
-        });
+    }
   }
 
   void loadUser() async {

@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:MicroBlogger/Backend/server.dart';
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:MicroBlogger/Components/Templates/nativeVideoPlayer.dart';
 import 'package:MicroBlogger/Screens/profile.dart';
 import 'package:MicroBlogger/Views/blog_viewer.dart';
 import 'package:MicroBlogger/Views/shareableWebViewer.dart';
@@ -30,7 +32,7 @@ class MicroBlogPost extends StatelessWidget {
         isInViewMode: isInViewMode,
         widgetComponent:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text("${postObject['content']}"),
+          HashTagEnabledUserTaggableTextDisplay(postObject['content']),
         ]));
   }
 }
@@ -70,7 +72,7 @@ class _CarouselPostState extends State<CarouselPost> {
         widgetComponent: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(widget.postObject['content']),
+            HashTagEnabledUserTaggableTextDisplay(widget.postObject['content']),
             SizedBox(
               height: 15,
             ),
@@ -139,7 +141,7 @@ class LevelOneComment extends StatelessWidget {
         postObject: commentObject,
         widgetComponent:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text("${commentObject['content']}"),
+          HashTagEnabledUserTaggableTextDisplay(commentObject['content']),
         ]));
   }
 }
@@ -167,7 +169,7 @@ class _PollPostState extends State<PollPost> {
         postObject: widget.postObject,
         widgetComponent:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text("${widget.postObject['content']}"),
+          HashTagEnabledUserTaggableTextDisplay(widget.postObject['content']),
           SizedBox(
             height: 10.0,
           ),
@@ -226,7 +228,7 @@ class ShareablePost extends StatelessWidget {
         postObject: postObject,
         widgetComponent:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text("${postObject['content']}"),
+          HashTagEnabledUserTaggableTextDisplay(postObject['content']),
           SizedBox(
             height: 10.0,
           ),
@@ -527,5 +529,49 @@ class ReshareWithComment extends StatelessWidget {
         postObject: postObject,
         isInViewMode: isInViewMode,
         widgetComponent: hostChild);
+  }
+}
+
+class VideoCarouselPost extends StatefulWidget {
+  final postObject;
+  // final isInViewMode;
+  // final bool isHosted;
+  const VideoCarouselPost({
+    Key key,
+    this.postObject,
+    // this.isHosted = false,
+    // this.isInViewMode = false
+  }) : super(key: key);
+
+  @override
+  _VideoCarouselPostState createState() => _VideoCarouselPostState();
+}
+
+class _VideoCarouselPostState extends State<VideoCarouselPost> {
+  PageController _controller = new PageController();
+  @override
+  Widget build(BuildContext context) {
+    return BasicTemplate(
+        postObject: widget.postObject,
+        isHosted: false,
+        isInViewMode: false,
+        widgetComponent:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          HashTagEnabledUserTaggableTextDisplay(widget.postObject['content']),
+          SizedBox(
+            height: 5.0,
+          ),
+          Container(child: NativeVideoPlayer(widget.postObject['videoURLs'][0])
+
+              // PageView(
+              //   controller: _controller,
+              //   children: [
+              //     widget.postObject['videoURLs'].forEach((e) {
+              //       return NativeVideoPlayer(e);
+              //     })
+              //   ],
+              // ),
+              )
+        ]));
   }
 }

@@ -1,3 +1,4 @@
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
@@ -107,6 +108,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
   @override
   void initState() {
     super.initState();
+    checkConnection(context);
     commentController = new TextEditingController();
     commentController.text = widget.state['comment'];
     commentController.value = TextEditingValue(
@@ -119,24 +121,37 @@ class _ComposerComponentState extends State<ComposerComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Expanded(
-        child: Card(
+    return SingleChildScrollView(
+      child: Column(children: [
+        Card(
             color: Colors.black12,
             child: Padding(
               padding: EdgeInsets.all(12.0),
-              child: TextField(
+              child: HashTagEnabledUserTaggableTextField(
                 controller: commentController,
-                onChanged: (x) {
-                  widget.commentUpdater("$x");
-                },
-                maxLines: 45,
-                style: TextStyle(fontSize: 19.0),
-                decoration:
-                    InputDecoration.collapsed(hintText: "Start Commenting"),
+                onChange: widget.commentUpdater,
+                maxlines: 25,
+                hint: "What's your reply?",
               ),
             )),
-      ),
-    ]);
+        // Expanded(
+        //   child: Card(
+        //       color: Colors.black12,
+        //       child: Padding(
+        //         padding: EdgeInsets.all(12.0),
+        //         child: TextField(
+        //           controller: commentController,
+        //           onChanged: (x) {
+        //             widget.commentUpdater("$x");
+        //           },
+        //           maxLines: 45,
+        //           style: TextStyle(fontSize: 19.0),
+        //           decoration:
+        //               InputDecoration.collapsed(hintText: "Start Commenting"),
+        //         ),
+        //       )),
+        // ),
+      ]),
+    );
   }
 }
