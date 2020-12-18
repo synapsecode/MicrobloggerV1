@@ -1,6 +1,6 @@
 #TODO Post Age helper function caluclator
 from MicroBloggerCore.models import db, MicroBlogPost, BlogPost, ShareablePost, PollPost, TimelinePost, ReshareWithComment, CarouselPost
-from helperfunctions import calculate_post_age
+from helperfunctions import calculate_post_age, get_unavailable_post
 
 def userTemplate(user_record):
 	return {
@@ -25,20 +25,6 @@ def FollowSuggestion():
 		'suggestions': [
 			{}
 		]
-	}
-
-
-def YoutubeElement():
-	return {
-		'type': 'YoutubeElement',
-		'id': "0x14141414abcabc",
-		'author':  {
-			'name': 'Default User',
-			'username': 'microbloggerbot',
-			'icon': 'https://res.cloudinary.com/krustel-inc/image/upload/v1598958728/nabvmp35j9kc6ldbjr7c.png'
-		},
-		'content': 'How to build an Instagram Clone by Gaurav Sen!',
-		'videoID': 'QmX2NPkJTKg'
 	}
 
 def YoutubeElement():
@@ -132,7 +118,12 @@ def comment(user, c):
 		# 'isEdited': post.isEdited
 	}
 
+
+
 def microblog(user, post):
+	if(not post):
+		return get_unavailable_post('microblog')
+
 	return {
 		'type':'microblog',
 		'id': post.post_id,
@@ -154,6 +145,8 @@ def microblog(user, post):
 	}
 
 def blog(user, post):
+	if(not post):
+		return get_unavailable_post('blog')
 	return {
 		'type':'blog',
 		'id': post.post_id,
@@ -201,6 +194,8 @@ def poll(user, post):
 	}
 
 def shareable(user, post):
+	if(not post):
+		return get_unavailable_post('shareable')
 	return {
 		'type':'shareable',
 		'id': post.post_id,
@@ -222,6 +217,8 @@ def shareable(user, post):
 	}
 
 def timeline(user, post):
+	if(not post):
+		return get_unavailable_post('timeline')
 	return {
 		'type':'timeline',
 		'id': post.post_id,
@@ -311,6 +308,8 @@ def newsArticle(headline, url, background, source="internet"):
 #PIECE FUNCTIONS
 
 def timeline_skin(user, post):
+	if(not post):
+		return get_unavailable_post('timeline')
 	return {
 		'type':'timeline',
 		'id': post.post_id,
@@ -324,6 +323,8 @@ def timeline_skin(user, post):
 	}
 
 def timeline_body(user, post):
+	if(not post):
+		return get_unavailable_post('timeline')
 	return {
 		'type':'timeline',
 		'id': post.post_id,
@@ -346,6 +347,8 @@ def timeline_body(user, post):
 	}
 
 def blog_skin(user, post):
+	if(not post):
+		return get_unavailable_post('blog')
 	return {
 		'type':'blog',
 		'id': post.post_id,
@@ -360,6 +363,8 @@ def blog_skin(user, post):
 	}
 
 def blog_body(user, post):
+	if(not post):
+		return {'blog': get_unavailable_post('blog')}
 	return {
 		'type':'blog',
 		'id': post.post_id,

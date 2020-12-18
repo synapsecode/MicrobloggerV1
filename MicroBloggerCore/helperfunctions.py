@@ -24,3 +24,34 @@ def caluclate_post_age_delta(created):
 	FMT = "%b %d, %Y %H:%M:%S"
 	tdelta = datetime.strptime(now, FMT) - datetime.strptime(str(created), FMT)
 	return tdelta
+
+
+def get_unavailable_post(post_type):
+	return {
+		'type': post_type,
+		'id': '000000000000',
+		'author': {
+			'name': "Unavailable Post",
+			'username': "unavailable",
+			'icon': "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
+		},
+		'likes': 0,
+		'reshares': 0,
+		'comments': 0,
+		'content': "This post has been deleted or is unavailable at the moment.",
+		'category': "Uncategorized",
+		'age': '0x00',
+		'isLiked': False,
+		'isReshared': False,
+		'isBookmarked': False,
+
+		'link': 'https://www.google.com/4uhr',
+		'name':'Unavailable',
+
+		'background': 'https://www.insidetheiot.com/wp-content/uploads/2019/05/Update-rollback.jpg',
+		'blog_name': 'Unavailable Blog',
+
+		'timeline_name': 'Unavailable Timeline',
+		'events': [],
+
+	}

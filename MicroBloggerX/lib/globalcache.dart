@@ -1,0 +1,2 @@
+List GlobalFeedCache = [];
+Map GlobalProfileDataCache = {};

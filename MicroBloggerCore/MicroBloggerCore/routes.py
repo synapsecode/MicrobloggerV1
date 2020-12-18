@@ -406,6 +406,7 @@ def getpostcomments():
 	post_id = data['post_id']
 	post_type = data['post_type']
 	user = User.query.filter_by(username=username).first()
+	# if(not user): return jsonify({'comments': []})
 	post = getPost(post_type, post_id)
 	return jsonify({
 			'comments': get_comments_from_post(user, post)
@@ -1072,6 +1073,9 @@ def addPoint(cmd, user):
 		point = +0.25
 	elif(cmd == 'UNLIKE' or cmd == 'UNBOOKMARK'):
 		point = -0.08
+
+	if(not user):
+		return
 	
 	user.secondarypoints = f"{float(user.secondarypoints) + float(point)}"
 	user.reputation = f"{float(user.basepoints) + float(user.secondarypoints)}"
