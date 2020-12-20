@@ -93,6 +93,14 @@ def allusers():
 		}
 	)
 
+@app.route("/<myusername>/getfollowsuggestions")
+def getfollowsuggestions(myusername):
+	my_user_record = User.query.filter_by(username=myusername).first()
+	all_users = [u for u in User.query.all() if u.username != myusername]
+	my_following = my_user_record.my_following
+	suggestions = [{'username': x.username, 'icon':x.icon, 'name':x.name} for x in all_users if x.username not in my_following]
+	return jsonify({"suggestions": suggestions})
+
 @app.route("/profile/<myusername>/<username>")
 def getprofile(myusername, username):
 	my_user_record = User.query.filter_by(username=myusername).first()

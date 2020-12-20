@@ -1,5 +1,169 @@
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:MicroBlogger/globalcache.dart';
 import 'package:flutter/material.dart';
-import '../../Backend/datastore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import '../../Backend/server.dart';
+
+class UserFollowSuggestions extends StatefulWidget {
+  UserFollowSuggestions({Key key}) : super(key: key);
+
+  @override
+  _UserFollowSuggestionsState createState() => _UserFollowSuggestionsState();
+}
+
+class _UserFollowSuggestionsState extends State<UserFollowSuggestions> {
+  Future suggestionFuture;
+  @override
+  void initState() {
+    suggestionFuture = getFollowSuggestions();
+    super.initState();
+  }
+
+  void removeSuggestion(int index) {
+    FollowSuggestionsCache.removeAt(index);
+    setState(() {});
+  }
+
+  Widget generateSuggestions(data) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Follow Suggestions",
+            style: TextStyle(fontSize: 22.0, color: Colors.white70),
+          ),
+          Text(
+            "Follow to get more posts on your feed",
+            style: TextStyle(fontSize: 16.0, color: Colors.white30),
+          ),
+          SizedBox(height: 5.0),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 5.0),
+            padding: EdgeInsets.all(5.0),
+            decoration: BoxDecoration(
+              color: Colors.white10,
+              border: Border.all(width: 1.0, color: Colors.white30),
+            ),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for (int i = 0; i < data.length; i++)
+                    UserDisplayCard(
+                      user: data[i],
+                      userIndex: i,
+                      del: removeSuggestion,
+                    )
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CachedFutureBuilder(
+      cacheStore: FollowSuggestionsCache,
+      future: suggestionFuture,
+      onCacheUsed: (cache) {
+        print("CACHE");
+        return generateSuggestions(FollowSuggestionsCache);
+      },
+      onUpdate: (AsyncSnapshot snapshot) {
+        print("UPDT");
+        FollowSuggestionsCache = snapshot.data;
+        return generateSuggestions(snapshot.data);
+      },
+    );
+  }
+}
+
+class UserDisplayCard extends StatelessWidget {
+  final Map user;
+  final int userIndex;
+  final Function(int) del;
+
+  const UserDisplayCard({
+    Key key,
+    this.user,
+    this.userIndex,
+    this.del,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 200.0,
+      padding: EdgeInsets.all(15.0),
+      margin: EdgeInsets.symmetric(horizontal: 5.0),
+      decoration: BoxDecoration(
+        color: Colors.black12,
+        border: Border.all(width: 1.0, color: Colors.white12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: 64,
+            backgroundImage: NetworkImage(user['icon']),
+          ),
+          SizedBox(height: 10.0),
+          Container(
+            height: 25,
+            width: 180,
+            child: Center(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Text(
+                  user['name'],
+                  style: TextStyle(fontSize: 22.0),
+                ),
+              ),
+            ),
+          ),
+          Text(
+            "@${user['username']}",
+            style: TextStyle(fontSize: 16.0, color: Colors.blue),
+          ),
+          SizedBox(
+            height: 15.0,
+          ),
+          Container(
+            width: 140,
+            child: RaisedButton(
+              onPressed: () async {
+                await followProfile(user['username']);
+                Fluttertoast.showToast(
+                  msg: "You are now following ${user['username']}",
+                  backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                  toastLength: Toast.LENGTH_SHORT,
+                );
+                del(userIndex); //Delete Suggestion
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.people),
+                  SizedBox(width: 10.0),
+                  Text("Follow")
+                ],
+              ),
+              color: Colors.black54,
+              shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(30.0),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
 
 class FollowSuggestions extends StatefulWidget {
   final suggestions;
@@ -14,6 +178,7 @@ class _FollowSuggestionsState extends State<FollowSuggestions> {
   @override
   void initState() {
     super.initState();
+    Future suggestionDataFuture = getFollowSuggestions();
     data = [
       {
         'username': 'synapsecode',

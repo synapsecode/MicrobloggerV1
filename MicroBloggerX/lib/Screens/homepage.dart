@@ -125,7 +125,7 @@ class _FeedState extends State<Feed> {
         );
         break;
       case "FollowSuggestions":
-        output = FollowSuggestions(postData);
+        output = UserFollowSuggestions();
         break;
       case "YoutubeElement":
         output = YoutubeElement(postData);

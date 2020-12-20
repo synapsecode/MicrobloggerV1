@@ -329,8 +329,14 @@ class BioCard extends StatelessWidget {
                         size: 20.0,
                       ),
                       SizedBox(width: 5.0),
-                      Text("${user['user']['website']}",
-                          style: TextStyle(color: Colors.blue))
+                      SizedBox(
+                        width: 250,
+                        child: Text(
+                          "${user['user']['website']}",
+                          style: TextStyle(color: Colors.blue),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      )
                     ],
                   ),
                 ),

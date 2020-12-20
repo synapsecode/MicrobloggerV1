@@ -305,6 +305,20 @@ getTimelineData(post) async {
     return x['timeline'];
   }
 }
+
+getFollowSuggestions() async {
+  print("Getting URL: " +
+      "$serverURL/${currentUser['user']['username']}/getfollowsuggestions");
+  final response = await http.get(
+      "$serverURL/${currentUser['user']['username']}/getfollowsuggestions");
+  Map x = json.decode(response.body);
+  if (response.statusCode == 200) {
+    Map x = json.decode(response.body);
+    print(x);
+    return x['suggestions'];
+  }
+  return [];
+}
 //---------------------------------------------GETTERS------------------------------------------------
 
 //------------------------------------------COMPOSERS----------------------------------------------

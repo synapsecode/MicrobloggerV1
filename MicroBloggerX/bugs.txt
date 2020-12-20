@@ -3,6 +3,9 @@ Light Theme not implemented fully
 in dark mode
 	post backgrounds are not visible
 	like, reshare counter not visible properly
+	Post age not visible
+
+Circular Loader has irregular color scheme
 
 
 
