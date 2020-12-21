@@ -1,14 +1,39 @@
+import 'dart:io';
+
 import 'package:MicroBlogger/Backend/server.dart';
 import 'package:MicroBlogger/Screens/homepage.dart';
 import 'package:MicroBlogger/Screens/profile.dart';
 import 'package:MicroBlogger/theme.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
 import '../../Backend/datastore.dart';
+
+void PlatformCodeRunner(
+  Function web,
+  Function android,
+  Function iOS,
+  Function windows,
+  Function macOS,
+  Function linux,
+  Function fuchsia,
+) {
+  if (kIsWeb) {
+    if (web != null) web();
+  } else {
+    if (Platform.isWindows && windows != null) windows();
+    if (Platform.isMacOS && macOS != null) macOS();
+    if (Platform.isAndroid && android != null) android();
+    if (Platform.isIOS && android != null) iOS();
+    if (Platform.isLinux && linux != null) linux();
+    if (Platform.isFuchsia && fuchsia != null) fuchsia();
+  }
+  return;
+}
 
 class ImageCarousel extends StatefulWidget {
   const ImageCarousel({

@@ -5,7 +5,7 @@ import 'server.dart';
 
 Map currentUser = {};
 Map currentPallete = {};
-String serverURL = "https://92f3d396db90.ngrok.io";
+String serverURL = "https://b3c5b524413d.ngrok.io";
 
 saveUserLoginInfo(username) async {
   if (!Platform.isWindows) {
@@ -34,7 +34,6 @@ loadSavedUsername() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String username = (prefs.getString('logged_in_username') ?? "");
     if (username == "") return "";
-    print("\nDATASTORE<loadSavedUsername>: username: $username");
     currentUser = await loadMyProfile(username);
     if (currentUser.containsKey('message')) {
       if (currentUser['code'] == 'E2') {
@@ -43,8 +42,6 @@ loadSavedUsername() async {
         return "";
       }
     }
-    print(
-        "\n\nDATASTORE<loadSavedUsername>: Stored the CurrentUser: $currentUser");
     return username;
   }
   return "";
@@ -86,4 +83,16 @@ toggleColourPallete(String key) async {
         break;
     }
   }
+}
+
+getColourPalette() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String themeOP = (prefs.getString('palette') ?? "DARK");
+  return themeOP;
+}
+
+setColourPalette(String key) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (key == "LIGHT") await prefs.setString('palette', 'DARK');
+  if (key == "DARK") await prefs.setString('palette', 'LIGHT');
 }
