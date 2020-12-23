@@ -1,4 +1,3 @@
-import 'package:MicroBlogger/theme.dart';
 import 'package:flutter/material.dart';
 
 Map CurrentPalette = darkThemePalette; //Default Dark Theme
@@ -32,31 +31,15 @@ Map<String, dynamic> lightThemePalette = {
   "secondaryBackgroundColor": const Color(0xFF121A26),
   "errorColor": const Color(0xFFB00020),
   "postBackgroundColor": const Color(0xFFFFFFFF),
-  "postcolour": Color.fromARGB(255, 200, 200, 200), //black12,
-  "childpostcolour": Color.fromARGB(255, 32, 32, 32), //black12 (overlay)
+  "postcolour": Colors.white, //black12,
+  "childpostcolour": Colors.black12, //black12 (overlay)
   "sheetcolor": Color.fromARGB(255, 32, 32, 32),
-  "border": Colors.white30, //black38
-  "transparent_text": Colors.white30, //black26
+  "border": Colors.black45, //black38
+  "transparent_text": Colors.black45, //black26
   "cardbackground": Colors.black12, //white10
   "solidconjugate": Colors.black, //white
 };
 
-//MaterialThemeData
-// final ThemeData CustomDarkThemeData = ThemeData(
-//   brightness: Brightness.dark,
-//   accentColorBrightness: Brightness.dark,
-//   errorColor: darkThemePalette['errorColor'],
-//   cardColor: Color(0xFF121A26),
-//   backgroundColor: const Color(0xFF0D1520),
-//   canvasColor: const Color(0xFF2A4058),
-//   primaryColor: const Color(0xFF0D1520),
-//   accentColor: Color(0xFF121A26),
-//   buttonTheme: ButtonThemeData(
-//     colorScheme: ColorScheme.dark(),
-//     textTheme: ButtonTextTheme.primary,
-//   ),
-//   scaffoldBackgroundColor: darkThemePalette['secondaryBackgroundColor'],
-// );
 final ThemeData CustomDarkThemeData = ThemeData(
   brightness: Brightness.dark,
   accentColorBrightness: Brightness.dark,
@@ -76,13 +59,19 @@ final ThemeData CustomDarkThemeData = ThemeData(
     colorScheme: colorScheme,
     textTheme: ButtonTextTheme.primary,
   ),
+  // appBarTheme: AppBarTheme(
+  //   color: const Color(0xFF0D1520),
+  //   brightness: Brightness.dark,
+  //   iconTheme: IconThemeData(color: Colors.white),
+  //   actionsIconTheme: IconThemeData(color: Colors.white),
+  // ),
 );
 
 final ThemeData CustomLightThemeData = ThemeData(
   brightness: Brightness.light,
   accentColorBrightness: Brightness.light,
   primaryColor: primaryColor,
-  cardColor: Color(0xFF121A26),
+  cardColor: Color(0xFFFFFFFF),
   primaryColorDark: const Color(0xFF0050a0),
   primaryColorLight: secondaryColor,
   buttonColor: primaryColor,
@@ -97,4 +86,10 @@ final ThemeData CustomLightThemeData = ThemeData(
     colorScheme: colorScheme,
     textTheme: ButtonTextTheme.primary,
   ),
+  // appBarTheme: AppBarTheme(
+  //   color: const Color(0xFFFFFFFF),
+  //   brightness: Brightness.light,
+  //   iconTheme: IconThemeData(color: Colors.black38),
+  //   actionsIconTheme: IconThemeData(color: Colors.black38),
+  // ),
 );

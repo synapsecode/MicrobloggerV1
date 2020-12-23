@@ -1,6 +1,7 @@
 import 'package:MicroBlogger/Backend/server.dart';
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/Components/Templates/news.dart';
+import 'package:MicroBlogger/origin.dart';
 import 'package:flutter/material.dart';
 
 class NewsFeedPage extends StatelessWidget {
@@ -37,11 +38,14 @@ class NewsFeedPage extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircularProgressIndicator(
-                          valueColor:
-                              new AlwaysStoppedAnimation<Color>(Colors.red),
-                          backgroundColor: Color.fromARGB(200, 220, 20, 60),
-                        )
+                        (Origin.of(context).isCurrentPaletteDarkTheme)
+                            ? CircularProgressIndicator(
+                                valueColor: new AlwaysStoppedAnimation<Color>(
+                                    Colors.red),
+                                backgroundColor:
+                                    Color.fromARGB(200, 220, 20, 60),
+                              )
+                            : CirclularLoader(),
                       ],
                     ),
                   );

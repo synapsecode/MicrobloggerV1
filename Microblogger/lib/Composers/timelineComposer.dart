@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/Screens/imageupload.dart';
+import 'package:MicroBlogger/origin.dart';
+import 'package:MicroBlogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
@@ -210,7 +212,7 @@ class _TComposerState extends State<TComposer> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        color: Colors.black12,
+        // color: Colors.black12,
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           //The Event Displayer
           Container(
@@ -250,18 +252,24 @@ class _TComposerState extends State<TComposer> {
               ),
             ),
           ),
-          Card(
-              color: Colors.black12,
-              margin: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Padding(
-                padding: EdgeInsets.all(12.0),
-                child: HashTagEnabledUserTaggableTextField(
-                  controller: eventController,
-                  onChange: widget.eventTextUpdater,
-                  maxlines: 10,
-                  hint: "Start Describing the Event!",
-                ),
-              )),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 10.0),
+            decoration: BoxDecoration(
+                border: Border.all(
+              color: CurrentPalette['border'],
+            )),
+            child: Card(
+                elevation: 0,
+                child: Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: HashTagEnabledUserTaggableTextField(
+                    controller: eventController,
+                    onChange: widget.eventTextUpdater,
+                    maxlines: 10,
+                    hint: "Start Describing the Event!",
+                  ),
+                )),
+          ),
           // Card(
           //     color: Colors.black12,
           //     margin: EdgeInsets.symmetric(horizontal: 10.0),
@@ -280,11 +288,18 @@ class _TComposerState extends State<TComposer> {
           if (widget.state['events'].length > 0) ...[
             Card(
                 margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                color: Colors.black12,
+                // color: Colors.black12,
                 child: Column(
                   children: [
                     Container(
-                      color: Colors.black12,
+                      decoration: BoxDecoration(
+                        color: Origin.of(context).isCurrentPaletteDarkTheme
+                            ? Colors.black12
+                            : Colors.transparent,
+                        border: Border.all(
+                          color: CurrentPalette['border'],
+                        ),
+                      ),
                       padding: EdgeInsets.all(10.0),
                       child: ListView.builder(
                           itemCount: widget.state['events'].length,
@@ -293,11 +308,29 @@ class _TComposerState extends State<TComposer> {
                           itemBuilder: (context, index) {
                             return Container(
                               margin: EdgeInsets.only(bottom: 2.0),
-                              color: Colors.white10,
+                              decoration: BoxDecoration(
+                                color:
+                                    Origin.of(context).isCurrentPaletteDarkTheme
+                                        ? Colors.black12
+                                        : Colors.transparent,
+                                border: Border.all(
+                                  color: CurrentPalette['border'],
+                                ),
+                              ),
                               child: ListTile(
                                 title: Card(
-                                    color: Colors.black12,
+                                    elevation: 0,
+                                    // color: Colors.black12,
                                     child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Origin.of(context)
+                                                .isCurrentPaletteDarkTheme
+                                            ? Colors.black12
+                                            : Colors.transparent,
+                                        border: Border.all(
+                                          color: CurrentPalette['border'],
+                                        ),
+                                      ),
                                       padding: EdgeInsets.all(12.0),
                                       child: Column(
                                         crossAxisAlignment:

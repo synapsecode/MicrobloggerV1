@@ -1,9 +1,11 @@
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/Screens/profile.dart';
-import 'package:MicroBlogger/globalcache.dart';
+import 'package:MicroBlogger/globals.dart';
+import 'package:MicroBlogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../Backend/server.dart';
+import '../../origin.dart';
 
 class UserFollowSuggestions extends StatefulWidget {
   UserFollowSuggestions({Key key}) : super(key: key);
@@ -33,11 +35,19 @@ class _UserFollowSuggestionsState extends State<UserFollowSuggestions> {
         children: [
           Text(
             "Follow Suggestions",
-            style: TextStyle(fontSize: 22.0, color: Colors.white70),
+            style: TextStyle(
+                fontSize: 22.0,
+                color: Origin.of(context).isCurrentPaletteDarkTheme
+                    ? Colors.white70
+                    : Colors.black87),
           ),
           Text(
             "Follow to get more posts on your feed",
-            style: TextStyle(fontSize: 16.0, color: Colors.white30),
+            style: TextStyle(
+                fontSize: 16.0,
+                color: Origin.of(context).isCurrentPaletteDarkTheme
+                    ? Colors.white70
+                    : Colors.black45),
           ),
           SizedBox(height: 5.0),
           Container(
@@ -45,7 +55,7 @@ class _UserFollowSuggestionsState extends State<UserFollowSuggestions> {
             padding: EdgeInsets.all(5.0),
             decoration: BoxDecoration(
               color: Colors.white10,
-              border: Border.all(width: 1.0, color: Colors.white30),
+              border: Border.all(width: 1.0, color: CurrentPalette['border']),
             ),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,

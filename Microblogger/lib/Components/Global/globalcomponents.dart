@@ -189,9 +189,9 @@ class BottomNavigator extends StatelessWidget {
         BottomNavigationBarItem(icon: Icon(Icons.notifications), label: ""),
         BottomNavigationBarItem(icon: Icon(Icons.perm_identity), label: ""),
       ],
-      selectedItemColor: Colors.white,
-      backgroundColor: CurrentPalette['primaryBackgroundColor'],
-      unselectedItemColor: Colors.white,
+      selectedItemColor: Color.fromARGB(255, 220, 20, 60),
+      backgroundColor: Theme.of(context).backgroundColor,
+      // unselectedItemColor: isCurrentPaletteDarkTheme ?  Colors.white : Colors.black,
       onTap: (int x) {
         switch (x) {
           case 0:
@@ -224,7 +224,7 @@ class MainAppDrawer extends StatelessWidget {
     final user = currentUser['user'];
     return Drawer(
       child: Container(
-        color: CurrentPalette['primaryBackgroundColor'],
+        color: Theme.of(context).backgroundColor,
         child: new ListView(
           children: <Widget>[
             new SizedBox(
@@ -354,7 +354,7 @@ class AddOptionsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 370.0,
-      color: CurrentPalette['primaryBackgroundColor'],
+      color: Theme.of(context).backgroundColor,
       padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0),
       child: OrientationBuilder(builder: (context, orientation) {
         return GridView.count(

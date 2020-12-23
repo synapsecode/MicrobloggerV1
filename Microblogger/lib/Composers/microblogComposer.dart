@@ -1,4 +1,5 @@
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:MicroBlogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
@@ -117,15 +118,22 @@ class _ComposerComponentState extends State<ComposerComponent> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(children: [
-        Card(
-          color: Colors.white10,
-          child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: HashTagEnabledUserTaggableTextField(
-                controller: contentController,
-                onChange: widget.contentUpdater,
-                maxlines: 20,
-              )),
+        Container(
+          margin: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              border: Border.all(
+            color: CurrentPalette['border'],
+          )),
+          child: Card(
+            elevation: 0,
+            child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: HashTagEnabledUserTaggableTextField(
+                  controller: contentController,
+                  onChange: widget.contentUpdater,
+                  maxlines: 20,
+                )),
+          ),
         ),
       ]),
     );

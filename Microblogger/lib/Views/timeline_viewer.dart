@@ -1,5 +1,6 @@
 import 'package:MicroBlogger/Backend/server.dart';
 import 'package:MicroBlogger/Components/Templates/ViewerTemplate.dart';
+import 'package:MicroBlogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import '../Components/Global/globalcomponents.dart';
@@ -25,7 +26,7 @@ class _TimelineViewerState extends State<TimelineViewer> {
   Widget build(BuildContext context) {
     print(widget.postObject['events']);
     return Scaffold(
-      backgroundColor: Colors.black87,
+      // backgroundColor: Colors.black87,
       appBar: AppBar(
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -34,7 +35,7 @@ class _TimelineViewerState extends State<TimelineViewer> {
               print("Back");
             }),
         title: Text("Timeline"),
-        backgroundColor: Colors.black,
+        // backgroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
         child: FutureBuilder(
@@ -47,7 +48,7 @@ class _TimelineViewerState extends State<TimelineViewer> {
                     Container(
                       color: Colors.white10,
                       padding: EdgeInsets.all(10.0),
-                      margin: EdgeInsets.symmetric(horizontal: 5.0),
+                      // margin: EdgeInsets.symmetric(horizontal: 5.0),
                       child: TopBar(
                         postObject: snapshot.data,
                       ),
@@ -71,12 +72,13 @@ class _TimelineViewerState extends State<TimelineViewer> {
                                 Container(
                                   child: ListTile(
                                     title: Card(
-                                        color: Colors.white10,
+                                        elevation: 0,
+                                        // color: Colors.white10,
                                         child: Container(
                                           decoration: BoxDecoration(
                                               border: Border.all(
-                                                  width: 1.0,
-                                                  color: Colors.white24),
+                                                  color:
+                                                      CurrentPalette['border']),
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(5))),
                                           padding: EdgeInsets.all(12.0),
@@ -96,7 +98,8 @@ class _TimelineViewerState extends State<TimelineViewer> {
                                                   snapshot.data['events'][index]
                                                       ['description'],
                                                   style: TextStyle(
-                                                      color: Colors.white54,
+                                                      color: CurrentPalette[
+                                                          'transparent_text'],
                                                       fontSize: 18.0)),
                                               // TextField(
                                               //   enabled: false,
@@ -145,7 +148,12 @@ class _TimelineViewerState extends State<TimelineViewer> {
                       height: 10.0,
                     ),
                     ActionBar(
+                      noborder: true,
+                      backgroundColor: Colors.transparent,
                       post: snapshot.data,
+                    ),
+                    SizedBox(
+                      height: 10.0,
                     ),
                     CommentSection(
                       postObject: snapshot.data,

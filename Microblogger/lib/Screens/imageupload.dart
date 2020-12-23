@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import '../Backend/server.dart';
+import '../palette.dart';
 
 /// Widget to capture and crop the image
 class ImageCapture extends StatefulWidget {
@@ -85,7 +86,7 @@ class _ImageCaptureState extends State<ImageCapture> {
             Container(
               margin: EdgeInsets.all(10.0),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.white12, width: 3.0),
+                border: Border.all(color: CurrentPalette['border'], width: 3.0),
                 color: Colors.black38,
               ),
               child: SizedBox(
@@ -94,8 +95,12 @@ class _ImageCaptureState extends State<ImageCapture> {
             Row(
               children: <Widget>[
                 FlatButton(
-                  child: Icon(Icons.crop),
+                  child: Icon(
+                    Icons.crop,
+                    color: CurrentPalette['transparent_text'],
+                  ),
                   onPressed: _cropImage,
+
                   // onPressed: () {
                   //   Fluttertoast.showToast(
                   //     msg: "The Cropping Feature has been disabled",
@@ -104,7 +109,10 @@ class _ImageCaptureState extends State<ImageCapture> {
                   // },
                 ),
                 FlatButton(
-                  child: Icon(Icons.clear),
+                  child: Icon(
+                    Icons.clear,
+                    color: CurrentPalette['transparent_text'],
+                  ),
                   onPressed: _clear,
                 ),
               ],

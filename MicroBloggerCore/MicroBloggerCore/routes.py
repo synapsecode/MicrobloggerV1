@@ -1,5 +1,5 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify
-from MicroBloggerCore import app, db
+from MicroBloggerCore import app, db, cache
 from MicroBloggerCore.models import (User, MicroBlogPost, BlogPost, TimelinePost, ShareablePost,
  PollPost, ReshareWithComment, SimpleReshare, Comment, BookmarkedPosts, ResharedPosts, ReportedBugs, CarouselPost)
 from post_templates import *
@@ -11,7 +11,7 @@ import io
 
 @app.route("/")
 def homepage():
-	return "Welcome to the microblogger API"
+	return "MICROBLOGGER_API"
 
 @app.route("/login", methods=['POST'])
 def loginpage():
@@ -62,6 +62,7 @@ def report_bug():
 	})
 
 @app.route("/get_news_feed")
+@cache.cached(timeout=50)
 def getnews():
 	#TODO: Can add a new way to get news
 	nx = requests.get('https://newsapi.org/v2/top-headlines?country=in&apiKey=590b8ff1c78d4c0e8088535f3cf54122')
@@ -80,6 +81,7 @@ def getnews():
 		})
 
 @app.route("/all_users")
+@cache.cached(timeout=50)
 def allusers():
 	users = User.query.all()
 	return jsonify(
@@ -94,6 +96,7 @@ def allusers():
 	)
 
 @app.route("/<myusername>/getfollowsuggestions")
+@cache.cached(timeout=50)
 def getfollowsuggestions(myusername):
 	my_user_record = User.query.filter_by(username=myusername).first()
 	all_users = [u for u in User.query.all() if u.username != myusername]
@@ -906,6 +909,7 @@ def editcarousel():
 #--------------------------------------------------EXPLORE--------------------------------------------------
 
 @app.route('/exploremicroblogs/<username>')
+@cache.cached(timeout=50)
 def exploremicroblogs(username):
 	user = User.query.filter_by(username=username).first()
 	addPoint('EXPLORE', user)
@@ -918,6 +922,7 @@ def exploremicroblogs(username):
 	})
 
 @app.route('/exploreblogsandcarousels/<username>')
+@cache.cached(timeout=50)
 def exploreblogsandcarousels(username):
 	user = User.query.filter_by(username=username).first()
 	addPoint('EXPLORE', user)
@@ -930,6 +935,7 @@ def exploreblogsandcarousels(username):
 	})
 
 @app.route('/exploretimelines/<username>')
+@cache.cached(timeout=50)
 def exploretimelines(username):
 	user = User.query.filter_by(username=username).first()
 	addPoint('EXPLORE', user)
@@ -941,6 +947,7 @@ def exploretimelines(username):
 	})
 
 @app.route('/exploreshareablesandpolls/<username>')
+@cache.cached(timeout=50)
 def exploreshareablesandpolls(username):
 	user = User.query.filter_by(username=username).first()
 	addPoint('EXPLORE', user)

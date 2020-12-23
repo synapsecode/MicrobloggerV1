@@ -3,10 +3,7 @@ import 'package:MicroBlogger/Backend/server.dart';
 import 'package:MicroBlogger/Components/Templates/followsuggestions.dart';
 import 'package:MicroBlogger/Components/Templates/nativeVideoPlayer.dart';
 import 'package:MicroBlogger/Components/Templates/youtubePlayer.dart';
-import 'package:MicroBlogger/bloc/theme_change_bloc.dart';
-import 'package:MicroBlogger/bloc/theme_change_event.dart';
-import 'package:MicroBlogger/bloc/theme_change_state.dart';
-import 'package:MicroBlogger/globalcache.dart';
+import 'package:MicroBlogger/globals.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -40,9 +37,23 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       // backgroundColor: Colors.black87,
       appBar: AppBar(
-        backgroundColor: CurrentPalette['primaryBackgroundColor'],
+        backgroundColor: !isDarkMode
+            ? const Color(0xFFFFFFFF)
+            : Theme.of(context).backgroundColor,
+        brightness: !isDarkMode ? Brightness.light : Brightness.dark,
+        iconTheme:
+            IconThemeData(color: !isDarkMode ? Colors.black38 : Colors.white),
+        actionsIconTheme:
+            IconThemeData(color: !isDarkMode ? Colors.black38 : Colors.white),
+
+        // backgroundColor: Theme.of(context).backgroundColor,
         // backgroundColor: Colors.black,
-        title: Text("Feed"),
+        title: Text(
+          "Feed",
+          style: TextStyle(
+            color: isDarkMode ? Colors.white : Colors.black45,
+          ),
+        ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.logout),
@@ -69,8 +80,13 @@ class _HomePageState extends State<HomePage> {
                   isDarkMode ? lightThemePalette : darkThemePalette;
               CurrentTheme =
                   isDarkMode ? CustomLightThemeData : CustomDarkThemeData;
+              saveTheme(isDarkMode ? "LIGHT" : "DARK");
+
               Origin.of(context).rebuild();
-              Origin.of(context).rebuild();
+              // Origin.of(context).rebuild();
+              print(
+                  "$CurrentPalette, $CurrentTheme, ${Origin.of(context).isCurrentPaletteDarkTheme}");
+
               setState(() {
                 isDarkMode = !isDarkMode;
               });

@@ -5,6 +5,7 @@ import 'package:MicroBlogger/Screens/imageupload.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
+import '../palette.dart';
 
 class BlogComposer extends StatefulWidget {
   final Map preExistingState;
@@ -112,7 +113,7 @@ class _BlogComposerState extends State<BlogComposer> {
         ),
         body: SingleChildScrollView(
           child: Container(
-            color: Colors.black12,
+            // color: Colors.black12,
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               ComposerComponent(
                 state,
@@ -176,16 +177,24 @@ class _ComposerComponentState extends State<ComposerComponent> {
           ),
         ),
       ),
-      Card(
-          color: Colors.black12,
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: HashTagEnabledUserTaggableTextField(
-              controller: contentController,
-              onChange: widget.contentUpdater,
-              maxlines: 25,
-            ),
-          )),
+      Container(
+        margin: EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
+        decoration: BoxDecoration(
+            border: Border.all(
+          color: CurrentPalette['border'],
+        )),
+        child: Card(
+            // color: Colors.black12,
+            elevation: 0,
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: HashTagEnabledUserTaggableTextField(
+                controller: contentController,
+                onChange: widget.contentUpdater,
+                maxlines: 25,
+              ),
+            )),
+      ),
     ]));
   }
 }

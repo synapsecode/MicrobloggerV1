@@ -2,6 +2,7 @@ import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
+import '../palette.dart';
 
 class ShareableComposer extends StatefulWidget {
   final Map preExistingState;
@@ -174,15 +175,23 @@ class _ComposerComponentState extends State<ComposerComponent> {
             ),
           ),
         ),
-        Card(
-          color: Colors.black12,
-          child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: HashTagEnabledUserTaggableTextField(
-                controller: contentController,
-                onChange: widget.contentUpdater,
-                maxlines: 21,
-              )),
+        Container(
+          margin: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              border: Border.all(
+            color: CurrentPalette['border'],
+          )),
+          child: Card(
+            // color: Colors.black12,
+            elevation: 0,
+            child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: HashTagEnabledUserTaggableTextField(
+                  controller: contentController,
+                  onChange: widget.contentUpdater,
+                  maxlines: 21,
+                )),
+          ),
         ),
       ]),
     );

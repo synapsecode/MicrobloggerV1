@@ -7,6 +7,7 @@ import 'package:MicroBlogger/Screens/profile.dart';
 import 'package:MicroBlogger/Views/blog_viewer.dart';
 import 'package:MicroBlogger/Views/shareableWebViewer.dart';
 import 'package:MicroBlogger/Views/timeline_viewer.dart';
+import 'package:MicroBlogger/palette.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -221,7 +222,7 @@ class SimpleReshare extends StatelessWidget {
             children: [
               Text(
                 "Reshared By ",
-                style: TextStyle(color: Colors.white30),
+                style: TextStyle(color: CurrentPalette['transparent_text']),
               ),
               InkWell(
                 onTap: () {

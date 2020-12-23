@@ -1,4 +1,5 @@
 import 'package:MicroBlogger/Views/news_viewer.dart';
+import 'package:MicroBlogger/palette.dart';
 import 'package:flutter/material.dart';
 
 class NewsItem extends StatelessWidget {
@@ -21,6 +22,7 @@ class NewsItem extends StatelessWidget {
             ),
             padding: new EdgeInsets.only(left: 16.0, bottom: 8.0),
             decoration: new BoxDecoration(
+              border: Border.all(color: CurrentPalette['border']),
               image: new DecorationImage(
                   colorFilter: ColorFilter.mode(
                       Colors.black.withOpacity(0.2), BlendMode.dstATop),

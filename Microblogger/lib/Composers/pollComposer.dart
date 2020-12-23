@@ -1,7 +1,9 @@
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:MicroBlogger/origin.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
+import '../palette.dart';
 
 class PollComposer extends StatefulWidget {
   const PollComposer({Key key}) : super(key: key);
@@ -119,98 +121,135 @@ class _ComposerComponentState extends State<ComposerComponent> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        child: Column(children: [
-      Card(
-          color: Colors.black12,
-          child: Padding(
-            padding: EdgeInsets.all(12.0),
-            child: HashTagEnabledUserTaggableTextField(
-              controller: contentController,
-              onChange: widget.contentUpdater,
-              maxlines: 20,
-              hint: "Poll Description",
-            ),
-          )),
-      Card(
-          color: Colors.black12,
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.all(15.0),
-                color: Colors.black26,
-                child: Row(
-                  children: [
-                    Flexible(
-                      child: TextField(
-                        onChanged: (x) {
-                          setState(() {
-                            currentPollItem = x;
-                          });
-                        },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Enter Poll Option',
-                        ),
-                      ),
-                      flex: 4,
-                    ),
-                    Flexible(
-                        flex: 1,
-                        child: Container(
-                          padding: EdgeInsets.only(left: 15.0),
-                          child: ClipOval(
-                            child: Material(
-                              color: Colors.black, // button color
-                              child: InkWell(
-                                // inkwell color
-                                child: SizedBox(
-                                    width: 40,
-                                    height: 40,
-                                    child: Icon(Icons.add)),
-                                onTap: () {
-                                  print("Poll Item Added");
-                                  widget.pollItemUpdater(currentPollItem);
-                                },
-                              ),
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                border: Border.all(
+              color: CurrentPalette['border'],
+            )),
+            child: Card(
+                // color: Colors.black12,
+                elevation: 0,
+                child: Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: HashTagEnabledUserTaggableTextField(
+                    controller: contentController,
+                    onChange: widget.contentUpdater,
+                    maxlines: 20,
+                    hint: "Poll Description",
+                  ),
+                )),
+          ),
+          Container(
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                border: Border.all(
+              color: CurrentPalette['border'],
+            )),
+            child: Card(
+              // color: Colors.black12,
+              elevation: 0,
+              child:
+                  // color: Colors.black12,
+                  Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(15.0),
+                    color: Origin.of(context).isCurrentPaletteDarkTheme
+                        ? Colors.black12
+                        : Colors.transparent,
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: TextField(
+                            onChanged: (x) {
+                              setState(() {
+                                currentPollItem = x;
+                              });
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Enter Poll Option',
                             ),
                           ),
-                        ))
-                  ],
-                ),
-              ),
-              Container(
-                color: Colors.black12,
-                padding: EdgeInsets.all(10.0),
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: widget.pollItems.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 2.0),
-                        color: Colors.white10,
-                        child: ListTile(
-                          leading: Container(
-                            height: 20.0,
-                            width: 20.0,
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 1.0, color: Colors.green),
-                                borderRadius: BorderRadius.circular(10.0)),
+                          flex: 4,
+                        ),
+                        Flexible(
+                            flex: 1,
+                            child: Container(
+                              padding: EdgeInsets.only(left: 15.0),
+                              child: ClipOval(
+                                child: Material(
+                                  color: Colors.black, // button color
+                                  child: InkWell(
+                                    // inkwell color
+                                    child: SizedBox(
+                                      width: 40,
+                                      height: 40,
+                                      child: Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      print("Poll Item Added");
+                                      widget.pollItemUpdater(currentPollItem);
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ))
+                      ],
+                    ),
+                  ),
+                  Container(
+                    color: Origin.of(context).isCurrentPaletteDarkTheme
+                        ? Colors.black12
+                        : Colors.transparent,
+                    padding: EdgeInsets.all(10.0),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: widget.pollItems.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: EdgeInsets.only(bottom: 2.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white10,
+                            border: Border.all(
+                              color: CurrentPalette['border'],
+                            ),
                           ),
-                          title: Text(widget.pollItems[index]),
-                          trailing: IconButton(
+                          child: ListTile(
+                            leading: Container(
+                              height: 20.0,
+                              width: 20.0,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1.0, color: Colors.green),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                            ),
+                            title: Text(widget.pollItems[index]),
+                            trailing: IconButton(
                               icon: Icon(Icons.clear),
                               onPressed: () {
                                 print("CLEAR");
                                 widget.pollItemDeleter(widget.pollItems[index]);
-                              }),
-                        ),
-                      );
-                    }),
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
-          )),
-    ]));
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

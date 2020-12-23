@@ -2,7 +2,7 @@ import 'package:MicroBlogger/Backend/datastore.dart';
 import 'package:MicroBlogger/Backend/server.dart';
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/Screens/browser.dart';
-import 'package:MicroBlogger/globalcache.dart';
+import 'package:MicroBlogger/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Components/Templates/postTemplates.dart';
@@ -84,7 +84,7 @@ class _ProfileState extends State<ProfilePage>
     );
 
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      // backgroundColor: Theme.of(context).backgroundColor,
       bottomNavigationBar: BottomNavigator(),
       body: (widget.username == currentUser['user']['username']) ? cbdr : fbdr,
     );
@@ -102,10 +102,11 @@ class CLoader extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
-            backgroundColor: Color.fromARGB(200, 220, 20, 60),
-          )
+          // CircularProgressIndicator(
+          //   valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
+          //   backgroundColor: Color.fromARGB(200, 220, 20, 60),
+          // )
+          CirclularLoader(),
         ],
       ),
     );
@@ -150,7 +151,7 @@ class _ProfileAppBodyState extends State<ProfileAppBody>
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: CurrentPalette['secondaryBackgroundColor'],
+      // color: CurrentPalette['secondaryBackgroundColor'],
       child: Column(children: <Widget>[
         StatisticsBar(),
         //SizedBox(height: 20.0),
@@ -432,7 +433,7 @@ class _MyPostViewState extends State<MyPostView> {
         SizedBox(
           height: 530.0,
           child: Container(
-            color: CurrentPalette['secondaryBackgroundColor'],
+            // color: CurrentPalette['secondaryBackgroundColor'],
             // transform: Matrix4.translationValues(
             //           0, -20, 0),
             child: TabBarView(

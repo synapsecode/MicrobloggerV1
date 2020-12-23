@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import '../../palette.dart';
+
 class YoutubeElement extends StatefulWidget {
   final Map data;
   YoutubeElement(this.data, {key}) : super(key: key);
@@ -67,7 +69,7 @@ class _YoutubeElementState extends State<YoutubeElement> {
             ),
             Text(
               widget.data['content'],
-              style: TextStyle(color: Colors.white38),
+              style: TextStyle(color: CurrentPalette['transparent_text']),
               textAlign: TextAlign.start,
             ),
             SizedBox(

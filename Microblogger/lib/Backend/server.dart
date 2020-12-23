@@ -1,11 +1,22 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'datastore.dart';
 import 'package:http_parser/http_parser.dart';
 import '../Backend/datastore.dart';
+
+serverCheckRequest() async {
+  print("SERVCHECK");
+  final response = await http.get('$serverURL/');
+  final res = response.body;
+  if (res != "MICROBLOGGER_API") {
+    return null;
+  }
+  return true;
+}
 
 login(username, password) async {
   final response = await http.post(

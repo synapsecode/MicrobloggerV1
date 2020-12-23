@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/Screens/imageupload.dart';
+import 'package:MicroBlogger/origin.dart';
+import 'package:MicroBlogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
@@ -95,7 +97,9 @@ class _CarouselComposerState extends State<CarouselComposer> {
                   child: RaisedButton(
                     padding:
                         EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
-                    color: Colors.black26,
+                    color: Origin.of(context).isCurrentPaletteDarkTheme
+                        ? Colors.black26
+                        : CurrentTheme.primaryColor,
                     child: Text(
                       "Add Image",
                       style: TextStyle(color: Colors.white),
@@ -124,7 +128,10 @@ class _CarouselComposerState extends State<CarouselComposer> {
                     children: [
                       Text(
                         "Images",
-                        style: TextStyle(fontSize: 40.0, color: Colors.white24),
+                        style: TextStyle(
+                          fontSize: 40.0,
+                          color: CurrentPalette['transparent_text'],
+                        ),
                       ),
                       ListView.builder(
                           itemCount: state['images'].length,
@@ -135,7 +142,8 @@ class _CarouselComposerState extends State<CarouselComposer> {
                                 margin: EdgeInsets.symmetric(vertical: 10.0),
                                 decoration: BoxDecoration(
                                     border: Border.all(
-                                        width: 2.0, color: Colors.white30)),
+                                        width: 2.0,
+                                        color: CurrentPalette['border'])),
                                 child: Stack(
                                   children: [
                                     Positioned(
@@ -149,7 +157,8 @@ class _CarouselComposerState extends State<CarouselComposer> {
                                         top: 5.0,
                                         right: 5.0,
                                         child: IconButton(
-                                          icon: Icon(Icons.clear),
+                                          icon: Icon(Icons.clear,
+                                              color: Colors.white70),
                                           onPressed: () {
                                             print(index);
                                             setState(() {
@@ -213,15 +222,22 @@ class _ComposerComponentState extends State<ComposerComponent> {
       //             hintText: "Start Describing the Images!"),
       //       ),
       //     )),
-      Card(
-          color: Colors.black12,
-          child: Padding(
-            padding: EdgeInsets.all(12.0),
-            child: HashTagEnabledUserTaggableTextField(
-              controller: contentController,
-              onChange: widget.contentUpdater,
-              maxlines: 15,
-              hint: "Start Describing the Images!",
+      Container(
+          margin: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              border: Border.all(
+            color: CurrentPalette['border'],
+          )),
+          child: Card(
+            elevation: 0,
+            child: Padding(
+              padding: EdgeInsets.all(12.0),
+              child: HashTagEnabledUserTaggableTextField(
+                controller: contentController,
+                onChange: widget.contentUpdater,
+                maxlines: 15,
+                hint: "Start Describing the Images!",
+              ),
             ),
           )),
     ]);

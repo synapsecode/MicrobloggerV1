@@ -1,10 +1,13 @@
 import 'package:MicroBlogger/Backend/server.dart';
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:MicroBlogger/palette.dart';
 
 import '../Components/Templates/ViewerTemplate.dart';
 import '../Components/Templates/basetemplate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+
+import '../origin.dart';
 
 class BlogViewer extends StatefulWidget {
   final postObject;
@@ -72,7 +75,10 @@ class _BlogViewerState extends State<BlogViewer> {
                               child: HashTagEnabledUserTaggableTextDisplay(
                                 snapshot.data['content'],
                                 style: TextStyle(
-                                  color: Colors.white54,
+                                  color: Origin.of(context)
+                                          .isCurrentPaletteDarkTheme
+                                      ? Colors.white54
+                                      : Colors.black54,
                                   fontSize: 20.0,
                                 ),
                               ),

@@ -7,6 +7,14 @@ import 'datastore.dart';
 import 'package:http_parser/http_parser.dart';
 import '../Backend/datastore.dart';
 
+serverCheckRequest() async {
+  print("SERVCHECK");
+  final response = await http.get('$serverURL/');
+  final res = response.body;
+  print("RESSSSS: $res");
+  return res;
+}
+
 login(username, password) async {
   final response = await http.post(
     '$serverURL/login',

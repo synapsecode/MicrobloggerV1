@@ -2,6 +2,7 @@ import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
+import '../palette.dart';
 
 class CommentComposer extends StatefulWidget {
   final post;
@@ -123,15 +124,22 @@ class _ComposerComponentState extends State<ComposerComponent> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(children: [
-        Card(
-            color: Colors.black12,
-            child: Padding(
-              padding: EdgeInsets.all(12.0),
-              child: HashTagEnabledUserTaggableTextField(
-                controller: commentController,
-                onChange: widget.commentUpdater,
-                maxlines: 25,
-                hint: "What's your reply?",
+        Container(
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                border: Border.all(
+              color: CurrentPalette['border'],
+            )),
+            child: Card(
+              elevation: 0,
+              child: Padding(
+                padding: EdgeInsets.all(12.0),
+                child: HashTagEnabledUserTaggableTextField(
+                  controller: commentController,
+                  onChange: widget.commentUpdater,
+                  maxlines: 25,
+                  hint: "What's your reply?",
+                ),
               ),
             )),
         // Expanded(

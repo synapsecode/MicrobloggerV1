@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show Platform;
+import '../origin.dart';
 import 'server.dart';
 
 Map currentUser = {};
 Map currentPallete = {};
-String serverURL = "https://140e471e3c70.ngrok.io";
+String serverURL = "https://ee5bb090f4c6.ngrok.io";
 
 saveUserLoginInfo(username) async {
   if (!Platform.isWindows) {
@@ -52,52 +53,25 @@ loadSavedUsername() async {
   return "";
 }
 
-applyColourPallete() async {
-  if (!Platform.isWindows) {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String key = (prefs.getString('colourpallete')) ?? "LIGHT";
-    ThemeData theme;
-    switch (key) {
-      case "LIGHT":
-        theme = ThemeData(
-            primarySwatch: Colors.red,
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-            brightness: Brightness.light,
-            appBarTheme: AppBarTheme(color: Colors.black12),
-            bottomAppBarTheme: BottomAppBarTheme(color: Colors.black12),
-            backgroundColor: Colors.white);
-        break;
-      case "DARK":
-        break;
-    }
-    return theme;
-  }
-}
-
-toggleColourPallete(String key) async {
-  if (!Platform.isWindows) {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    switch (key) {
-      case "LIGHT":
-        await prefs.setString('colourpallete', 'DARK');
-        break;
-      case "DARK":
-        await prefs.setString('colourpallete', 'LIGHT');
-        break;
-      default:
-        break;
-    }
-  }
-}
-
-getColourPalette() async {
+getTheme() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String themeOP = (prefs.getString('palette') ?? "DARK");
-  return themeOP;
+  String key = (prefs.getString('colorpalette')) ?? "LIGHT";
+  return key;
 }
 
-setColourPalette(String key) async {
+saveTheme(String key) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  if (key == "LIGHT") await prefs.setString('palette', 'DARK');
-  if (key == "DARK") await prefs.setString('palette', 'LIGHT');
+  await prefs.setString('colorpalette', key);
 }
+
+// getColourPalette() async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   String themeOP = (prefs.getString('palette') ?? "DARK");
+//   return themeOP;
+// }
+
+// setColourPalette(String key) async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   if (key == "LIGHT") await prefs.setString('palette', 'DARK');
+//   if (key == "DARK") await prefs.setString('palette', 'LIGHT');
+// }

@@ -59,20 +59,22 @@ class _BaseViewerState extends State<BaseViewer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
+      // backgroundColor: Colors.black87,
       appBar: AppBar(
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.of(context).pop();
             }),
-        title: Text("$postType"),
-        backgroundColor: Colors.black,
+        title: Text(
+            "${postType.substring(0, 1).toUpperCase() + postType.substring(1)}"),
+        // backgroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 10),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10.0),
               child: post,

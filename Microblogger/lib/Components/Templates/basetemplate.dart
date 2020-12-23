@@ -13,7 +13,6 @@ import 'package:MicroBlogger/Screens/homepage.dart';
 import 'package:MicroBlogger/Screens/profile.dart';
 import 'package:MicroBlogger/Views/blog_viewer.dart';
 import 'package:MicroBlogger/Views/timeline_viewer.dart';
-import 'package:MicroBlogger/theme.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -83,16 +82,19 @@ class _BasicTemplateState extends State<BasicTemplate> {
                   color: (widget.isHosted)
                       ? CurrentPalette['childpostcolour']
                       : CurrentPalette['postcolour'],
-                  border: Border(
-                    top:
-                        BorderSide(width: 1.0, color: CurrentPalette['border']),
-                    left:
-                        BorderSide(width: 1.0, color: CurrentPalette['border']),
-                    right:
-                        BorderSide(width: 1.0, color: CurrentPalette['border']),
-                    bottom:
-                        BorderSide(width: 1.0, color: CurrentPalette['border']),
-                  ),
+
+                  border:
+                      Border.all(width: 1.0, color: CurrentPalette['border']),
+                  // border: Border(
+                  //   top:
+                  //       BorderSide(width: 1.0, color: CurrentPalette['border']),
+                  //   left:
+                  //       BorderSide(width: 1.0, color: CurrentPalette['border']),
+                  //   right:
+                  //       BorderSide(width: 1.0, color: CurrentPalette['border']),
+                  //   bottom:
+                  //       BorderSide(width: 1.0, color: CurrentPalette['border']),
+                  // ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -757,7 +759,7 @@ class _ActionBarState extends State<ActionBar> {
             if (widget.post['type'] == 'comment') ...[
               Text(
                 "   Replying to ",
-                style: TextStyle(color: Colors.white24),
+                style: TextStyle(color: CurrentPalette['transparent_text']),
               ),
               InkWell(
                   onTap: () async {

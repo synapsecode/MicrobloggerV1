@@ -1,5 +1,6 @@
 import 'package:MicroBlogger/Backend/server.dart';
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:MicroBlogger/palette.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../Components/Templates/postTemplates.dart';
@@ -71,7 +72,7 @@ class _ReshareComposerState extends State<ReshareComposer> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.black87,
+      // backgroundColor: Colors.black87,
       appBar: AppBar(
         leading: IconButton(
             icon: Icon(
@@ -137,19 +138,25 @@ class _ReshareComposerState extends State<ReshareComposer> {
               child: post,
             ),
             Container(
-              margin: EdgeInsets.only(left: 6.0, right: 6.0, bottom: 6.0),
-              child: Card(
-                  color: Colors.black12,
-                  child: Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: HashTagEnabledUserTaggableTextField(
-                      controller: contentController,
-                      onChange: updateContent,
-                      maxlines: 25,
-                      hint: "What are your views regarding this?",
-                    ),
-                  )),
-
+              // margin: EdgeInsets.only(left: 6.0, right: 6.0, bottom: 6.0),
+              child: Container(
+                margin: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    border: Border.all(
+                  color: CurrentPalette['border'],
+                )),
+                child: Card(
+                    elevation: 0,
+                    child: Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: HashTagEnabledUserTaggableTextField(
+                        controller: contentController,
+                        onChange: updateContent,
+                        maxlines: 25,
+                        hint: "What are your views regarding this?",
+                      ),
+                    )),
+              ),
               //  Card(
               //     color: Colors.white10,
               //     child: Padding(

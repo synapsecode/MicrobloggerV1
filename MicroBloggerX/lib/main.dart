@@ -150,6 +150,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
     loadUser();
     //checkConnection(context);
     if (Platform.isAndroid) {
@@ -168,6 +169,7 @@ class _MyAppState extends State<MyApp> {
           });
     }
   }
+
 
   void loadUser() async {
     String x = await loadSavedUsername();

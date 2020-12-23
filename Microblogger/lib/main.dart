@@ -21,11 +21,11 @@ import 'package:MicroBlogger/Screens/profile.dart';
 import 'package:MicroBlogger/Screens/register.dart';
 import 'package:MicroBlogger/Screens/setting.dart';
 import 'package:MicroBlogger/origin.dart';
-import 'package:MicroBlogger/palette.dart';
-import 'package:MicroBlogger/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shake/shake.dart';
+
+import 'Backend/server.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -73,10 +73,8 @@ class _MainAppState extends State<MainApp> {
             height: 10.0,
           ),
           CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(
-              CurrentPalette['primaryBackgroundColor'],
-            ),
-            backgroundColor: Colors.transparent,
+            valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
+            backgroundColor: Color.fromARGB(200, 220, 20, 60),
           )
         ],
       ),
@@ -88,6 +86,12 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
+    getTheme().then((x) {
+      CurrentPalette = x == "LIGHT" ? lightThemePalette : darkThemePalette;
+      CurrentTheme = x == "LIGHT" ? CustomLightThemeData : CustomDarkThemeData;
+      Origin.of(context).rebuild();
+      setState(() {});
+    });
     loadUser();
     if (Platform.isAndroid) startShakeDetectorService();
   }
@@ -112,44 +116,54 @@ class _MainAppState extends State<MainApp> {
   }
 
   void loadUser() async {
-    String x = await loadSavedUsername();
-    if (x == null) {
-      payload = Scaffold(
-        appBar: AppBar(
-          title: Text("Server Error"),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset('assets/env.png'),
-              Text(
-                "Fatal Server Side Error",
-                style: TextStyle(
-                  fontSize: 21.0,
-                  color: Colors.white38,
-                ),
+    Widget servErrorPage = Scaffold(
+      appBar: AppBar(
+        title: Text("Server Error"),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset('assets/env.png'),
+            Text(
+              "Fatal Server Side Error",
+              style: TextStyle(
+                fontSize: 21.0,
+                color: Colors.white38,
               ),
-              Text(
-                "Couldn't establish a connection",
-                style: TextStyle(
-                  color: Colors.white12,
-                ),
-              )
-            ],
-          ),
+            ),
+            Text(
+              "Couldn't establish a connection",
+              style: TextStyle(
+                color: Colors.white12,
+              ),
+            )
+          ],
         ),
-      );
+      ),
+    );
+    final servCheck = await serverCheckRequest();
+    if (servCheck == null) {
+      payload = servErrorPage;
       setState(() {
         payload = payload;
         user_id = "";
       });
     } else {
-      setState(() {
-        payload = (x == "") ? LoginPage() : HomePage();
-        user_id = x;
-      });
+      String x = await loadSavedUsername();
+      if (x == null) {
+        payload = servErrorPage;
+        setState(() {
+          payload = payload;
+          user_id = "";
+        });
+      } else {
+        setState(() {
+          payload = (x == "") ? LoginPage() : HomePage();
+          user_id = x;
+        });
+      }
     }
   }
 
