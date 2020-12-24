@@ -130,13 +130,17 @@ class _MainAppState extends State<MainApp> {
               "Fatal Server Side Error",
               style: TextStyle(
                 fontSize: 21.0,
-                color: Colors.white38,
+                color: Origin.of(context).isCurrentPaletteDarkTheme
+                    ? Colors.white38
+                    : Colors.black54,
               ),
             ),
             Text(
               "Couldn't establish a connection",
               style: TextStyle(
-                color: Colors.white12,
+                color: Origin.of(context).isCurrentPaletteDarkTheme
+                    ? Colors.white12
+                    : Colors.black38,
               ),
             )
           ],

@@ -362,6 +362,9 @@ class AddOptionsWidget extends StatelessWidget {
           crossAxisSpacing: 10.0,
           mainAxisSpacing: 10.0,
           children: <Widget>[
+            ActionButton('Story', Icons.local_fire_department, () {
+              Navigator.of(context).pushNamed('/MediaComposer');
+            }),
             ActionButton('MicroBlog', Icons.image, () {
               Navigator.of(context).pushNamed('/MicroBlogComposer');
             }),
@@ -381,9 +384,6 @@ class AddOptionsWidget extends StatelessWidget {
               Navigator.of(context).pushNamed('/MediaComposer');
             }),
             ActionButton('Video Carousel', Icons.video_library, () {
-              Navigator.of(context).pushNamed('/MediaComposer');
-            }),
-            ActionButton('Youtube Element', Icons.videocam, () {
               Navigator.of(context).pushNamed('/MediaComposer');
             }),
             ActionButton('Audio', Icons.music_note, () {
