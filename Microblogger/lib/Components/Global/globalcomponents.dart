@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:MicroBlogger/Screens/hashtagviewer.dart';
 import 'package:MicroBlogger/palette.dart';
 import 'package:MicroBlogger/Backend/server.dart';
 import 'package:MicroBlogger/Screens/homepage.dart';
@@ -296,6 +297,15 @@ class MainAppDrawer extends StatelessWidget {
               onTap: () => Navigator.of(context).pushNamed('/NewsFeed'),
             ),
             new ListTile(
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => HashPostsViewer(),
+                ),
+              ),
+              title: Text("Hashtags"),
+              trailing: Icon(Icons.tag),
+            ),
+            new ListTile(
               onTap: () => Navigator.of(context).pushNamed('/About'),
               title: Text(
                 "About",
@@ -327,10 +337,11 @@ class MainAppDrawer extends StatelessWidget {
 class ActionButton extends StatelessWidget {
   final String actionText;
   final icon;
+  final Color color;
   final Function event;
 
   //Constructor
-  ActionButton(this.actionText, this.icon, this.event);
+  ActionButton(this.actionText, this.icon, this.event, {this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -343,7 +354,10 @@ class ActionButton extends StatelessWidget {
           onPressed: event,
         ),
         Padding(padding: EdgeInsets.only(bottom: 10.0)),
-        Text(actionText)
+        if (color != null)
+          Text(actionText, style: TextStyle(color: color))
+        else
+          Text(actionText)
       ],
     );
   }
@@ -363,7 +377,7 @@ class AddOptionsWidget extends StatelessWidget {
           mainAxisSpacing: 10.0,
           children: <Widget>[
             ActionButton('Story', Icons.local_fire_department, () {
-              Navigator.of(context).pushNamed('/MediaComposer');
+              Navigator.of(context).pushNamed('/StoryMaker');
             }),
             ActionButton('MicroBlog', Icons.image, () {
               Navigator.of(context).pushNamed('/MicroBlogComposer');

@@ -26,6 +26,7 @@ import 'package:flutter/services.dart';
 import 'package:shake/shake.dart';
 
 import 'Backend/server.dart';
+import 'Screens/Stories/storymaker.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -228,4 +229,5 @@ Map<String, WidgetBuilder> routes = {
         isEditing: false,
         preExistingState: {'content': "", 'images': []},
       ),
+  '/StoryMaker': (BuildContext context) => new StoryMaker(),
 };

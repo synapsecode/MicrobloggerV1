@@ -102,6 +102,7 @@ class _BasicTemplateState extends State<BasicTemplate> {
                     //----------------------------------------HEADER-------------------------------------------------
                     TopBar(
                       postObject: widget.postObject,
+                      isHosted: widget.isHosted,
                     ),
                     //----------------------------------------HEADER-------------------------------------------------
                     SizedBox(
@@ -148,7 +149,9 @@ class _BasicTemplateState extends State<BasicTemplate> {
 
 class TopBar extends StatelessWidget {
   final postObject;
-  const TopBar({Key key, this.postObject}) : super(key: key);
+  final isHosted;
+  const TopBar({Key key, this.postObject, this.isHosted = false})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -363,6 +366,9 @@ class TopBar extends StatelessWidget {
                                 if (postObject['type'] != "poll")
                                   PopupMenuItem(
                                       value: "edit", child: Text("Edit Post")),
+                                // PopupMenuItem(
+                                //     value: "hoist",
+                                //     child: Text("Hoist to Story"))
                               ];
                             })),
                   ],
@@ -371,6 +377,18 @@ class TopBar extends StatelessWidget {
             ],
           ),
         ),
+        if (!isHosted) ...[
+          Opacity(
+            opacity: 0.3,
+            child: IconButton(
+              onPressed: () {
+                print("Hoisting to Story");
+                print("POST DATA $postObject");
+              },
+              icon: Icon(Icons.ios_share),
+            ),
+          ),
+        ],
       ],
     );
   }

@@ -14,6 +14,70 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'basetemplate.dart';
 import '../../Backend/datastore.dart';
 
+class StoriesHolder extends StatelessWidget {
+  final Map postObject;
+  const StoriesHolder({this.postObject, Key key}) : super(key: key);
+
+  Widget StoryItem({String uname, String thumbnailUrl}) {
+    return InkWell(
+      onTap: () {
+        print("Open Story");
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+        child: Column(
+          children: [
+            CircleAvatar(
+              radius: 36,
+              backgroundColor: CurrentPalette['errorColor'],
+              child: CircleAvatar(
+                  radius: 34,
+                  // backgroundColor: Colors.black,
+                  backgroundImage: NetworkImage(thumbnailUrl ??
+                      'https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?ixid=MXwxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZmlsZXxlbnwwfHwwfA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80')),
+            ),
+            SizedBox(height: 2.0),
+            SizedBox(
+              width: 80,
+              child: Text(
+                uname ?? "username",
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print("Rebild");
+    return Container(
+      color: CurrentPalette['postcolor'],
+      // margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+      height: 110.0,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: CurrentPalette['postcolor'],
+        // border: Border.all(
+        //   color: CurrentPalette['border'],
+        // ),
+      ),
+      padding: EdgeInsets.all(5.0),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: postObject['stories'],
+        itemBuilder: (context, index) {
+          Map story = postObject['stories'][index];
+          return StoryItem(uname: story['username']);
+        },
+      ),
+    );
+  }
+}
+
 class MicroBlogPost extends StatelessWidget {
   final postObject;
   final isInViewMode;

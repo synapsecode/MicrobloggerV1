@@ -144,6 +144,9 @@ class _FeedState extends State<Feed> {
   Widget feedBuilder(String postType, postData) {
     Widget output;
     switch (postType) {
+      case "storyfeed":
+        output = StoriesHolder(postObject: postData);
+        break;
       case "microblog":
         output = MicroBlogPost(postObject: postData);
         break;
@@ -193,23 +196,33 @@ class _FeedState extends State<Feed> {
 
   @override
   Widget build(BuildContext context) {
-    FutureBuilder fbdr = FutureBuilder(
-      future: feedData,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return ListView.builder(
-            shrinkWrap: true,
-            itemCount: snapshot.data.length,
-            itemBuilder: (context, index) {
-              return feedBuilder(
-                  snapshot.data[index]['type'], snapshot.data[index]);
-            },
-          );
-        } else {
-          return CirclularLoader();
-        }
-      },
-    );
+    // FutureBuilder fbdr = FutureBuilder(
+    //   future: feedData,
+    //   builder: (context, snapshot) {
+    //     if (snapshot.connectionState == ConnectionState.done) {
+    //       List feedList = snapshot.data;
+    //       feedList = [...feedList];
+    //       return Column(
+    //         children: [
+    //           StoriesHolder(),
+    //           Text("ff"),
+    //           SizedBox(
+    //             height: 100.0,
+    //           ),
+    //           ListView.builder(
+    //             shrinkWrap: true,
+    //             itemCount: feedList.length,
+    //             itemBuilder: (context, index) {
+    //               return feedBuilder(feedList[index]['type'], [index]);
+    //             },
+    //           ),
+    //         ],
+    //       );
+    //     } else {
+    //       return CirclularLoader();
+    //     }
+    //   },
+    // );
 
     CachedFutureBuilder cbdr = CachedFutureBuilder(
       future: feedData,
@@ -218,6 +231,7 @@ class _FeedState extends State<Feed> {
         print("Using Cache");
         return ListView.builder(
           shrinkWrap: true,
+          // physics: NeverScrollableScrollPhysics(),
           itemCount: GlobalFeedCache.length,
           itemBuilder: (context, index) {
             return feedBuilder(
@@ -231,6 +245,7 @@ class _FeedState extends State<Feed> {
         GlobalFeedCache = [...snapshot.data];
         return ListView.builder(
           shrinkWrap: true,
+          // physics: NeverScrollableScrollPhysics(),
           itemCount: snapshot.data.length,
           itemBuilder: (context, index) {
             return feedBuilder(
