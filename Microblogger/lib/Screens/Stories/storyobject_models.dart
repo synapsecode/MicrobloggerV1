@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 /*
@@ -14,7 +16,7 @@ Impl
 -> Screenshot
 */
 
-enum ItemType { Image, Text }
+enum ItemType { FileImage, Text }
 
 class EditableItem {
   Offset position = Offset(0.1, 0.1);
@@ -39,9 +41,10 @@ class TextItem extends EditableItem {
 }
 
 class ImageItem extends EditableItem {
-  String value;
+  File value;
   final int id;
-  ItemType type = ItemType.Image;
+  double scale = 0.3;
+  ItemType type = ItemType.FileImage;
 
   ImageItem({
     this.value,

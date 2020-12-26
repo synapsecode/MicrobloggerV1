@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:MicroBlogger/Backend/datastore.dart';
@@ -8,6 +9,7 @@ import 'package:MicroBlogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
 var scr = new GlobalKey();
@@ -24,6 +26,26 @@ class StoryMaker extends StatefulWidget {
 }
 
 class _StoryMakerState extends State<StoryMaker> {
+  File _image;
+
+  _imgFromCamera() async {
+    File image = await ImagePicker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      _image = image;
+    });
+  }
+
+  _imgFromGallery() async {
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = image;
+    });
+  }
+
+  _showPicker(context) {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +94,64 @@ class _StoryMakerState extends State<StoryMaker> {
                         'Image',
                         Icons.image,
                         () {
-                          Navigator.of(context).pushNamed('/StoryMaker');
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (BuildContext bc) {
+                              return SafeArea(
+                                child: Container(
+                                  child: new Wrap(
+                                    children: <Widget>[
+                                      new ListTile(
+                                        leading: new Icon(Icons.photo_camera),
+                                        title: new Text('Camera'),
+                                        onTap: () async {
+                                          await _imgFromCamera();
+                                          if (_image != null) {
+                                            int nid = 0;
+                                            if (mockData.length > 0) {
+                                              nid = mockData.last.id;
+                                            }
+                                            mockData.add(
+                                              ImageItem(
+                                                id: nid + 1,
+                                                value: _image,
+                                              ),
+                                            );
+                                          }
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      new ListTile(
+                                          leading:
+                                              new Icon(Icons.photo_library),
+                                          title: new Text('Photo Library'),
+                                          onTap: () async {
+                                            await _imgFromGallery();
+                                            if (_image != null) {
+                                              int nid = 0;
+                                              if (mockData.length > 0) {
+                                                nid = mockData.last.id;
+                                              }
+                                              mockData.add(
+                                                ImageItem(
+                                                  id: nid + 1,
+                                                  value: _image,
+                                                ),
+                                              );
+                                            }
+                                            Navigator.of(context).pop();
+                                          }),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                          setState(() {
+                            _image = null;
+                          });
+
+                          // Navigator.of(context).pushNamed('/StoryMaker');
                         },
                         color: Colors.white,
                       ),
@@ -80,13 +159,20 @@ class _StoryMakerState extends State<StoryMaker> {
                         'Text',
                         Icons.text_fields,
                         () {
-                          int nid = mockData.last?.id ?? 0;
+                          print("FFF");
+                          int nid = 0;
+                          if (mockData.length > 0) {
+                            nid = mockData.last.id;
+                          }
+
+                          print("FFF");
                           mockData.add(
                             TextItem(
                               id: nid + 1,
                               value: "Text",
                             ),
                           );
+                          print(mockData);
                           setState(() {});
                         },
                         color: Colors.white,
@@ -95,7 +181,7 @@ class _StoryMakerState extends State<StoryMaker> {
                         'Video',
                         Icons.video_call,
                         () {
-                          Navigator.of(context).pushNamed('/MicroBlogComposer');
+                          // Navigator.of(context).pushNamed('/MicroBlogComposer');
                         },
                         color: Colors.white,
                       ),
@@ -251,8 +337,9 @@ class _StoryEditorState extends State<StoryEditor> {
           ),
         );
         break;
-      case ItemType.Image:
-        widget = Image.network(e.value);
+      case ItemType.FileImage:
+        widget = Image.file(e.value);
+        break;
     }
 
     return Positioned(
@@ -566,10 +653,10 @@ List<dynamic> mockData = [
   //   value:
   //       'https://cdn.pixabay.com/photo/2016/02/19/11/46/night-1209938_960_720.jpg',
   // ),
-  ImageItem(id: 0)
-    ..type = ItemType.Image
-    ..value =
-        'https://cdn.pixabay.com/photo/2016/02/19/11/46/night-1209938_960_720.jpg'
+  // ImageItem(id: 0)
+  //   ..type = ItemType.Image
+  //   ..value =
+  //       'https://cdn.pixabay.com/photo/2016/02/19/11/46/night-1209938_960_720.jpg'
   // ..id = 0
   // TextItem(
   //   id: 1,
