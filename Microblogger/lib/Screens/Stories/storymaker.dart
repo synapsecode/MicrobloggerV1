@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:MicroBlogger/Backend/datastore.dart';
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:MicroBlogger/Screens/Stories/storyobject_models.dart';
 import 'package:MicroBlogger/origin.dart';
 import 'package:MicroBlogger/palette.dart';
 import 'package:flutter/material.dart';
@@ -81,10 +82,10 @@ class _StoryMakerState extends State<StoryMaker> {
                         () {
                           int nid = mockData.last?.id ?? 0;
                           mockData.add(
-                            (EditableItem()
-                              ..type = ItemType.Text
-                              ..value = 'Text'
-                              ..id = nid + 1),
+                            TextItem(
+                              id: nid + 1,
+                              value: "Text",
+                            ),
                           );
                           setState(() {});
                         },
@@ -130,7 +131,7 @@ class StoryEditor extends StatefulWidget {
 }
 
 class _StoryEditorState extends State<StoryEditor> {
-  EditableItem _activeItem;
+  dynamic _activeItem;
 
   Offset _initPos;
 
@@ -194,33 +195,11 @@ class _StoryEditorState extends State<StoryEditor> {
 
                   showDialog(
                     context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Pick a color!'),
-                      content: SingleChildScrollView(
-                        child: ColorPicker(
-                          pickerColor: pickerColor,
-                          onColorChanged: (color) =>
-                              setState(() => pickerColor = color),
-                          showLabel: true,
-                          pickerAreaHeightPercent: 0.8,
-                        ),
-                      ),
-                      actions: <Widget>[
-                        FlatButton(
-                          child: Text(
-                            'Got it',
-                            style: TextStyle(
-                                color:
-                                    Origin.of(context).isCurrentPaletteDarkTheme
-                                        ? Colors.white
-                                        : Colors.black),
-                          ),
-                          onPressed: () {
-                            setState(() => backgroundColor = pickerColor);
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
+                    builder: (context) => ColorPickerDialog(
+                      startColor: backgroundColor,
+                      onColorSelected: (color) =>
+                          setState(() => backgroundColor = color),
+                      dialogHeading: "Backgrund Color",
                     ),
                   );
 
@@ -256,15 +235,20 @@ class _StoryEditorState extends State<StoryEditor> {
     );
   }
 
-  Widget _buildItemWidget(EditableItem e) {
+  Widget _buildItemWidget(dynamic e) {
     final screen = MediaQuery.of(context).size;
+
+    // print("POSSS: ${e.position}");
 
     var widget;
     switch (e.type) {
       case ItemType.Text:
         widget = Text(
           e.value,
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: e.textColor ?? Colors.white,
+            backgroundColor: e.backgroundColor ?? Colors.transparent,
+          ),
         );
         break;
       case ItemType.Image:
@@ -311,6 +295,8 @@ class _StoryEditorState extends State<StoryEditor> {
                       context: context,
                       builder: (context) {
                         String cVal = e.value;
+                        Color tColor = e.textColor ?? Colors.white;
+                        Color bColor = e.backgroundColor ?? Colors.transparent;
                         return StatefulBuilder(
                           builder: (context, setBuilderState) {
                             TextEditingController ctrl =
@@ -324,7 +310,7 @@ class _StoryEditorState extends State<StoryEditor> {
                               //   'Edit Text',
                               // ),
                               content: Container(
-                                height: 340.0,
+                                height: 460.0,
                                 child: SingleChildScrollView(
                                   child: Column(
                                     children: [
@@ -336,11 +322,16 @@ class _StoryEditorState extends State<StoryEditor> {
                                         padding: EdgeInsets.all(10.0),
                                         decoration: BoxDecoration(
                                           border: Border.all(
-                                              color: CurrentPalette['border']),
+                                            color: CurrentPalette['border'],
+                                          ),
                                           color: Colors.white10,
                                         ),
                                         child: Text(
                                           cVal,
+                                          style: TextStyle(
+                                            color: tColor,
+                                            backgroundColor: bColor,
+                                          ),
                                         ),
                                       ),
                                       TextField(
@@ -353,41 +344,78 @@ class _StoryEditorState extends State<StoryEditor> {
                                         },
                                       ),
                                       SizedBox(height: 10.0),
-                                      Text("Text Preview"),
+                                      Text("Text Colors"),
                                       SizedBox(height: 10.0),
-                                      Container(
-                                        height: 40,
-                                        width: 250.0,
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color:
-                                                    CurrentPalette['border'])),
-                                        child: SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Row(
-                                            children: [
-                                              for (int i = 0; i < 10; i++)
-                                                Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 5.0,
-                                                      horizontal: 10.0),
-                                                  child: CircleAvatar(
-                                                    radius: 15.0,
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-                                        ),
+                                      ColorPalette(
+                                        stateChanger: (color) =>
+                                            setBuilderState(
+                                                () => tColor = color),
                                       ),
                                       SizedBox(height: 10),
                                       RaisedButton(
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: 60.0),
+                                            horizontal: 50.0),
                                         color: Colors.black,
-                                        onPressed: () {},
-                                        child: Text("Custom Colors"),
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                ColorPickerDialog(
+                                              startColor: tColor,
+                                              onColorSelected: (color) =>
+                                                  setBuilderState(
+                                                      () => tColor = color),
+                                              dialogHeading:
+                                                  "Custom Text Color",
+                                            ),
+                                          );
+                                        },
+                                        child: Text("Custom Text Color"),
+                                      ),
+                                      SizedBox(height: 10.0),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          SizedBox(
+                                            width: 30.0,
+                                          ),
+                                          Text("Background Color"),
+                                          IconButton(
+                                            icon: Icon(Icons.clear),
+                                            onPressed: () {
+                                              setBuilderState(() =>
+                                                  bColor = Colors.transparent);
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                      // SizedBox(height: 5.0),
+                                      ColorPalette(
+                                        stateChanger: (color) =>
+                                            setBuilderState(
+                                                () => bColor = color),
+                                      ),
+                                      SizedBox(height: 10),
+                                      RaisedButton(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 28.0),
+                                        color: Colors.black,
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                ColorPickerDialog(
+                                              startColor: bColor,
+                                              onColorSelected: (color) =>
+                                                  setBuilderState(
+                                                      () => bColor = color),
+                                              dialogHeading:
+                                                  "Custom Background Color",
+                                            ),
+                                          );
+                                        },
+                                        child: Text("Custom Background Color"),
                                       ),
                                       RaisedButton(
                                         padding: EdgeInsets.symmetric(
@@ -419,7 +447,11 @@ class _StoryEditorState extends State<StoryEditor> {
                                     if (nval == "") nval = "Text";
                                     print("New Value: $nval");
 
-                                    mockData[mockData.indexOf(e)].value = nval;
+                                    var x = mockData[mockData.indexOf(e)];
+
+                                    x.value = nval;
+                                    x.backgroundColor = bColor;
+                                    x.textColor = tColor;
                                     setState(() {});
                                     Navigator.pop(context);
                                   },
@@ -446,21 +478,164 @@ class _StoryEditorState extends State<StoryEditor> {
   }
 }
 
-enum ItemType { Image, Text }
+class ColorPalette extends StatelessWidget {
+  final Function(Color) stateChanger;
 
-class EditableItem {
-  Offset position = Offset(0.1, 0.1);
-  double scale = 1.0;
-  double rotation = 0.0;
-  ItemType type;
-  int id;
-  String value;
+  const ColorPalette({Key key, this.stateChanger}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 40,
+      width: 250.0,
+      decoration:
+          BoxDecoration(border: Border.all(color: CurrentPalette['border'])),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            ColorDot(
+              color: Colors.white,
+              onPress: (color) => stateChanger(color),
+            ),
+            ColorDot(
+              color: Colors.black,
+              onPress: (color) => stateChanger(color),
+            ),
+            ColorDot(
+              color: Colors.green,
+              onPress: (color) => stateChanger(color),
+            ),
+            ColorDot(
+              color: Colors.blue,
+              onPress: (color) => stateChanger(color),
+            ),
+            ColorDot(
+              color: Colors.red,
+              onPress: (color) => stateChanger(color),
+            ),
+            ColorDot(
+              color: Colors.yellow,
+              onPress: (color) => stateChanger(color),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-final mockData = [
-  EditableItem()
+class ColorDot extends StatelessWidget {
+  final Color color;
+  final Function(Color) onPress;
+  const ColorDot({
+    Key key,
+    this.color,
+    this.onPress,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => onPress(color),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+        child: CircleAvatar(
+          radius: 15.0,
+          backgroundColor: color,
+        ),
+      ),
+    );
+  }
+}
+
+// enum ItemType { Image, Text }
+
+// class EditableItem {
+//   Offset position = Offset(0.1, 0.1);
+//   double scale = 1.0;
+//   double rotation = 0.0;
+//   ItemType type;
+//   int id;
+//   String value;
+// }
+
+List<dynamic> mockData = [
+  // ImageItem(
+  //   id: 0,
+  //   value:
+  //       'https://cdn.pixabay.com/photo/2016/02/19/11/46/night-1209938_960_720.jpg',
+  // ),
+  ImageItem(id: 0)
     ..type = ItemType.Image
     ..value =
         'https://cdn.pixabay.com/photo/2016/02/19/11/46/night-1209938_960_720.jpg'
-    ..id = 0,
+  // ..id = 0
+  // TextItem(
+  //   id: 1,
+  //   backgroundColor: Colors.transparent,
+  //   textColor: Colors.white,
+  //   value: "Text",
+  // ),
 ];
+
+class ColorPickerDialog extends StatefulWidget {
+  final Function(Color) onColorSelected;
+  final Color startColor;
+  final String dialogHeading;
+  ColorPickerDialog(
+      {Key key, this.onColorSelected, this.dialogHeading, this.startColor})
+      : super(key: key);
+
+  @override
+  _ColorPickerDialogState createState() => _ColorPickerDialogState();
+}
+
+class _ColorPickerDialogState extends State<ColorPickerDialog> {
+  Color pickerColor = Colors.black;
+  @override
+  void initState() {
+    pickerColor = widget.startColor ?? Colors.black;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.dialogHeading),
+      content: SingleChildScrollView(
+        child: ColorPicker(
+          pickerColor: pickerColor,
+          onColorChanged: (color) => setState(() => pickerColor = color),
+          showLabel: true,
+          pickerAreaHeightPercent: 0.8,
+        ),
+      ),
+      actions: <Widget>[
+        FlatButton(
+          child: Text(
+            'Cancel',
+            style: TextStyle(
+                color: Origin.of(context).isCurrentPaletteDarkTheme
+                    ? Colors.white
+                    : Colors.black),
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        FlatButton(
+          child: Text(
+            'Done',
+            style: TextStyle(
+                color: Origin.of(context).isCurrentPaletteDarkTheme
+                    ? Colors.white
+                    : Colors.black),
+          ),
+          onPressed: () {
+            widget.onColorSelected(pickerColor);
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
+}

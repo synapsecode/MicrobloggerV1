@@ -26,11 +26,25 @@ class TextItem extends EditableItem {
   Color textColor;
   Color backgroundColor;
   String value;
-  final int uid;
-  TextItem(
-    this.uid, {
+  ItemType type = ItemType.Text;
+
+  final int id;
+
+  TextItem({
+    this.id,
     this.textColor = Colors.white,
     this.backgroundColor = Colors.transparent,
     this.value = "Text",
+  });
+}
+
+class ImageItem extends EditableItem {
+  String value;
+  final int id;
+  ItemType type = ItemType.Image;
+
+  ImageItem({
+    this.value,
+    this.id,
   });
 }
