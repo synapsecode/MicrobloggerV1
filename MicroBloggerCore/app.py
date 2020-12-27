@@ -1,4 +1,4 @@
-from MicroBloggerCore import app, manager
+from MicroBloggerCore import app
 
 if __name__ == '__main__' :
 	#manager.run() 

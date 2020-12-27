@@ -55,3 +55,10 @@ def get_unavailable_post(post_type):
 		'events': [],
 
 	}
+
+
+def extract_hashtags(content):
+	import re
+	content = content.strip()
+	tags = re.findall(r'#[\w]*', content)
+	return tags

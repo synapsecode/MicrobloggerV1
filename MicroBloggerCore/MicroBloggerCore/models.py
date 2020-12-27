@@ -9,6 +9,19 @@ followers = db.Table('followers',
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
 
+tags = db.Table('HTags',
+    db.Column('hashtag_id', db.Integer, db.ForeignKey('hashtags.id'), primary_key=True),
+    db.Column('microblog_id', db.Integer, db.ForeignKey('micro_blog_post.id'), primary_key=True),
+    db.Column('blog_id', db.Integer, db.ForeignKey('blog_post.id'), primary_key=True),
+    db.Column('timeline_id', db.Integer, db.ForeignKey('timeline_post.id'), primary_key=True),
+    db.Column('shareable_id', db.Integer, db.ForeignKey('shareable_post.id'), primary_key=True),
+    db.Column('poll_id', db.Integer, db.ForeignKey('poll_post.id'), primary_key=True),
+    db.Column('timeline_id', db.Integer, db.ForeignKey('timeline_post.id'), primary_key=True),
+    db.Column('comment_id', db.Integer, db.ForeignKey('comment.id'), primary_key=True),
+    db.Column('rwc_id', db.Integer, db.ForeignKey('reshare_with_comment.id'), primary_key=True),
+    db.Column('carousel_id', db.Integer, db.ForeignKey('carousel_post.id'), primary_key=True),
+)
+
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	user_id = db.Column(db.String)
@@ -110,6 +123,8 @@ class MicroBlogPost(db.Model):
 	content = db.Column(db.String)
 	created_on = db.Column(db.String)
 	category = db.Column(db.String)
+	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+        backref=db.backref('microblogs', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
 	#Constructor
@@ -167,6 +182,8 @@ class BlogPost(db.Model):
 	comments = db.relationship('Comment', backref='blog_parent')
 	content = db.Column(db.String)
 	created_on = db.Column(db.String)
+	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+        backref=db.backref('blogs', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
 	#Constructor
@@ -223,6 +240,8 @@ class PollPost(db.Model):
 	content = db.Column(db.String)
 	options = db.Column(db.PickleType(comparator=lambda *a: False))
 	created_on = db.Column(db.String)
+	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+        backref=db.backref('polls', lazy=True))
 
 	#Constructor
 	def __init__(self, author, content, options):
@@ -262,6 +281,8 @@ class ShareablePost(db.Model):
 	link = db.Column(db.String)
 	name = db.Column(db.String)
 	created_on = db.Column(db.String)
+	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+        backref=db.backref('shareables', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
 	def __init__(self, name, content, link, author):
@@ -320,6 +341,8 @@ class TimelinePost(db.Model):
 	events = db.Column(db.PickleType)
 	created_on = db.Column(db.String)
 	comments = db.relationship('Comment', backref='timeline_parent')
+	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+        backref=db.backref('timelines', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
 	"""
@@ -391,6 +414,8 @@ class Comment(db.Model):
 	timeline_pid = db.Column(db.Integer, db.ForeignKey('timeline_post.id'))
 	rwc_pid = db.Column(db.Integer, db.ForeignKey('reshare_with_comment.id'))
 	carousel_pid = db.Column(db.Integer, db.ForeignKey('carousel_post.id'))
+	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+        backref=db.backref('comments', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
 	def __init__(self, author, content, category, microblog_parent=None, blog_parent=None, timeline_parent=None, rwc_parent=None, carousel_parent=None):
@@ -457,6 +482,8 @@ class ReshareWithComment(db.Model):
 	created_on = db.Column(db.String)
 	category = db.Column(db.String)
 	host_type = db.Column(db.String)
+	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+        backref=db.backref('rwc', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
 	def __init__(self, content, category, author, host):
@@ -498,6 +525,8 @@ class CarouselPost(db.Model):
 	content = db.Column(db.String)
 	created_on = db.Column(db.String)
 	images = db.Column(db.PickleType(comparator=lambda *a: False))
+	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+        backref=db.backref('carousel', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
 	@hybrid_property
@@ -593,6 +622,16 @@ class BookmarkedPosts(db.Model):
 	def __repr__(self):
 		user = User.query.filter_by(id=self.user_id).first()
 		return f"BookmarkedPosts(post: {self.post_id} -> user: {user.username})"
+
+class Hashtags(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	hashtag = db.Column(db.String)
+
+	def __init__(self, hashtag):
+		self.hashtag = hashtag
+
+	def __repr__(self):
+		return f"HashtagNativeRepresentation({self.hashtag})"
 
 class ReportedBugs(db.Model):
 	id = db.Column(db.Integer, primary_key=True)

@@ -5,7 +5,9 @@ from MicroBloggerCore.models import (User, MicroBlogPost, BlogPost, TimelinePost
 from post_templates import *
 import requests
 from MicroBloggerCore.fileuploader import upload_file_to_cloud
+from helperfunctions import extract_hashtags
 import io
+import re
 
 #TODO: Unify functions and make it efficient
 
@@ -279,6 +281,8 @@ def create_microblog():
 	username = data['username']
 	content = data['content']
 	category = data['category']
+	used_tags = extract_hashtags(content)
+	print("Tags Used: " + str(used_tags))
 	user = User.query.filter_by(username=username).first()
 	mxb = MicroBlogPost(author=user, category=category, content=content)
 	db.session.add(mxb)
@@ -295,6 +299,9 @@ def create_blog():
 	content = data['content']
 	blog_name = data['blog_name']
 	cover = data['cover']
+
+	used_tags = extract_hashtags(content)
+	print("Tags Used: " + str(used_tags))
 
 	user = User.query.filter_by(username=username).first()
 	xb = BlogPost(author=user, blog_name=blog_name, content=content, background=cover)
@@ -316,6 +323,10 @@ def create_carousel():
 	cx = CarouselPost(author=user, content=content)
 	db.session.add(cx)
 	db.session.commit()
+
+	used_tags = extract_hashtags(content)
+	print("Tags Used: " + str(used_tags))
+
 	#Adding Images
 	cx.images = []
 	db.session.commit()
@@ -334,6 +345,9 @@ def create_shareable():
 	name = data['name']
 	link = data['link']
 
+	used_tags = extract_hashtags(content)
+	print("Tags Used: " + str(used_tags))
+
 	user = User.query.filter_by(username=username).first()
 	sb = ShareablePost(author=user, name=name, content=content, link=link)
 	db.session.add(sb)
@@ -349,6 +363,9 @@ def create_poll():
 	username = data['username']
 	content = data['content']
 	options = data['options']
+
+	used_tags = extract_hashtags(content)
+	print("Tags Used: " + str(used_tags))
 
 	user = User.query.filter_by(username=username).first()
 	p = PollPost(author=user, content=content, options=options)
@@ -366,6 +383,9 @@ def create_timeline():
 	timeline_name = data['timeline_name']
 	events = data['events']
 	cover = data['cover']
+
+	used_tags = extract_hashtags(content)
+	print("Tags Used: " + str(used_tags))
 
 	user = User.query.filter_by(username=username).first()
 	t = TimelinePost(author=user, timeline_name=timeline_name, events=events, background=cover)

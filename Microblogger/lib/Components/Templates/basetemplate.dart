@@ -13,6 +13,7 @@ import 'package:MicroBlogger/Screens/homepage.dart';
 import 'package:MicroBlogger/Screens/profile.dart';
 import 'package:MicroBlogger/Views/blog_viewer.dart';
 import 'package:MicroBlogger/Views/timeline_viewer.dart';
+import 'package:MicroBlogger/origin.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -206,20 +207,6 @@ class TopBar extends StatelessWidget {
                   SizedBox(
                     width: 5,
                   ),
-                  if (postObject['type'] == 'microblog' ||
-                      postObject['type'] == 'ResharedWithComment' ||
-                      postObject['type'] == 'comment') ...[
-                    Text(
-                      "${postObject['category']}",
-                      style: TextStyle(
-                          color: (postObject['category'] == 'Fact')
-                              ? Colors.green
-                              : Colors.pink),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                  ],
                   if (postObject['author']['username'] ==
                       currentUser['user']['username']) ...[
                     ConstrainedBox(
@@ -383,11 +370,32 @@ class TopBar extends StatelessWidget {
             child: IconButton(
               onPressed: () {
                 print("Hoisting to Story");
-                print("POST DATA $postObject");
+                // print("POST DATA ${widget.post}");
               },
               icon: Icon(Icons.ios_share),
             ),
           ),
+        ],
+        if (postObject['type'] == 'microblog' ||
+            postObject['type'] == 'ResharedWithComment' ||
+            postObject['type'] == 'comment') ...[
+          // CircleAvatar(
+          //   radius: 10,
+          //   backgroundColor:
+          //       (postObject['category'] == 'Fact') ? Colors.green : Colors.pink,
+          // ),
+          CircleAvatar(
+            radius: 10,
+            backgroundColor:
+                (postObject['category'] == 'Fact') ? Colors.green : Colors.pink,
+            child: CircleAvatar(
+              radius: 9,
+              backgroundColor: CurrentPalette['postcolour'],
+            ),
+          )
+          // SizedBox(
+          //   width: 10,
+          // ),
         ],
       ],
     );
@@ -774,6 +782,7 @@ class _ActionBarState extends State<ActionBar> {
                 ],
               ),
             ],
+
             if (widget.post['type'] == 'comment') ...[
               Text(
                 "   Replying to ",
@@ -816,7 +825,7 @@ class _ActionBarState extends State<ActionBar> {
                   child: InkWell(
                       child: Text("Parent Post",
                           style: TextStyle(color: Colors.blue))))
-            ]
+            ],
           ],
         ));
   }
