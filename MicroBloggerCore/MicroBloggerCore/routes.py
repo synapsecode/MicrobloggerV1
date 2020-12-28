@@ -1,15 +1,17 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify
 from MicroBloggerCore import app, db, cache
 from MicroBloggerCore.models import (User, MicroBlogPost, BlogPost, TimelinePost, ShareablePost,
- PollPost, ReshareWithComment, SimpleReshare, Comment, BookmarkedPosts, ResharedPosts, ReportedBugs, CarouselPost)
+ PollPost, ReshareWithComment, SimpleReshare, Comment, BookmarkedPosts, ResharedPosts, ReportedBugs, CarouselPost, Hashtags)
 from post_templates import *
 import requests
 from MicroBloggerCore.fileuploader import upload_file_to_cloud
-from helperfunctions import extract_hashtags
+from helperfunctions import parse_hashtags, extract_hashtags
 import io
 import re
 
 #TODO: Unify functions and make it efficient
+
+
 
 @app.route("/")
 def homepage():
@@ -275,18 +277,21 @@ def feed():
 		})
 	
 #----------------------------------------------POST COMPOSER-----------------------------------------------
+
+		
+
 @app.route('/createmicroblog', methods=['POST'])
 def create_microblog():
 	data = request.get_json()
 	username = data['username']
 	content = data['content']
 	category = data['category']
-	used_tags = extract_hashtags(content)
-	print("Tags Used: " + str(used_tags))
 	user = User.query.filter_by(username=username).first()
 	mxb = MicroBlogPost(author=user, category=category, content=content)
-	db.session.add(mxb)
+	db.session.add(mxb, content)
 	db.session.commit()
+	
+	parse_hashtags(mxb, content)
 	addPoint('MICROBLOG', user)
 	return jsonify({
 		'message': 'created microblog',
@@ -300,15 +305,14 @@ def create_blog():
 	blog_name = data['blog_name']
 	cover = data['cover']
 
-	used_tags = extract_hashtags(content)
-	print("Tags Used: " + str(used_tags))
-
 	user = User.query.filter_by(username=username).first()
 	xb = BlogPost(author=user, blog_name=blog_name, content=content, background=cover)
 
 	db.session.add(xb)	
 	db.session.commit()
+	parse_hashtags(xb, content)
 	addPoint('BLOG', user)
+
 	return jsonify({
 		'message': 'created blog',
 	})
@@ -324,14 +328,14 @@ def create_carousel():
 	db.session.add(cx)
 	db.session.commit()
 
-	used_tags = extract_hashtags(content)
-	print("Tags Used: " + str(used_tags))
-
 	#Adding Images
 	cx.images = []
 	db.session.commit()
 	cx.images = [*[i for i in images]]
 	db.session.commit()
+
+	parse_hashtags(cx, content)
+
 	addPoint('CAROUSEL', user)
 	return jsonify({
 		'message': 'created carousel',
@@ -345,13 +349,12 @@ def create_shareable():
 	name = data['name']
 	link = data['link']
 
-	used_tags = extract_hashtags(content)
-	print("Tags Used: " + str(used_tags))
-
 	user = User.query.filter_by(username=username).first()
 	sb = ShareablePost(author=user, name=name, content=content, link=link)
 	db.session.add(sb)
 	db.session.commit()
+	parse_hashtags(sb, content)
+
 	addPoint('SHAREABLE', user)
 	return jsonify({
 		'message': 'created shareable',
@@ -364,13 +367,11 @@ def create_poll():
 	content = data['content']
 	options = data['options']
 
-	used_tags = extract_hashtags(content)
-	print("Tags Used: " + str(used_tags))
-
 	user = User.query.filter_by(username=username).first()
 	p = PollPost(author=user, content=content, options=options)
 	db.session.add(p)
 	db.session.commit()
+	parse_hashtags(p, content)
 	addPoint('POLL', user)
 	return jsonify({
 		'message': 'created poll',
@@ -384,15 +385,19 @@ def create_timeline():
 	events = data['events']
 	cover = data['cover']
 
-	used_tags = extract_hashtags(content)
-	print("Tags Used: " + str(used_tags))
-
 	user = User.query.filter_by(username=username).first()
 	t = TimelinePost(author=user, timeline_name=timeline_name, events=events, background=cover)
 
 	db.session.add(t)
 	db.session.commit()
+	
+	#Grouping All Content to collect hashtags
+	content = ""
+	for e in events:
+		content += e['description'].strip() + " "
+	parse_hashtags(t, content)
 	addPoint('TIMELINE', user)
+
 	return jsonify({
 		'message': 'created timeline',
 	})
@@ -568,6 +573,7 @@ def resharepost():
 		db.session.add(rwc)
 		post.reshare(user=user, post=rwc)
 		print(f"{user} reshared post: {post} => {rwc}")
+		parse_hashtags(rwc, content)
 	else:
 		sr = SimpleReshare(author=user, host=post)
 		db.session.add(sr)
@@ -595,6 +601,7 @@ def unresharepost():
 				for c in rwc.comments:
 					db.session.delete(c)
 				db.session.commit()
+				rwc.removehashtag([x.hashtag for x in rwc.hashtags]) #Remove Hashtags associated with this
 				db.session.delete(rwc)
 				db.session.commit()
 				print(f"{user} unreshared post: {post} => {rwc}")
@@ -638,6 +645,7 @@ def addcomment():
 
 	db.session.add(c)
 	db.session.commit()
+	parse_hashtags(c, content)
 	print(f"{user} commented on post: {post} => {c}")
 	addPoint('COMMENT', user)
 	return jsonify({
@@ -654,6 +662,7 @@ def deletecomment():
 	comment = getPost('comment', c_id)
 
 	if(comment.author_id == user.id):
+		comment.removehashtag([x.hashtag for x in comment.hashtags]) #Remove Hashtags associated with this
 		db.session.delete(comment)
 		db.session.commit()
 		addPoint('DELETECOMMENT', user)
@@ -680,8 +689,11 @@ def deletepost():
 		if(post_type != "poll" and post_type != "shareable"):
 			#Delete Comments of Post
 			for c in post.comments:
+				c.removehashtag([x.hashtag for x in c.hashtags])
 				db.session.delete(c)
 			db.session.commit()
+
+		post.removehashtag([x.hashtag for x in post.hashtags]) #Remove Hashtags associated with this
 		db.session.delete(post)
 		db.session.commit()
 		addPoint('DELETEPOST', user)
@@ -735,6 +747,7 @@ def submit_vote():
 #-------------------------------------------------POSTACTIONS-----------------------------------------------
 
 #-----------------------------------------------EDIT POSTS------------------------------------------------------
+#?Add Remove on Edit and Add on Edit : Hashtags
 @app.route('/editmicroblog', methods=['POST'])
 def editmicroblog():
 	data = request.get_json()
@@ -746,6 +759,7 @@ def editmicroblog():
 	post = getPost('microblog', post_id)
 	if(post.author.id == user.id):
 		post.content = content
+		parse_hashtags(post, content) #Delta
 		post.category = category
 		db.session.commit()
 		return jsonify({
@@ -772,6 +786,7 @@ def edit_rwc():
 
 	if(post.author.id == user.id):
 		post.content = content
+		parse_hashtags(post, content) #Delta
 		post.category = category
 		db.session.commit()
 		addPoint('EDITPOST', user)
@@ -800,6 +815,7 @@ def editblog():
 
 	if(post.author.id == user.id):
 		post.content = content
+		parse_hashtags(post, content) #Delta
 		post.blog_name = blog_name
 		if(cover != None):
 			post.background = cover
@@ -833,6 +849,13 @@ def edit_timeline():
 		post.events = []
 		db.session.commit()
 		post.events = [*events]
+
+		#Grouping All Content to collect hashtags
+		content = ""
+		for e in events:
+			content += e['description'] + " "
+		parse_hashtags(post, content)
+
 		#post.content = content
 		post.background = cover
 		db.session.commit()
@@ -861,6 +884,7 @@ def editshareable():
 		post.link = link
 		post.name = name
 		post.content = content
+		parse_hashtags(post, content) #Delta
 		db.session.commit()
 		addPoint('EDITPOST', user)
 		return jsonify({
@@ -885,6 +909,7 @@ def editcomment():
 
 	if(post.author.id == user.id):
 		post.content = comment
+		parse_hashtags(post, comment) #Delta
 		post.category = category
 		db.session.commit()
 		addPoint('EDITPOST', user)
@@ -910,6 +935,7 @@ def editcarousel():
 
 	if(post.author.id == user.id):
 		post.content = content
+		parse_hashtags(post, content) #Delta
 		post.images = []
 		db.session.commit()
 		post.images = [*images]
@@ -980,6 +1006,51 @@ def exploreshareablesandpolls(username):
 	})
 #--------------------------------------------------EXPLORE--------------------------------------------------
 
+#---------------------------------------------MISC------------------------------------------------------
+
+@app.route('/get_users_list')
+def get_users_list():
+	U = User.query.all()
+	return jsonify({
+		'users': [u.username for u in U]
+	})
+
+@app.route('/get_hashtag_list')
+def get_hashtag_list():
+	H = Hashtags.query.all()
+	return jsonify({
+		'hashtags': [h.hashtag for h in H]
+	})
+
+@app.route('/get_hashtag_posts/<username>/<hashtag>')
+def get_hashtag_posts(username, hashtag):
+	user = User.query.filter_by(username=username).first()
+	H = Hashtags.query.filter_by(hashtag=hashtag).first()
+	if(not user or not H): 
+		return jsonify({
+			'microblogsandcomments':[],
+			'blogstimelinesandcarousels':[],
+			'reshared':[],
+			'pollsandshareables':[],
+		})
+	
+	microblogs = H.microblogs
+	blogs = H.blogs
+	timelines = H.timelines
+	shareables = H.shareables
+	polls = H.polls
+	comments = H.comments
+	carousels = H.carousels
+	rwc = H.rwc
+
+	return jsonify({
+		'microblogsandcomments': [*[microblog(user, x) for x in microblogs], *[comment(user, x) for x in comments]],
+		'blogstimelinesandcarousels': [*[blog(user,x) for x in blogs], *[timeline(user, x) for x in timelines], *[carousel(user,x) for x in carousels]],
+		'reshared': [reshareWithComment(user, x) for x in rwc],
+		'pollsandshareables': [*[poll(user, x) for x in polls], *[shareable(user, x) for x in shareables]]
+	})
+
+#---------------------------------------------MISC-------------------------------------------------------
 def getUserData(username, currentuser):
 	user = User.query.filter_by(username=username).first()
 	#Get Reshares

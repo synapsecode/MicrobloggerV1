@@ -1,5 +1,7 @@
 import 'dart:io';
-import 'package:MicroBlogger/Screens/hashtagviewer.dart';
+import 'package:MicroBlogger/Screens/hashtaglistviewer.dart';
+import 'package:MicroBlogger/Screens/hashtagpostviewer.dart';
+import 'package:MicroBlogger/globals.dart';
 import 'package:MicroBlogger/palette.dart';
 import 'package:MicroBlogger/Backend/server.dart';
 import 'package:MicroBlogger/Screens/homepage.dart';
@@ -157,7 +159,10 @@ class _CachedFutureBuilderState extends State<CachedFutureBuilder> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           //Value Recieved
-          return widget.onUpdate(snapshot);
+          if (snapshot.data != null)
+            return widget.onUpdate(snapshot);
+          else
+            return widget.onCacheUsed(widget.cacheStore);
         } else {
           //Pending
           if (widget.cacheStore.length > 0) {
@@ -168,6 +173,36 @@ class _CachedFutureBuilderState extends State<CachedFutureBuilder> {
           }
         } //Fallback
       },
+    );
+  }
+}
+
+class GeneralSliverPageView extends StatelessWidget {
+  final String appBarTitle;
+  final Widget sliverChild;
+  final List<Widget> children;
+  const GeneralSliverPageView(
+      {Key key, this.appBarTitle, this.sliverChild, this.children})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverAppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text("$appBarTitle"),
+          pinned: true,
+          expandedHeight: 350.0,
+          flexibleSpace: FlexibleSpaceBar(background: sliverChild),
+        ),
+        SliverList(
+          delegate: SliverChildListDelegate(children),
+        )
+      ],
     );
   }
 }
@@ -746,32 +781,86 @@ class _HashTagEnabledUserTaggableTextFieldState
     extends State<HashTagEnabledUserTaggableTextField> {
   List words = [];
   String selectedUser = '';
-  List usernames = [
-    'manashejmadi',
-    'synapsecode',
-    'nikolatesla',
-    'thomasedison',
-    'electroboom',
-    'modichowkidar',
-    'ampere',
-    'erwinshrodinger',
-    'alberteinstein',
-    'louispascal',
-    'viratkohli'
-  ];
-  List hashtags = [
-    "coding",
-    "devinitelyhealthy",
-    "buildupdevs",
-    "worldcode",
-    "code",
-  ];
+  List usernames = UsernamesListCache;
+  List hashtags = HashtagsListCache;
 
   @override
   void initState() {
+    getUsersList().then((x) {
+      usernames = x;
+      UsernamesListCache = x;
+    });
+    getHashtags().then((x) {
+      hashtags = x;
+      HashtagsListCache = x;
+    });
+
     super.initState();
     if (widget.usernames != null) usernames = widget.usernames;
     if (widget.hashtags != null) hashtags = widget.hashtags;
+  }
+
+  List<Widget> generateHashtagSuggestions(List data) {
+    return data.map((s) {
+      if (('#' + s).contains(selectedUser)) {
+        if (widget.onChange != null)
+          return ListTile(
+              // tileColor: Colors.white10,
+              title: Text(
+                '#$s',
+              ),
+              onTap: () {
+                String tmp = selectedUser.substring(0, selectedUser.length);
+                setState(() {
+                  selectedUser = '';
+                  widget.controller.text +=
+                      s.substring(s.indexOf(tmp) + tmp.length, s.length) + " ";
+
+                  //Fixing Cursor
+                  widget.controller.value = TextEditingValue(
+                      text: widget.controller.text,
+                      selection: TextSelection.fromPosition(
+                        TextPosition(offset: widget.controller.text.length),
+                      ));
+                  widget.onChange(widget.controller.text); //update appended tag
+                  // .replaceAll(' ', '_');
+                });
+              });
+      } else
+        return SizedBox();
+    }).toList();
+  }
+
+  List<Widget> generateUsernameSuggestions(List data) {
+    return data.map((s) {
+      if (('@' + s).contains(selectedUser)) {
+        if (widget.onChange != null)
+          return ListTile(
+              // tileColor: Colors.white10,
+              title: Text(
+                '@$s',
+                // style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {
+                String tmp = selectedUser.substring(0, selectedUser.length);
+                setState(() {
+                  selectedUser = '';
+                  widget.controller.text +=
+                      s.substring(s.indexOf(tmp) + tmp.length, s.length) + " ";
+
+                  //Fixing Cursor
+                  widget.controller.value = TextEditingValue(
+                      text: widget.controller.text,
+                      selection: TextSelection.fromPosition(
+                        TextPosition(offset: widget.controller.text.length),
+                      ));
+                  widget.onChange(widget.controller.text); //update appended tag
+                  // .replaceAll(' ', '_');
+                });
+              });
+      } else
+        return SizedBox();
+    }).toList();
   }
 
   @override
@@ -782,85 +871,16 @@ class _HashTagEnabledUserTaggableTextFieldState
           ? Container(
               padding: EdgeInsets.all(5.0),
               decoration: BoxDecoration(
-                  border: Border.all(width: 1.0, color: Colors.white)),
+                  border:
+                      Border.all(width: 1.0, color: CurrentPalette['border'])),
               child: SizedBox(
                 height: 110.0,
                 child: ListView(
                     controller: ScrollController(),
                     shrinkWrap: true,
                     children: [
-                      //USERTAGGING
-                      ...usernames.map((s) {
-                        if (('@' + s).contains(selectedUser)) {
-                          if (widget.onChange != null)
-                            return ListTile(
-                                tileColor: Colors.white10,
-                                title: Text(
-                                  '@$s',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                onTap: () {
-                                  String tmp = selectedUser.substring(
-                                      0, selectedUser.length);
-                                  setState(() {
-                                    selectedUser = '';
-                                    widget.controller.text += s.substring(
-                                            s.indexOf(tmp) + tmp.length,
-                                            s.length) +
-                                        " ";
-
-                                    //Fixing Cursor
-                                    widget.controller.value = TextEditingValue(
-                                        text: widget.controller.text,
-                                        selection: TextSelection.fromPosition(
-                                          TextPosition(
-                                              offset: widget
-                                                  .controller.text.length),
-                                        ));
-                                    widget.onChange(widget
-                                        .controller.text); //update appended tag
-                                    // .replaceAll(' ', '_');
-                                  });
-                                });
-                        } else
-                          return SizedBox();
-                      }),
-                      //TOPICS<HASHTAGS>
-                      ...hashtags.map((s) {
-                        if (('#' + s).contains(selectedUser)) {
-                          if (widget.onChange != null)
-                            return ListTile(
-                                tileColor: Colors.white10,
-                                title: Text(
-                                  '#$s',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                onTap: () {
-                                  String tmp = selectedUser.substring(
-                                      0, selectedUser.length);
-                                  setState(() {
-                                    selectedUser = '';
-                                    widget.controller.text += s.substring(
-                                            s.indexOf(tmp) + tmp.length,
-                                            s.length) +
-                                        " ";
-
-                                    //Fixing Cursor
-                                    widget.controller.value = TextEditingValue(
-                                        text: widget.controller.text,
-                                        selection: TextSelection.fromPosition(
-                                          TextPosition(
-                                              offset: widget
-                                                  .controller.text.length),
-                                        ));
-                                    widget.onChange(widget
-                                        .controller.text); //update appended tag
-                                    // .replaceAll(' ', '_');
-                                  });
-                                });
-                        } else
-                          return SizedBox();
-                      })
+                      ...generateUsernameSuggestions(usernames),
+                      ...generateHashtagSuggestions(hashtags),
                     ]),
               ),
             )
@@ -937,7 +957,16 @@ class HashTagEnabledUserTaggableTextDisplay extends StatelessWidget {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             print("Clicked on Topic: ${w.substring(1)}");
-                          })
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HashtagPostViewer(
+                                  hashtag: w.substring(1),
+                                ),
+                              ),
+                            );
+                          },
+                      )
                     : TextSpan(
                         text: w + ' ',
                         style: (style == null)

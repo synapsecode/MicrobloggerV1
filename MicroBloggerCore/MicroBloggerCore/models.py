@@ -9,18 +9,77 @@ followers = db.Table('followers',
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
 
-tags = db.Table('HTags',
-    db.Column('hashtag_id', db.Integer, db.ForeignKey('hashtags.id'), primary_key=True),
-    db.Column('microblog_id', db.Integer, db.ForeignKey('micro_blog_post.id'), primary_key=True),
-    db.Column('blog_id', db.Integer, db.ForeignKey('blog_post.id'), primary_key=True),
-    db.Column('timeline_id', db.Integer, db.ForeignKey('timeline_post.id'), primary_key=True),
-    db.Column('shareable_id', db.Integer, db.ForeignKey('shareable_post.id'), primary_key=True),
-    db.Column('poll_id', db.Integer, db.ForeignKey('poll_post.id'), primary_key=True),
-    db.Column('timeline_id', db.Integer, db.ForeignKey('timeline_post.id'), primary_key=True),
-    db.Column('comment_id', db.Integer, db.ForeignKey('comment.id'), primary_key=True),
-    db.Column('rwc_id', db.Integer, db.ForeignKey('reshare_with_comment.id'), primary_key=True),
-    db.Column('carousel_id', db.Integer, db.ForeignKey('carousel_post.id'), primary_key=True),
-)
+def genauxtable(name, dname):
+	return db.Column(f'{name}_id', db.Integer, db.ForeignKey(f'{dname}.id'), primary_key=True)
+
+hashassociation = {
+	'microblog': db.Table(
+		'MB-HTags',
+		genauxtable('mb_hashtag', 'hashtags'),
+		genauxtable('microblog', 'micro_blog_post'),
+	),
+	'blog': db.Table(
+		'B-HTags',
+		genauxtable('b_hashtag', 'hashtags'),
+		genauxtable('blog', 'blog_post'),
+	),
+	'timeline': db.Table(
+		'TL-HTags',
+		genauxtable('tl_hashtag', 'hashtags'),
+		genauxtable('timeline', 'timeline_post'),
+	),
+	'shareable': db.Table(
+		'S-HTags',
+		genauxtable('s_hashtag', 'hashtags'),
+		genauxtable('shareable', 'shareable_post'),
+	),
+	'poll': db.Table(
+		'PL-HTags',
+		genauxtable('pl_hashtag', 'hashtags'),
+		genauxtable('poll', 'poll_post'),
+	),
+	'comment': db.Table(
+		'CMT-HTags',
+		genauxtable('cmt_hashtag', 'hashtags'),
+		genauxtable('comment', 'comment'),
+	),
+	'carousel': db.Table(
+		'C-HTags',
+		genauxtable('c_hashtag', 'hashtags'),
+		genauxtable('carousel', 'carousel_post'),
+	),
+	'rwc': db.Table(
+		'RWC-HTags',
+		genauxtable('rwc_hashtag', 'hashtags'),
+		genauxtable('rwc', 'reshare_with_comment'),
+	),
+	
+}
+
+def hashgen(ht):
+	if(ht not in [x.hashtag for x in Hashtags.query.all()]):
+		H = Hashtags(hashtag=ht)
+		print(f'NewHashTag', H)
+		db.session.add(H)
+		db.session.commit()
+		return H
+	else:
+		HX = Hashtags.query.filter_by(hashtag=ht).first()
+		print('OldHashTag', HX)
+		return HX
+
+# tags = db.Table('HTags',
+#     db.Column('hashtag_id', db.Integer, db.ForeignKey('hashtags.id'), primary_key=True),
+#     db.Column('microblog_id', db.Integer, db.ForeignKey('micro_blog_post.id'), primary_key=True),
+#     db.Column('blog_id', db.Integer, db.ForeignKey('blog_post.id'), primary_key=True),
+#     db.Column('timeline_id', db.Integer, db.ForeignKey('timeline_post.id'), primary_key=True),
+#     db.Column('shareable_id', db.Integer, db.ForeignKey('shareable_post.id'), primary_key=True),
+#     db.Column('poll_id', db.Integer, db.ForeignKey('poll_post.id'), primary_key=True),
+#     # db.Column('timeline_id', db.Integer, db.ForeignKey('timeline_post.id'), primary_key=True),
+#     db.Column('comment_id', db.Integer, db.ForeignKey('comment.id'), primary_key=True),
+#     db.Column('rwc_id', db.Integer, db.ForeignKey('reshare_with_comment.id'), primary_key=True),
+#     db.Column('carousel_id', db.Integer, db.ForeignKey('carousel_post.id'), primary_key=True),
+# )
 
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -123,7 +182,7 @@ class MicroBlogPost(db.Model):
 	content = db.Column(db.String)
 	created_on = db.Column(db.String)
 	category = db.Column(db.String)
-	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+	hashtags = db.relationship('Hashtags', secondary=hashassociation['microblog'], lazy='subquery',
         backref=db.backref('microblogs', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
@@ -168,6 +227,18 @@ class MicroBlogPost(db.Model):
 		if(obj): 
 			db.session.delete(obj)
 			db.session.commit()
+
+	def addhashtag(self, HList):
+		for h in HList:
+			H = hashgen(h)
+			H.microblogs.append(self)
+		db.session.commit()
+
+	def removehashtag(self, HList):
+		for h in HList:
+			H = Hashtags.query.filter_by(hashtag=h).first()
+			H.microblogs.remove(self)
+		db.session.commit()
 	
 	def __repr__(self):
 		return f"MicroBlogPost({self.post_id})"
@@ -182,7 +253,7 @@ class BlogPost(db.Model):
 	comments = db.relationship('Comment', backref='blog_parent')
 	content = db.Column(db.String)
 	created_on = db.Column(db.String)
-	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+	hashtags = db.relationship('Hashtags', secondary=hashassociation['blog'], lazy='subquery',
         backref=db.backref('blogs', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
@@ -229,6 +300,18 @@ class BlogPost(db.Model):
 			db.session.delete(obj)
 			db.session.commit()
 
+	def addhashtag(self, HList):
+		for h in HList:
+			H = hashgen(h)
+			H.blogs.append(self)
+		db.session.commit()
+
+	def removehashtag(self, HList):
+		for h in HList:
+			H = Hashtags.query.filter_by(hashtag=h).first()
+			H.blogs.remove(self)
+		db.session.commit()
+
 	def __repr__(self):
 		return f"BlogPost({self.blog_name})"
 
@@ -240,7 +323,7 @@ class PollPost(db.Model):
 	content = db.Column(db.String)
 	options = db.Column(db.PickleType(comparator=lambda *a: False))
 	created_on = db.Column(db.String)
-	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+	hashtags = db.relationship('Hashtags', secondary=hashassociation['poll'], lazy='subquery',
         backref=db.backref('polls', lazy=True))
 
 	#Constructor
@@ -268,6 +351,18 @@ class PollPost(db.Model):
 			db.session.delete(obj)
 			db.session.commit()
 
+	def addhashtag(self, HList):
+		for h in HList:
+			H = hashgen(h)
+			H.polls.append(self)
+		db.session.commit()
+
+	def removehashtag(self, HList):
+		for h in HList:
+			H = Hashtags.query.filter_by(hashtag=h).first()
+			H.polls.remove(self)
+		db.session.commit()
+
 	def __repr__(self):
 		return f"PollPost({self.post_id})"
 
@@ -281,7 +376,7 @@ class ShareablePost(db.Model):
 	link = db.Column(db.String)
 	name = db.Column(db.String)
 	created_on = db.Column(db.String)
-	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+	hashtags = db.relationship('Hashtags', secondary=hashassociation['shareable'], lazy='subquery',
         backref=db.backref('shareables', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
@@ -327,6 +422,18 @@ class ShareablePost(db.Model):
 			db.session.delete(obj)
 			db.session.commit()
 
+	def addhashtag(self, HList):
+		for h in HList:
+			H = hashgen(h)
+			H.shareables.append(self)
+		db.session.commit()
+
+	def removehashtag(self, HList):
+		for h in HList:
+			H = Hashtags.query.filter_by(hashtag=h).first()
+			H.shareables.remove(self)
+		db.session.commit()
+
 	def __repr__(self):
 		return f"ShareablePost({self.name})"
 
@@ -341,7 +448,7 @@ class TimelinePost(db.Model):
 	events = db.Column(db.PickleType)
 	created_on = db.Column(db.String)
 	comments = db.relationship('Comment', backref='timeline_parent')
-	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+	hashtags = db.relationship('Hashtags', secondary=hashassociation['timeline'], lazy='subquery',
         backref=db.backref('timelines', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
@@ -398,6 +505,18 @@ class TimelinePost(db.Model):
 			db.session.delete(obj)
 			db.session.commit()
 
+	def addhashtag(self, HList):
+		for h in HList:
+			H = hashgen(h)
+			H.timelines.append(self)
+		db.session.commit()
+
+	def removehashtag(self, HList):
+		for h in HList:
+			H = Hashtags.query.filter_by(hashtag=h).first()
+			H.timelines.remove(self)
+		db.session.commit()
+
 	def __repr__(self):
 		return f"TimelinePost({self.timeline_name})"
 
@@ -414,7 +533,7 @@ class Comment(db.Model):
 	timeline_pid = db.Column(db.Integer, db.ForeignKey('timeline_post.id'))
 	rwc_pid = db.Column(db.Integer, db.ForeignKey('reshare_with_comment.id'))
 	carousel_pid = db.Column(db.Integer, db.ForeignKey('carousel_post.id'))
-	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+	hashtags = db.relationship('Hashtags', secondary=hashassociation['comment'], lazy='subquery',
         backref=db.backref('comments', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
@@ -450,6 +569,18 @@ class Comment(db.Model):
 			db.session.delete(obj)
 			db.session.commit()
 
+	def addhashtag(self, HList):
+		for h in HList:
+			H = hashgen(h)
+			H.comments.append(self)
+		db.session.commit()
+
+	def removehashtag(self, HList):
+		for h in HList:
+			H = Hashtags.query.filter_by(hashtag=h).first()
+			H.comments.remove(self)
+		db.session.commit()
+
 	def __repr__(self):
 	 return f"Comment({self.comment_id})"
 
@@ -482,7 +613,7 @@ class ReshareWithComment(db.Model):
 	created_on = db.Column(db.String)
 	category = db.Column(db.String)
 	host_type = db.Column(db.String)
-	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
+	hashtags = db.relationship('Hashtags', secondary=hashassociation['rwc'], lazy='subquery',
         backref=db.backref('rwc', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
@@ -512,6 +643,18 @@ class ReshareWithComment(db.Model):
 		if(obj): 
 			db.session.delete(obj)
 			db.session.commit()
+
+	def addhashtag(self, HList):
+		for h in HList:
+			H = hashgen(h)
+			H.rwc.append(self)
+		db.session.commit()
+
+	def removehashtag(self, HList):
+		for h in HList:
+			H = Hashtags.query.filter_by(hashtag=h).first()
+			H.rwc.remove(self)
+		db.session.commit()
 		
 	def __repr__(self):
 		return f"ResharedWithComment({self.post_id} -> {self.host_id})"
@@ -525,8 +668,8 @@ class CarouselPost(db.Model):
 	content = db.Column(db.String)
 	created_on = db.Column(db.String)
 	images = db.Column(db.PickleType(comparator=lambda *a: False))
-	hashtags = db.relationship('Hashtags', secondary=tags, lazy='subquery',
-        backref=db.backref('carousel', lazy=True))
+	hashtags = db.relationship('Hashtags', secondary=hashassociation['carousel'], lazy='subquery',
+        backref=db.backref('carousels', lazy=True))
 	# isEdited = db.Column(db.Boolean)
 
 	@hybrid_property
@@ -560,6 +703,18 @@ class CarouselPost(db.Model):
 		if(obj): 
 			db.session.delete(obj)
 			db.session.commit()
+
+	def addhashtag(self, HList):
+		for h in HList:
+			H = hashgen(h)
+			H.carousels.append(self)
+		db.session.commit()
+
+	def removehashtag(self, HList):
+		for h in HList:
+			H = Hashtags.query.filter_by(hashtag=h).first()
+			H.carousels.remove(self)
+		db.session.commit()
 
 	def __init__(self, author, content):
 		self.post_id = str(uuid.uuid4())
@@ -625,7 +780,7 @@ class BookmarkedPosts(db.Model):
 
 class Hashtags(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	hashtag = db.Column(db.String)
+	hashtag = db.Column(db.String, unique=True)
 
 	def __init__(self, hashtag):
 		self.hashtag = hashtag

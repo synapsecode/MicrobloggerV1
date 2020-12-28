@@ -5,6 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
 import '../palette.dart';
 
+//! ADD EDIT POLL
+
 class PollComposer extends StatefulWidget {
   const PollComposer({Key key}) : super(key: key);
 
@@ -196,6 +198,7 @@ class _ComposerComponentState extends State<ComposerComponent> {
                                     onTap: () {
                                       print("Poll Item Added");
                                       widget.pollItemUpdater(currentPollItem);
+                                      setState(() => currentPollItem = "");
                                     },
                                   ),
                                 ),

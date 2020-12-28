@@ -194,7 +194,7 @@ class TopBar extends StatelessWidget {
                     },
                     child: Text(
                       "@${postObject['author']['username']}",
-                      style: TextStyle(color: Colors.blue),
+                      style: TextStyle(color: Colors.blue, fontSize: 13),
                     ),
                   ),
                   SizedBox(
@@ -204,9 +204,10 @@ class TopBar extends StatelessWidget {
                     "${postObject['age']}",
                     style: TextStyle(color: CurrentPalette['transparent_text']),
                   ),
-                  SizedBox(
-                    width: 5,
-                  ),
+                  if (isHosted)
+                    SizedBox(
+                      width: 10,
+                    ),
                   if (postObject['author']['username'] ==
                       currentUser['user']['username']) ...[
                     ConstrainedBox(

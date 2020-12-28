@@ -62,3 +62,32 @@ def extract_hashtags(content):
 	content = content.strip()
 	tags = re.findall(r'#[\w]*', content)
 	return tags
+
+def parse_hashtags(obj, body):
+	used_tags = extract_hashtags(body)
+	existing_tags = [x.hashtag for x in obj.hashtags]
+
+	used_tags = [t[1:] for t in used_tags]
+
+	A = set(existing_tags)
+	B = set(used_tags)
+	
+	tag_delta = A - B #Tags that have breen removed
+	tags = A.union(B) - A - A.intersection(B) #New Tags
+
+	#Removing the Hash Symbol
+	tags = list(tags)
+	tag_delta = list(tag_delta)
+
+	#Removing Tags
+	print("Post Type:", obj.post_type)
+	print("Existing Hashtags:", A)
+	print("Current Hashtags:", B)
+	if(len(tag_delta) > 0):
+		print("Removing:", tag_delta)
+		obj.removehashtag(tag_delta)
+	
+	#Adding Tags
+	if(len(tags) > 0):
+		print("Adding:", tags)
+		obj.addhashtag(tags)

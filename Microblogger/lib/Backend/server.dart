@@ -781,3 +781,38 @@ getNewsFeed() async {
   }
 }
 //----------------------------------------------------------------------------------------------------
+
+getHashtags() async {
+  http.Response response = await http.get("$serverURL/get_hashtag_list");
+  if (response.statusCode == 200) {
+    var obj = jsonDecode(response.body);
+    return obj['hashtags'];
+  }
+  return [];
+}
+
+getUsersList() async {
+  http.Response response = await http.get("$serverURL/get_users_list");
+  if (response.statusCode == 200) {
+    var obj = jsonDecode(response.body);
+    return obj['users'];
+  }
+  return [];
+}
+
+getHashtagPosts(String hashtag) async {
+  String uname = currentUser['user']['username'] ?? '0x00';
+  http.Response response =
+      await http.get("$serverURL/get_hashtag_posts/$uname/$hashtag");
+  if (response.statusCode == 200) {
+    var obj = jsonDecode(response.body);
+    print(obj);
+    return obj;
+  }
+  return {
+    "blogstimelinesandcarousels": [],
+    "microblogsandcomments": [],
+    "pollsandshareables": [],
+    "reshared": []
+  };
+}

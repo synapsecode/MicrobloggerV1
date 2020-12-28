@@ -406,6 +406,25 @@ class _MyPostViewState extends State<MyPostView> {
   final TabController _controller;
   _MyPostViewState(this._controller);
 
+  Widget createTab(List data, Widget X) {
+    if (data.length > 0) {
+      return Container(
+        padding: const EdgeInsets.all(8.0),
+        child: X,
+      );
+    } else {
+      return Column(
+        children: [
+          SizedBox(height: 150),
+          Text(
+            "No Posts",
+            style: TextStyle(color: CurrentPalette['border']),
+          ),
+        ],
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     List othersFeed = user['posts']['mypollsandshareables'] ?? [];
@@ -439,61 +458,63 @@ class _MyPostViewState extends State<MyPostView> {
             child: TabBarView(
               controller: widget._controller,
               children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.builder(
-                      itemCount: microblogFeed.length,
-                      itemBuilder: (context, index) {
-                        return new MicroBlogPost(
-                          postObject: microblogFeed[index],
+                createTab(
+                  microblogFeed,
+                  ListView.builder(
+                    itemCount: microblogFeed.length,
+                    itemBuilder: (context, index) {
+                      return new MicroBlogPost(
+                        postObject: microblogFeed[index],
+                      );
+                    },
+                  ),
+                ),
+                createTab(
+                  reshareFeed,
+                  ListView.builder(
+                    itemCount: reshareFeed.length,
+                    itemBuilder: (context, index) {
+                      if (reshareFeed[index]['type'] == 'SimpleReshare')
+                        return new SimpleReshare(
+                          postObject: reshareFeed[index],
                         );
-                      }),
+                      else
+                        return new ReshareWithComment(
+                          postObject: reshareFeed[index],
+                        );
+                    },
+                  ),
                 ),
-                Container(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.builder(
-                      itemCount: reshareFeed.length,
-                      itemBuilder: (context, index) {
-                        if (reshareFeed[index]['type'] == 'SimpleReshare')
-                          return new SimpleReshare(
-                            postObject: reshareFeed[index],
-                          );
-                        else
-                          return new ReshareWithComment(
-                            postObject: reshareFeed[index],
-                          );
-                      }),
+                createTab(
+                  blogandTimelineFeed,
+                  ListView.builder(
+                    itemCount: blogandTimelineFeed.length,
+                    itemBuilder: (context, index) {
+                      if (blogandTimelineFeed[index]['type'] == 'blog')
+                        return BlogPost(blogandTimelineFeed[index]);
+                      else if (blogandTimelineFeed[index]['type'] == 'timeline')
+                        return Timeline(blogandTimelineFeed[index]);
+                      else if (blogandTimelineFeed[index]['type'] == 'carousel')
+                        return CarouselPost(
+                            postObject: blogandTimelineFeed[index]);
+                    },
+                  ),
                 ),
-                Container(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.builder(
-                      itemCount: blogandTimelineFeed.length,
-                      itemBuilder: (context, index) {
-                        if (blogandTimelineFeed[index]['type'] == 'blog')
-                          return BlogPost(blogandTimelineFeed[index]);
-                        else if (blogandTimelineFeed[index]['type'] ==
-                            'timeline')
-                          return Timeline(blogandTimelineFeed[index]);
-                        else if (blogandTimelineFeed[index]['type'] ==
-                            'carousel')
-                          return CarouselPost(
-                              postObject: blogandTimelineFeed[index]);
-                      }),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.builder(
-                      itemCount: othersFeed.length,
-                      itemBuilder: (context, index) {
-                        if (othersFeed[index]['type'] == 'shareable')
-                          return new ShareablePost(
-                            postObject: othersFeed[index],
-                          );
-                        else
-                          return new PollPost(
-                            postObject: othersFeed[index],
-                          );
-                      }),
+                createTab(
+                  othersFeed,
+                  ListView.builder(
+                    itemCount: othersFeed.length,
+                    itemBuilder: (context, index) {
+                      if (othersFeed[index]['type'] == 'shareable')
+                        return new ShareablePost(
+                          postObject: othersFeed[index],
+                        );
+                      else
+                        return new PollPost(
+                          postObject: othersFeed[index],
+                        );
+                    },
+                  ),
                 ),
               ],
             ),

@@ -98,14 +98,14 @@ class _ReshareComposerState extends State<ReshareComposer> {
             child: RaisedButton(
               onPressed: () async {
                 if (!widget.isEditing) {
+                  Fluttertoast.showToast(
+                    msg: "Resharing Post",
+                    backgroundColor: Color.fromARGB(200, 220, 20, 60),
+                  );
                   String category = (state['isFact']) ? "Fact" : "Opinion";
                   await resharePost(widget.postObject['id'],
                       widget.postObject['type'], "ResharedWithComment",
                       content: state['content'], category: category);
-                  Fluttertoast.showToast(
-                    msg: "Reshared Post",
-                    backgroundColor: Color.fromARGB(200, 220, 20, 60),
-                  );
                 } else {
                   Fluttertoast.showToast(
                     msg: "Updadting Post",

@@ -1,5 +1,8 @@
 import 'dart:ui';
-import 'package:MicroBlogger/Screens/hashtagposts.dart';
+import 'package:MicroBlogger/Backend/server.dart';
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:MicroBlogger/Screens/hashtagpostviewer.dart';
+import 'package:MicroBlogger/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:MicroBlogger/palette.dart';
 
@@ -14,52 +17,101 @@ class HashPostsViewer extends StatelessWidget {
       appBar: AppBar(
           title: Text("Microblogger Hashtags"),
           backgroundColor: Colors.black87),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Text(
-            //   "Search Hashtags",
-            //   style: TextStyle(
-            //       fontSize: 40, color: CurrentPalette['transparent_text']),
-            // ),
-            SizedBox(
-              height: 10.0,
-            ),
-            CustomInputBox(
-              "Search Hashtags",
-              hintColor: CurrentPalette['transparent_text'],
-              backColor: Colors.transparent,
-              textColor: Origin.of(context).isCurrentPaletteDarkTheme
-                  ? Colors.white
-                  : Colors.black,
-              notifier: (x) {
-                // print("dd $x");
-              },
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            GridView.count(
-              crossAxisCount: 2,
-              primary: false,
-              shrinkWrap: true,
-              childAspectRatio: 3 / 4,
-              mainAxisSpacing: 10.0,
-              crossAxisSpacing: 10.0,
-              children: [
-                ...[
-                  for (int i = 0; i < 10; i++)
-                    HashTagGroupItem(
-                      hashtag: "Programming",
-                    ),
-                ],
-              ],
-            ),
-          ],
-        ),
+      body: HashtagsListBody(),
+    );
+  }
+}
+
+class HashtagsListBody extends StatefulWidget {
+  const HashtagsListBody({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _HashtagsListBodyState createState() => _HashtagsListBodyState();
+}
+
+class _HashtagsListBodyState extends State<HashtagsListBody> {
+  Future htagData;
+
+  @override
+  void initState() {
+    htagData = getHashtags();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(10.0),
+      child: CachedFutureBuilder(
+        cacheStore: HashtagsListCache,
+        future: htagData,
+        onUpdate: (AsyncSnapshot snapshot) {
+          // print(snapshot.data);
+          print("Updated");
+          HashtagsListCache = snapshot.data;
+          return HTBody(snapshot.data);
+        },
+        onCacheUsed: (cache) {
+          print("Using Cache");
+          return HTBody(cache);
+        },
       ),
+    );
+  }
+}
+
+class HTBody extends StatefulWidget {
+  final List data;
+  HTBody(this.data);
+
+  @override
+  _HTBodyState createState() => _HTBodyState();
+}
+
+class _HTBodyState extends State<HTBody> {
+  String currentSearchQuery = "";
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 10.0,
+        ),
+        CustomInputBox(
+          "Search Hashtags",
+          hintColor: CurrentPalette['transparent_text'],
+          backColor: Colors.transparent,
+          textColor: Origin.of(context).isCurrentPaletteDarkTheme
+              ? Colors.white
+              : Colors.black,
+          notifier: (x) {
+            setState(() => currentSearchQuery = x);
+          },
+        ),
+        SizedBox(
+          height: 20.0,
+        ),
+        GridView.count(
+          crossAxisCount: 2,
+          primary: false,
+          shrinkWrap: true,
+          childAspectRatio: 3 / 4,
+          mainAxisSpacing: 10.0,
+          crossAxisSpacing: 10.0,
+          children: widget.data
+              .where(
+                (e) => e.startsWith(currentSearchQuery),
+              )
+              .map((e) => HashTagGroupItem(
+                    hashtag: e,
+                  ))
+              .toList(),
+        ),
+      ],
     );
   }
 }
@@ -82,7 +134,7 @@ class HashTagGroupItem extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => SpecificHashtaggedPosts(
+            builder: (context) => HashtagPostViewer(
               hashtag: hashtag,
             ),
           ),
@@ -94,7 +146,7 @@ class HashTagGroupItem extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.black,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.black12),
+          border: Border.all(color: CurrentPalette['border']),
           image: DecorationImage(
             image: NetworkImage(
               thumbnail, //Image
