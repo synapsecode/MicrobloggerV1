@@ -32,22 +32,60 @@ class TextItem extends EditableItem {
 
   final int id;
 
-  TextItem({
-    this.id,
-    this.textColor = Colors.white,
-    this.backgroundColor = Colors.transparent,
-    this.value = "Text",
-  });
+  Map get getJSONRepresentation {
+    return {
+      'type': "TextItem",
+      'id': this.id,
+      'value': this.value,
+      'textColor': this.textColor.value,
+      'backgroundColor': this.backgroundColor.value,
+      'scale': this.scale,
+      'rotation': this.rotation,
+      'offset': [this.position.dx, this.position.dy]
+    };
+  }
+
+  TextItem(
+      {this.id,
+      this.textColor = Colors.white,
+      this.backgroundColor = Colors.transparent,
+      this.value = "Text"});
 }
 
 class ImageItem extends EditableItem {
   File value;
   final int id;
-  double scale = 0.3;
+  //Overrided
+  double scale = 1.0;
+  Offset position = Offset(0.1, 0.1);
+  double opacity = 1.0;
+
   ItemType type = ItemType.FileImage;
+
+  Map get getJSONRepresentation {
+    return {
+      'type': "ImageItem",
+      'id': this.id,
+      'value': this.value.path,
+      'scale': this.scale,
+      'rotation': this.rotation,
+      'opacity': this.opacity,
+      'offset': [this.position.dx, this.position.dy]
+    };
+  }
 
   ImageItem({
     this.value,
     this.id,
   });
+}
+
+class DateTimeItem extends EditableItem {
+  final int hours;
+  final int minutes;
+  final String month;
+  final int date;
+  final String day;
+
+  DateTimeItem({this.hours, this.minutes, this.month, this.date, this.day});
 }
