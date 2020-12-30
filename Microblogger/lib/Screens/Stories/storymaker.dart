@@ -3,7 +3,10 @@ import 'dart:ui';
 
 import 'package:MicroBlogger/Backend/datastore.dart';
 import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:MicroBlogger/Screens/Stories/components.dart';
+import 'package:MicroBlogger/Screens/Stories/dialogs.dart';
 import 'package:MicroBlogger/Screens/Stories/renderer.dart';
+import 'package:MicroBlogger/Screens/Stories/story_items.dart';
 import 'package:MicroBlogger/Screens/Stories/storyobject_models.dart';
 import 'package:MicroBlogger/origin.dart';
 import 'package:MicroBlogger/palette.dart';
@@ -16,13 +19,14 @@ import 'package:video_player/video_player.dart';
 var scr = new GlobalKey();
 
 int cSelectedItemIndex;
-
 Color bgCol = Colors.black;
-
 var currentDraggedIndex;
 
+List<dynamic> storyItems = [];
+
 class StoryMaker extends StatefulWidget {
-  const StoryMaker({Key key}) : super(key: key);
+  // final Widget post;
+  const StoryMaker();
 
   @override
   _StoryMakerState createState() => _StoryMakerState();
@@ -31,27 +35,12 @@ class StoryMaker extends StatefulWidget {
 class _StoryMakerState extends State<StoryMaker> {
   @override
   void dispose() {
-    mockData = [];
+    storyItems = [];
+    bgCol = Colors.black;
     super.dispose();
   }
 
   File _image;
-
-  _imgFromCamera() async {
-    File image = await ImagePicker.pickImage(source: ImageSource.camera);
-
-    setState(() {
-      _image = image;
-    });
-  }
-
-  _imgFromGallery() async {
-    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      _image = image;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,11 +56,9 @@ class _StoryMakerState extends State<StoryMaker> {
               Map tree = {
                 'BackgroundColor': bgCol.value,
                 'Elements':
-                    mockData.map((e) => e.getJSONRepresentation).toList()
+                    storyItems.map((e) => e.getJSONRepresentation).toList()
               };
-
               print(tree);
-
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => StoryRenderer(
@@ -91,7 +78,7 @@ class _StoryMakerState extends State<StoryMaker> {
             showBottomSheet(
               context: context,
               builder: (context) => Container(
-                height: 170,
+                height: 270,
                 padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 40),
                 color: Colors.grey[900],
                 child: OrientationBuilder(builder: (context, orientation) {
@@ -105,73 +92,13 @@ class _StoryMakerState extends State<StoryMaker> {
                         'Image',
                         Icons.image,
                         () {
-                          showModalBottomSheet(
+                          showAddImageDialog(
                             context: context,
-                            builder: (BuildContext bc) {
-                              return SafeArea(
-                                child: Container(
-                                  child: new Wrap(
-                                    children: <Widget>[
-                                      new ListTile(
-                                        leading: new Icon(Icons.photo_camera),
-                                        title: new Text(
-                                          'Camera',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                        onTap: () async {
-                                          await _imgFromCamera();
-                                          if (_image != null) {
-                                            int nid = 0;
-                                            if (mockData.length > 0) {
-                                              nid = mockData.last.id;
-                                            }
-
-                                            mockData.add(
-                                              ImageItem(
-                                                id: nid + 1,
-                                                value: _image,
-                                              ),
-                                            );
-                                          }
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      new ListTile(
-                                          leading:
-                                              new Icon(Icons.photo_library),
-                                          title: new Text(
-                                            'Photo Library',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                          onTap: () async {
-                                            await _imgFromGallery();
-                                            if (_image != null) {
-                                              int nid = 0;
-                                              if (mockData.length > 0) {
-                                                nid = mockData.last.id;
-                                              }
-
-                                              mockData.add(
-                                                ImageItem(
-                                                  id: nid + 1,
-                                                  value: _image,
-                                                ),
-                                              );
-                                            }
-                                            Navigator.of(context).pop();
-                                          }),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
+                            img: _image,
+                            imageSetter: (img) => setState(() => _image = img),
+                            setState: setState,
                           );
-                          setState(() {
-                            _image = null;
-                          });
-
-                          // Navigator.of(context).pushNamed('/StoryMaker');
+                          setState(() => _image = null);
                         },
                         color: Colors.white,
                       ),
@@ -179,24 +106,16 @@ class _StoryMakerState extends State<StoryMaker> {
                         'Text',
                         Icons.text_fields,
                         () {
-                          print("FFF");
-                          int nid = 0;
-                          if (mockData.length > 0) {
-                            nid = mockData.last.id;
-                          }
-
-                          print("FFF");
-                          mockData.add(
+                          int nid =
+                              (storyItems.length > 0) ? storyItems.last.id : 0;
+                          storyItems.add(
                             TextItem(
                               id: nid + 1,
                               value: "Text",
-
-                              // key: new GlobalKey(),
                             ),
                           );
-
-                          // print(mockData);
                           setState(() {});
+                          Navigator.of(context).pop();
                         },
                         color: Colors.white,
                       ),
@@ -204,8 +123,29 @@ class _StoryMakerState extends State<StoryMaker> {
                         'DateTime',
                         Icons.timer,
                         () {
-                          // Navigator.of(context).pushNamed('/MicroBlogComposer');
+                          int nid =
+                              (storyItems.length > 0) ? storyItems.last.id : 0;
+                          DateTime now = new DateTime.now();
+                          storyItems.add(
+                            DateTimeItem(
+                              id: nid + 1,
+                              minutes: now.minute,
+                              hours: now.hour,
+                              date: now.day,
+                              day: getWeekDay(now.weekday),
+                              month: getMonth(now.month),
+                              color: Colors.white,
+                            ),
+                          );
+                          setState(() {});
+                          Navigator.of(context).pop();
                         },
+                        color: Colors.white,
+                      ),
+                      ActionButton(
+                        'Video',
+                        Icons.video_call,
+                        () {},
                         color: Colors.white,
                       ),
                     ],
@@ -216,18 +156,7 @@ class _StoryMakerState extends State<StoryMaker> {
           },
         ),
       ),
-
       body: StoryEditor(),
-      // body: Column(
-      //   children: [
-      //     Flexible(child: ),
-      //     Container(
-      //       width: double.infinity,
-      //       height: 80.0,
-      //       color: Colors.deepPurple,
-      //     ),
-      //   ],
-      // ),
     );
   }
 }
@@ -251,8 +180,6 @@ class _StoryEditorState extends State<StoryEditor> {
   double _currentRotation;
 
   bool _inAction = false;
-
-  // Color backgroundColor = Colors.black;
 
   Color pickerColor = Color(0xff443a49);
 
@@ -287,21 +214,9 @@ class _StoryEditorState extends State<StoryEditor> {
           },
           child: Stack(
             children: [
-              // Positioned(
-              //   bottom: 20.0,
-              //   left: 40,
-              //   child: Container(
-              //     color: Colors.red,
-              //     height: 40,
-              //     width: 300,
-              //   ),
-              // ),
-
               InkWell(
                 child: Container(color: bgCol),
                 onLongPress: () {
-                  print("Changing Background Color Dialog");
-
                   showDialog(
                     context: context,
                     builder: (context) => ColorPickerDialog(
@@ -310,32 +225,9 @@ class _StoryEditorState extends State<StoryEditor> {
                       dialogHeading: "Background Color",
                     ),
                   );
-
-                  // showBottomSheet(
-                  //   context: context,
-                  //   builder: (context) => Container(
-                  //     height: 170,
-                  //     padding:
-                  //         EdgeInsets.symmetric(horizontal: 20.0, vertical: 40),
-                  //     color: Colors.grey[900],
-                  //   ),
-                  // );
-                  // backgroundColor = backgroundColor == Colors.black
-                  //     ? Colors.green
-                  //     : Colors.black;
-                  // setState(() {});
                 },
               ),
-              if (currentDraggedIndex != null)
-                Positioned(
-                  left: 10.0,
-                  top: 10.0,
-                  child: Icon(
-                    Icons.delete,
-                    color: Colors.red,
-                  ),
-                ),
-              ...mockData.map(_buildItemWidget).toList()
+              ...storyItems.map(_buildItemWidget).toList()
             ],
           ),
         ),
@@ -346,536 +238,113 @@ class _StoryEditorState extends State<StoryEditor> {
   Widget _buildItemWidget(dynamic e) {
     final screen = MediaQuery.of(context).size;
 
-    // print("POSSS: ${e.position}");
+    Widget widget = getEditableStoryItem(e);
 
-    var widget;
-    switch (e.type) {
-      case ItemType.Text:
-        widget = Text(
-          e.value,
-          softWrap: true,
-          style: TextStyle(
-            color: e.textColor ?? Colors.white,
-            backgroundColor: e.backgroundColor ?? Colors.transparent,
-          ),
-        );
-        break;
-      case ItemType.FileImage:
-        widget = Opacity(
-          opacity: e.opacity ?? 1.0,
-          child: Image.file(
-            e.value,
-          ),
-        );
-        break;
-    }
+    Widget StoryItemControllerWidget({Function editHandler, Widget child}) {
+      return Positioned(
+        top: e.position.dy * screen.height,
+        left: e.position.dx * screen.width,
+        child: Transform.scale(
+          scale: e.scale,
+          child: Transform.rotate(
+            angle: e.rotation,
+            child: Listener(
+              onPointerDown: (details) {
+                if (_inAction) return;
+                _inAction = true;
+                currentDraggedIndex = e.id;
+                _activeItem = e;
 
-    return Positioned(
-      top: e.position.dy * screen.height,
-      left: e.position.dx * screen.width,
-      child: Transform.scale(
-        scale: e.scale,
-        child: Transform.rotate(
-          angle: e.rotation,
-          child: Listener(
-            onPointerDown: (details) {
-              print("Dragging");
-              if (_inAction) return;
-              _inAction = true;
-              currentDraggedIndex = e.id;
-              _activeItem = e;
-
-              _initPos = details.position;
-              _currentPos = e.position;
-              _currentScale = e.scale;
-              _currentRotation = e.rotation;
-            },
-            onPointerUp: (PointerUpEvent details) {
-              print("Drag End");
-
-              print(details.position.dx / e.scale);
-              // print()
-
-              currentDraggedIndex = null;
-              _inAction = false;
-              setState(() {});
-            },
-            child: InkWell(
-              onTap: () {
-                cSelectedItemIndex = e.id;
-                print("Clicked on Item, ${e.type}, id: ${e.id}");
-                if (e.type == ItemType.Text) {
-                  String nval = e.value;
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        String cVal = e.value;
-                        Color tColor = e.textColor ?? Colors.white;
-                        Color bColor = e.backgroundColor ?? Colors.transparent;
-                        return StatefulBuilder(
-                          builder: (context, setBuilderState) {
-                            TextEditingController ctrl =
-                                new TextEditingController(text: cVal);
-
-                            ctrl.selection = TextSelection.fromPosition(
-                                TextPosition(offset: ctrl.text.length));
-
-                            return AlertDialog(
-                              // title: Text(
-                              //   'Edit Text',
-                              // ),
-                              content: Container(
-                                height: 510.0,
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      RaisedButton(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 30.0),
-                                        color: Colors.yellow,
-                                        onPressed: () {
-                                          mockData.remove(e);
-                                          mockData.add(e);
-                                        },
-                                        child: Text("Bring to Front"),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text("Text Preview"),
-                                      SizedBox(
-                                        height: 10.0,
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.all(10.0),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: CurrentPalette['border'],
-                                          ),
-                                          color: Colors.white10,
-                                        ),
-                                        child: Text(
-                                          cVal,
-                                          style: TextStyle(
-                                            color: tColor,
-                                            backgroundColor: bColor,
-                                          ),
-                                        ),
-                                      ),
-                                      TextField(
-                                        maxLines: 3,
-                                        controller: ctrl,
-                                        onChanged: (x) {
-                                          setBuilderState(() {
-                                            cVal = x;
-                                            nval = x;
-                                          });
-                                        },
-                                      ),
-                                      SizedBox(height: 10.0),
-                                      Text("Text Colors"),
-                                      SizedBox(height: 10.0),
-                                      ColorPalette(
-                                        stateChanger: (color) =>
-                                            setBuilderState(
-                                                () => tColor = color),
-                                      ),
-                                      SizedBox(height: 10),
-                                      RaisedButton(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 50.0),
-                                        color: Colors.black,
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                ColorPickerDialog(
-                                              startColor: tColor,
-                                              onColorSelected: (color) =>
-                                                  setBuilderState(
-                                                      () => tColor = color),
-                                              dialogHeading:
-                                                  "Custom Text Color",
-                                            ),
-                                          );
-                                        },
-                                        child: Text("Custom Text Color"),
-                                      ),
-                                      SizedBox(height: 10.0),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          SizedBox(
-                                            width: 30.0,
-                                          ),
-                                          Text("Background Color"),
-                                          IconButton(
-                                            icon: Icon(Icons.clear),
-                                            onPressed: () {
-                                              setBuilderState(() =>
-                                                  bColor = Colors.transparent);
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                      // SizedBox(height: 5.0),
-                                      ColorPalette(
-                                        stateChanger: (color) =>
-                                            setBuilderState(
-                                                () => bColor = color),
-                                      ),
-                                      SizedBox(height: 10),
-                                      RaisedButton(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 28.0),
-                                        color: Colors.black,
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                ColorPickerDialog(
-                                              startColor: bColor,
-                                              onColorSelected: (color) =>
-                                                  setBuilderState(
-                                                      () => bColor = color),
-                                              dialogHeading:
-                                                  "Custom Background Color",
-                                            ),
-                                          );
-                                        },
-                                        child: Text("Custom Background Color"),
-                                      ),
-                                      RaisedButton(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 60.0),
-                                        color: CurrentPalette['errorColor'],
-                                        onPressed: () {
-                                          mockData.remove(e);
-
-                                          setState(() {});
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text("Delete Element"),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              actions: [
-                                FlatButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(
-                                    'Cancel',
-                                    style: TextStyle(
-                                        color:
-                                            CurrentPalette['transparent_text']),
-                                  ),
-                                ),
-                                FlatButton(
-                                  onPressed: () {
-                                    if (nval == "") nval = "Text";
-                                    print("New Value: $nval");
-
-                                    var x = mockData[mockData.indexOf(e)];
-
-                                    x.value = nval;
-                                    x.backgroundColor = bColor;
-                                    x.textColor = tColor;
-                                    setState(() {});
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    'Done',
-                                    style: TextStyle(
-                                        color:
-                                            CurrentPalette['transparent_text']),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      });
-                } else if (e.type == ItemType.FileImage) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => StatefulBuilder(
-                      builder: (context, setBuilderState) {
-                        double op = e.opacity;
-                        return AlertDialog(
-                          title: Text("Edit Image"),
-                          content: Container(
-                            height: 200,
-                            child: Column(
-                              children: [
-                                RaisedButton(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 65.0),
-                                  color: Colors.yellow,
-                                  onPressed: () {
-                                    mockData.remove(e);
-                                    mockData.add(e);
-                                    setState(() {});
-                                  },
-                                  child: Text("Bring to Front"),
-                                ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-                                RaisedButton(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 60.0),
-                                  color: CurrentPalette['errorColor'],
-                                  onPressed: () {
-                                    mockData.remove(e);
-
-                                    setState(() {});
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("Delete Element"),
-                                ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-                                Text("Opacity"),
-                                Slider(
-                                    min: 0,
-                                    max: 1,
-                                    value: op,
-                                    onChanged: (x) {
-                                      setState(() => e.opacity = x);
-                                      setBuilderState(() => op = x);
-                                    })
-                              ],
-                            ),
-                          ),
-                          actions: [
-                            FlatButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(
-                                  color: CurrentPalette['transparent_text'],
-                                ),
-                              ),
-                            ),
-                            FlatButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                'Done',
-                                style: TextStyle(
-                                  color: CurrentPalette['transparent_text'],
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  );
-                }
+                _initPos = details.position;
+                _currentPos = e.position;
+                _currentScale = e.scale;
+                _currentRotation = e.rotation;
               },
-              child: widget,
+              onPointerUp: (PointerUpEvent details) {
+                currentDraggedIndex = null;
+                _inAction = false;
+                setState(() {});
+              },
+              child: InkWell(
+                onTap: () => editHandler(),
+                child: child,
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ColorPalette extends StatelessWidget {
-  final Function(Color) stateChanger;
-
-  const ColorPalette({Key key, this.stateChanger}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 40,
-      width: 250.0,
-      decoration:
-          BoxDecoration(border: Border.all(color: CurrentPalette['border'])),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            ColorDot(
-              color: Colors.white,
-              onPress: (color) => stateChanger(color),
-            ),
-            ColorDot(
-              color: Colors.black,
-              onPress: (color) => stateChanger(color),
-            ),
-            ColorDot(
-              color: Colors.green,
-              onPress: (color) => stateChanger(color),
-            ),
-            ColorDot(
-              color: Colors.blue,
-              onPress: (color) => stateChanger(color),
-            ),
-            ColorDot(
-              color: Colors.red,
-              onPress: (color) => stateChanger(color),
-            ),
-            ColorDot(
-              color: Colors.yellow,
-              onPress: (color) => stateChanger(color),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ColorDot extends StatelessWidget {
-  final Color color;
-  final Function(Color) onPress;
-  const ColorDot({
-    Key key,
-    this.color,
-    this.onPress,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => onPress(color),
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-        child: CircleAvatar(
-          radius: 15.0,
-          backgroundColor: color,
-        ),
-      ),
-    );
-  }
-}
-
-// enum ItemType { Image, Text }
-
-// class EditableItem {
-//   Offset position = Offset(0.1, 0.1);
-//   double scale = 1.0;
-//   double rotation = 0.0;
-//   ItemType type;
-//   int id;
-//   String value;
-// }
-
-List<dynamic> mockData = [
-  // ImageItem(
-  //   id: 0,
-  //   value:
-  //       'https://cdn.pixabay.com/photo/2016/02/19/11/46/night-1209938_960_720.jpg',
-  // ),
-  // ImageItem(id: 0)
-  //   ..type = ItemType.Image
-  //   ..value =
-  //       'https://cdn.pixabay.com/photo/2016/02/19/11/46/night-1209938_960_720.jpg'
-  // ..id = 0
-  // TextItem(
-  //   id: 1,
-  //   backgroundColor: Colors.transparent,
-  //   textColor: Colors.white,
-  //   value: "Text",
-  // ),
-];
-
-class ColorPickerDialog extends StatefulWidget {
-  final Function(Color) onColorSelected;
-  final Color startColor;
-  final String dialogHeading;
-  ColorPickerDialog(
-      {Key key, this.onColorSelected, this.dialogHeading, this.startColor})
-      : super(key: key);
-
-  @override
-  _ColorPickerDialogState createState() => _ColorPickerDialogState();
-}
-
-class _ColorPickerDialogState extends State<ColorPickerDialog> {
-  Color pickerColor = Colors.black;
-  @override
-  void initState() {
-    pickerColor = widget.startColor ?? Colors.black;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(widget.dialogHeading),
-      content: SingleChildScrollView(
-        child: ColorPicker(
-          pickerColor: pickerColor,
-          onColorChanged: (color) => setState(() => pickerColor = color),
-          showLabel: true,
-          pickerAreaHeightPercent: 0.8,
-        ),
-      ),
-      actions: <Widget>[
-        FlatButton(
-          child: Text(
-            'Cancel',
-            style: TextStyle(
-                color: Origin.of(context).isCurrentPaletteDarkTheme
-                    ? Colors.white
-                    : Colors.black),
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        FlatButton(
-          child: Text(
-            'Done',
-            style: TextStyle(
-                color: Origin.of(context).isCurrentPaletteDarkTheme
-                    ? Colors.white
-                    : Colors.black),
-          ),
-          onPressed: () {
-            widget.onColorSelected(pickerColor);
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
-  }
-}
-
-extension GlobalKeyExtension on GlobalKey {
-  Rect get globalPaintBounds {
-    final renderObject = currentContext?.findRenderObject();
-    var translation = renderObject?.getTransformTo(null)?.getTranslation();
-    if (translation != null && renderObject.paintBounds != null) {
-      return renderObject.paintBounds
-          .shift(Offset(translation.x, translation.y));
-    } else {
-      return null;
+      );
     }
-  }
 
-  Size get getSize {
-    final RenderBox rb = this.currentContext?.findRenderObject();
-    return rb.size;
+    return StoryItemControllerWidget(
+      editHandler: () {
+        cSelectedItemIndex = e.id;
+        print("Clicked on Item, ${e.type}, id: ${e.id}");
+        if (e.type == ItemType.Text) {
+          showTextEditDialog(
+            context: context,
+            nval: e.value,
+            e: e,
+            setState: setState,
+          );
+        } else if (e.type == ItemType.FileImage) {
+          showImageEditDialog(
+            context: context,
+            e: e,
+            setState: setState,
+          );
+        } else if (e.type == ItemType.DateTime) {
+          showDateTimeEditDialog(
+            context: context,
+            e: e,
+            setState: setState,
+          );
+        }
+      },
+      child: widget,
+    );
   }
 }
 
-getPaintBounds(GlobalKey key) {
-  final renderObject = key.currentContext?.findRenderObject();
-  var translation = renderObject?.getTransformTo(null)?.getTranslation();
-  if (translation != null && renderObject.paintBounds != null) {
-    return renderObject.paintBounds.shift(Offset(translation.x, translation.y));
-  } else {
-    return null;
-  }
+String getWeekDay(int d) {
+  return (d == 1)
+      ? "Mon"
+      : (d == 2)
+          ? "Tue"
+          : (d == 3)
+              ? "Wed"
+              : (d == 4)
+                  ? "Thu"
+                  : (d == 5)
+                      ? "Fri"
+                      : (d == 6)
+                          ? "Sat"
+                          : (d == 7)
+                              ? "Sun"
+                              : "Day";
 }
 
-Rect getDifference(Rect r1, Rect r2) {
-  return Rect.fromLTRB(r1.left - r2.left, r1.top - r2.top, r1.right - r2.right,
-      r1.bottom - r2.bottom);
+String getMonth(int m) {
+  return (m == 1)
+      ? "Jan"
+      : (m == 2)
+          ? "Feb"
+          : (m == 3)
+              ? "Mar"
+              : (m == 4)
+                  ? "Apr"
+                  : (m == 5)
+                      ? "May"
+                      : (m == 6)
+                          ? "Jun"
+                          : (m == 7)
+                              ? "July"
+                              : (m == 8)
+                                  ? "Aug"
+                                  : (m == 9)
+                                      ? "Sep"
+                                      : (m == 10)
+                                          ? "Oct"
+                                          : (m == 11)
+                                              ? "Nov"
+                                              : "Dec";
 }

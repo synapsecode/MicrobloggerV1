@@ -2,6 +2,7 @@ import '../Components/Global/globalcomponents.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import '../palette.dart';
 import 'homepage.dart';
 
 class NotificationsPage extends StatelessWidget {
@@ -49,7 +50,9 @@ class NotificationItem extends StatelessWidget {
         child: new Container(
             margin: EdgeInsets.all(5.0),
             padding: EdgeInsets.all(10.0),
-            color: Colors.black45,
+            decoration: BoxDecoration(
+                color: CurrentPalette['postcolour'],
+                border: Border.all(color: CurrentPalette['border'])),
             child: Container(
               child: Container(
                   padding: EdgeInsets.all(10.0),
@@ -107,10 +110,14 @@ class NotificationItem extends StatelessWidget {
                                       : (notificationType == 'Comment')
                                           ? " Commented on "
                                           : "",
+                              style: TextStyle(
+                                  color: CurrentPalette['transparent_text']),
                             ),
                             TextSpan(
-                                text:
-                                    "your Microblog. Click this message to redirect to the MicroBlog")
+                              text:
+                                  "your Microblog. Click this message to redirect to the MicroBlog",
+                              style: TextStyle(color: CurrentPalette['border']),
+                            )
                           ],
                         ),
                       ),
@@ -120,7 +127,7 @@ class NotificationItem extends StatelessWidget {
                       Container(
                           decoration: BoxDecoration(
                               border: Border.all(
-                                  color: Colors.white10, width: 0.5)),
+                                  color: CurrentPalette['border'], width: 0.5)),
                           padding: EdgeInsets.all(10.0),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

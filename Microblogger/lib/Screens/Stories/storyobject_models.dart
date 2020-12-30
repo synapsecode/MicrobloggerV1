@@ -16,7 +16,7 @@ Impl
 -> Screenshot
 */
 
-enum ItemType { FileImage, Text }
+enum ItemType { FileImage, Text, DateTime }
 
 class EditableItem {
   Offset position = Offset(0.1, 0.1);
@@ -81,11 +81,35 @@ class ImageItem extends EditableItem {
 }
 
 class DateTimeItem extends EditableItem {
+  final int id;
   final int hours;
   final int minutes;
   final String month;
   final int date;
   final String day;
+  ItemType type = ItemType.DateTime;
+  Color color;
 
-  DateTimeItem({this.hours, this.minutes, this.month, this.date, this.day});
+  Map get getJSONRepresentation {
+    return {
+      'type': "DateTimeItem",
+      'id': this.id,
+      'value':
+          "${this.month}-${this.day}-${this.date}-${this.hours}-${this.minutes}",
+      'scale': this.scale,
+      'rotation': this.rotation,
+      'offset': [this.position.dx, this.position.dy],
+      'color': this.color.value,
+    };
+  }
+
+  DateTimeItem({
+    this.id,
+    this.hours,
+    this.minutes,
+    this.month,
+    this.date,
+    this.day,
+    this.color,
+  });
 }

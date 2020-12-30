@@ -1,6 +1,4 @@
-import 'dart:io';
-
-import 'package:MicroBlogger/Screens/Stories/storyobject_models.dart';
+import 'package:MicroBlogger/Screens/Stories/story_items.dart';
 import 'package:flutter/material.dart';
 
 class StoryRenderer extends StatefulWidget {
@@ -15,30 +13,7 @@ class StoryRenderer extends StatefulWidget {
 class _StoryRendererState extends State<StoryRenderer> {
   Widget storyItemBuilder(dynamic e) {
     final screen = MediaQuery.of(context).size;
-    Widget widget;
-    switch (e['type']) {
-      case 'TextItem':
-        widget = Text(
-          e['value'],
-          // key: e.key,
-          softWrap: true,
-          style: TextStyle(
-            color: Color(e['textColor']) ?? Colors.white,
-            backgroundColor: Color(e['backgroundColor']) ?? Colors.transparent,
-          ),
-        );
-        break;
-      case 'ImageItem':
-        //! Change this later to use Image.network
-        widget = Opacity(
-          opacity: e['opacity'],
-          child: Image.file(
-            File(e['value']),
-            // key: e.key,
-          ),
-        );
-        break;
-    }
+    Widget widget = getRenderableStoryItem(e);
 
     return Positioned(
       top: e['offset'][1] * screen.height,
@@ -58,6 +33,7 @@ class _StoryRendererState extends State<StoryRenderer> {
     // print(widget.sTre['Background']['bgCol']);
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         backgroundColor: Color(widget.data['BackgroundColor']),
         title: Text("Story Renderer"),
       ),

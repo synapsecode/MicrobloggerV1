@@ -146,23 +146,32 @@ class CachedFutureBuilder extends StatefulWidget {
 
 class _CachedFutureBuilderState extends State<CachedFutureBuilder> {
   Widget loader;
+  Future fut;
   @override
   void initState() {
     loader = widget.loader ?? CirclularLoader();
+    fut = widget.future;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: widget.future,
+      future: fut,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           //Value Recieved
           if (snapshot.data != null)
             return widget.onUpdate(snapshot);
-          else
-            return widget.onCacheUsed(widget.cacheStore);
+          else {
+            if (widget.cacheStore.length > 0) {
+              //Use CacheStore
+              return widget.onCacheUsed(widget.cacheStore);
+            } else {
+              fut = widget.future;
+              return loader;
+            }
+          }
         } else {
           //Pending
           if (widget.cacheStore.length > 0) {
