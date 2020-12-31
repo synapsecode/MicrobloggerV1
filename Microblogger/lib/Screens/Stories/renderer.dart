@@ -2,9 +2,9 @@ import 'package:MicroBlogger/Screens/Stories/story_items.dart';
 import 'package:flutter/material.dart';
 
 class StoryRenderer extends StatefulWidget {
-  final Map serializedTree;
+  // final Map serializedTree;
   final Map data;
-  StoryRenderer({this.serializedTree, this.data});
+  StoryRenderer({this.data});
 
   @override
   _StoryRendererState createState() => _StoryRendererState();
@@ -13,7 +13,7 @@ class StoryRenderer extends StatefulWidget {
 class _StoryRendererState extends State<StoryRenderer> {
   Widget storyItemBuilder(dynamic e) {
     final screen = MediaQuery.of(context).size;
-    Widget widget = getRenderableStoryItem(e);
+    Widget widget = getRenderableStoryItem(context, e);
 
     return Positioned(
       top: e['offset'][1] * screen.height,

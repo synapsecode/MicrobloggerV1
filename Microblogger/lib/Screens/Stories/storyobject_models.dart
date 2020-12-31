@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import './storymaker.dart';
 import 'package:flutter/material.dart';
 
 /*
@@ -16,7 +16,7 @@ Impl
 -> Screenshot
 */
 
-enum ItemType { FileImage, Text, DateTime, PostItem }
+enum ItemType { FileImage, Text, DateTime, PostItem, VideoItem }
 
 class EditableItem {
   Offset position = Offset(0.1, 0.1);
@@ -53,11 +53,9 @@ class TextItem extends EditableItem {
 }
 
 class ImageItem extends EditableItem {
-  File value;
+  File value; //!Make this network image when rendering
   final int id;
-  //Overrided
-  double scale = 1.0;
-  Offset position = Offset(0.1, 0.1);
+
   double opacity = 1.0;
 
   ItemType type = ItemType.FileImage;
@@ -119,5 +117,44 @@ class PostStoryitem extends EditableItem {
   final Widget post;
   ItemType type = ItemType.PostItem;
 
+  Map get getJSONRepresentation {
+    return {
+      'type': "PostItem",
+      'id': this.id,
+      //!This should Change because postData comes from server
+      'post_type': hoistedPostData['type'],
+      'post_id': hoistedPostData['id'],
+      'post': hoistedPostData,
+      'scale': this.scale,
+      'rotation': this.rotation,
+      'offset': [this.position.dx, this.position.dy],
+    };
+  }
+
   PostStoryitem({this.post, this.id});
+}
+
+class VideoItem extends EditableItem {
+  final int id;
+  File value;
+  bool muted;
+  ItemType type = ItemType.VideoItem;
+
+  Map get getJSONRepresentation {
+    return {
+      'type': "VideoItem",
+      'id': this.id,
+      'muted': this.muted,
+      'value': this.value.path,
+      'scale': this.scale,
+      'rotation': this.rotation,
+      'offset': [this.position.dx, this.position.dy],
+    };
+  }
+
+  VideoItem({
+    this.id,
+    this.value,
+    this.muted = false,
+  });
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:MicroBlogger/Components/Global/tester.dart';
 import 'package:MicroBlogger/Screens/hashtaglistviewer.dart';
 import 'package:MicroBlogger/Screens/hashtagpostviewer.dart';
 import 'package:MicroBlogger/globals.dart';
@@ -438,7 +439,8 @@ class AddOptionsWidget extends StatelessWidget {
               Navigator.of(context).pushNamed('/MediaComposer');
             }),
             ActionButton('Video Carousel', Icons.video_library, () {
-              Navigator.of(context).pushNamed('/MediaComposer');
+              // Navigator.of(context)
+              //     .push(MaterialPageRoute(builder: (context) => TesterPage()));
             }),
             ActionButton('Audio', Icons.music_note, () {
               Navigator.of(context).pushNamed('/MediaComposer');
@@ -478,7 +480,9 @@ class _FloatingCircleButtonState extends State<FloatingCircleButton> {
 }
 
 class CirclularLoader extends StatelessWidget {
-  const CirclularLoader();
+  final Color color;
+  final double strokeWidth;
+  const CirclularLoader({this.color, this.strokeWidth});
 
   @override
   Widget build(BuildContext context) {
@@ -489,8 +493,11 @@ class CirclularLoader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircularProgressIndicator(
-                valueColor: new AlwaysStoppedAnimation<Color>(primaryColor),
-                backgroundColor: Colors.transparent)
+              valueColor:
+                  new AlwaysStoppedAnimation<Color>(color ?? primaryColor),
+              backgroundColor: Colors.transparent,
+              strokeWidth: strokeWidth ?? 4,
+            )
           ],
         ),
       ),

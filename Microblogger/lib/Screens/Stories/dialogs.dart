@@ -420,3 +420,134 @@ void showPostEditDialog({BuildContext context, Function setState, dynamic e}) {
     ),
   );
 }
+
+void showVideoEditDialog({BuildContext context, Function setState, dynamic e}) {
+  showDialog(
+    context: context,
+    builder: (context) => StatefulBuilder(
+      builder: (context, setBuilderState) {
+        return CustomAlertDialogScaffold(
+          title: "Edit Video",
+          height: 160,
+          children: [
+            RaisedButton(
+              padding: EdgeInsets.symmetric(horizontal: 65.0),
+              color: Colors.yellow,
+              onPressed: () {
+                storyItems.remove(e);
+                storyItems.add(e);
+                setState(() {});
+              },
+              child: Text("Bring to Front"),
+            ),
+            RaisedButton(
+              padding: EdgeInsets.symmetric(horizontal: 70.0),
+              color: Colors.yellow,
+              onPressed: () {
+                setState(() {
+                  e.muted = !e.muted;
+                });
+                setBuilderState(() {});
+              },
+              child: Text("${e.muted ? 'Unmute' : 'Mute'} Video"),
+            ),
+            RaisedButton(
+              padding: EdgeInsets.symmetric(horizontal: 60.0),
+              color: CurrentPalette['errorColor'],
+              onPressed: () {
+                storyItems.remove(e);
+
+                setState(() {});
+                Navigator.pop(context);
+              },
+              child: Text("Delete Element"),
+            ),
+          ],
+          onDone: () {},
+        );
+      },
+    ),
+  );
+}
+
+void showAddVideoDialog({
+  BuildContext context,
+  Function(File) videoSetter,
+  Function setState,
+  File vid,
+}) {
+  final picker = ImagePicker();
+
+  // This funcion will helps you to pick a Video File
+  _pickGalleryVideo() async {
+    PickedFile pickedFile = await picker.getVideo(source: ImageSource.gallery);
+    vid = File(pickedFile.path);
+    videoSetter(File(pickedFile.path));
+  }
+
+  _pickVideoFromCamera() async {
+    PickedFile pickedFile = await picker.getVideo(source: ImageSource.camera);
+    vid = File(pickedFile.path);
+    videoSetter(File(pickedFile.path));
+  }
+
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext bc) {
+      return SafeArea(
+        child: Container(
+          child: new Wrap(
+            children: <Widget>[
+              new ListTile(
+                leading: new Icon(Icons.photo_camera),
+                title: new Text(
+                  'Camera',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () async {
+                  await _pickVideoFromCamera();
+                  if (vid != null) {
+                    int nid = (storyItems.length > 0) ? storyItems.last.id : 0;
+                    storyItems.add(
+                      VideoItem(
+                        id: nid + 1,
+                        value: vid,
+                      ),
+                    );
+                  }
+                  setState(() {
+                    vid = null;
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+              new ListTile(
+                leading: new Icon(Icons.photo_library),
+                title: new Text(
+                  'Gallery',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () async {
+                  await _pickGalleryVideo();
+                  if (vid != null) {
+                    int nid = (storyItems.length > 0) ? storyItems.last.id : 0;
+                    storyItems.add(
+                      VideoItem(
+                        id: nid + 1,
+                        value: vid,
+                      ),
+                    );
+                  }
+                  setState(() {
+                    vid = null;
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}

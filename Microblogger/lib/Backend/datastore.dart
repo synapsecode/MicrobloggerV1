@@ -8,7 +8,7 @@ import 'server.dart';
 
 Map currentUser = {};
 Map currentPallete = {};
-String serverURL = "https://1201b90f0c0b.ngrok.io";
+String serverURL = "https://bc449083b6a6.ngrok.io";
 
 saveUserLoginInfo(username) async {
   if (!Platform.isWindows) {

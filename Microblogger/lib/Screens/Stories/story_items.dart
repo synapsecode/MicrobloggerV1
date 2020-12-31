@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:MicroBlogger/Components/Global/tester.dart';
+import 'package:MicroBlogger/Screens/Stories/components.dart';
 import 'package:MicroBlogger/Screens/Stories/storyobject_models.dart';
 import 'package:MicroBlogger/Screens/homepage.dart';
 import 'package:flutter/material.dart';
@@ -65,15 +67,25 @@ Widget getEditableStoryItem(BuildContext context, dynamic e) {
       );
       break;
     case ItemType.PostItem:
-      print(e.post);
+      // print(e.post);
       widget =
           Container(child: e.post, width: MediaQuery.of(context).size.width);
+      break;
+    case ItemType.VideoItem:
+      widget = Container(
+        // width: 300,
+        // height: 700,
+        child: FileVideo(
+          file: e.value,
+          isMuted: e.muted,
+        ),
+      );
       break;
   }
   return widget;
 }
 
-Widget getRenderableStoryItem(dynamic data) {
+Widget getRenderableStoryItem(BuildContext context, dynamic data) {
   Widget widget;
   switch (data['type']) {
     case 'TextItem':
@@ -132,6 +144,22 @@ Widget getRenderableStoryItem(dynamic data) {
               transform: Matrix4.translationValues(0.0, -15.0, 0.0),
             ),
           ],
+        ),
+      );
+      break;
+    case 'PostItem':
+      widget = Container(
+          child: feedBuilder(data['post']['type'], data['post']),
+          width: MediaQuery.of(context).size.width);
+      break;
+    case 'VideoItem':
+      //!Change to NetworkVideo
+      widget = Container(
+        // width: 300,
+        // height: 700,
+        child: FileVideo(
+          file: File(data['value']),
+          isMuted: data['muted'],
         ),
       );
       break;

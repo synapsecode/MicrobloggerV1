@@ -1,7 +1,12 @@
+import 'dart:io';
+
+import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
 import 'package:MicroBlogger/origin.dart';
 import 'package:MicroBlogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
 
 class ColorPalette extends StatelessWidget {
   final Function(Color) stateChanger;
@@ -174,6 +179,136 @@ class CustomAlertDialogScaffold extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class FileVideo extends StatefulWidget {
+  final File file;
+  final bool isMuted;
+  const FileVideo({this.file, this.isMuted = false});
+
+  @override
+  _FileVideoState createState() => _FileVideoState();
+}
+
+class _FileVideoState extends State<FileVideo> {
+  final picker = ImagePicker();
+
+  VideoPlayerController _controller;
+  @override
+  void initState() {
+    _controller = VideoPlayerController.file(widget.file)
+      ..initialize().then((_) {
+        setState(() {});
+      })
+      ..setLooping(true)
+      ..play()
+      ..setVolume(widget.isMuted ? 0 : 1);
+    super.initState();
+  }
+
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _controller.setVolume(widget.isMuted ? 0 : 1);
+    return Container(
+      child: _controller.value.initialized
+          ? FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                height: _controller.value.size.height,
+                width: _controller.value.size.width,
+                child: VideoPlayer(_controller),
+              ),
+            )
+          : Column(
+              children: [
+                CirclularLoader(
+                  color: Colors.white30,
+                  strokeWidth: 2,
+                ),
+                Container(
+                  child: Text(
+                    "Loading Video",
+                    style: TextStyle(
+                      color: Colors.white30,
+                      fontSize: 12,
+                    ),
+                  ),
+                  transform: Matrix4.translationValues(0.0, -13.0, 0.0),
+                ),
+              ],
+            ),
+    );
+  }
+}
+
+class NetworkVideo extends StatefulWidget {
+  final String url;
+  final bool isMuted;
+  const NetworkVideo({this.url, this.isMuted = false});
+
+  @override
+  _NetworkVideoState createState() => _NetworkVideoState();
+}
+
+class _NetworkVideoState extends State<NetworkVideo> {
+  final picker = ImagePicker();
+
+  VideoPlayerController _controller;
+  @override
+  void initState() {
+    _controller = VideoPlayerController.network(widget.url)
+      ..initialize().then((_) {
+        setState(() {});
+      })
+      ..setLooping(true)
+      ..play();
+
+    super.initState();
+  }
+
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _controller.setVolume(widget.isMuted ? 0 : 1);
+    return Container(
+      child: _controller.value.initialized
+          ? FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                height: _controller.value.size.height,
+                width: _controller.value.size.width,
+                child: VideoPlayer(_controller),
+              ),
+            )
+          : Column(
+              children: [
+                CirclularLoader(
+                  color: Colors.white30,
+                  strokeWidth: 2,
+                ),
+                Container(
+                  child: Text(
+                    "Loading Video",
+                    style: TextStyle(
+                      color: Colors.white30,
+                      fontSize: 12,
+                    ),
+                  ),
+                  transform: Matrix4.translationValues(0.0, -13.0, 0.0),
+                ),
+              ],
+            ),
     );
   }
 }

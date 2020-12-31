@@ -27,7 +27,7 @@ dependencies:
   webview_flutter:
   font_awesome_flutter:
   image_cropper: 1.0.2
-  image_picker: 0.6.0+17
+  image_picker: 0.6.7+12
   fluttertoast:
   http:
   shake:

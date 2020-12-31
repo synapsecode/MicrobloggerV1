@@ -379,6 +379,7 @@ class TopBar extends StatelessWidget {
                 // print(post);
                 if (storyItems.length == 0) {
                   storyItems.add(PostStoryitem(id: 0, post: post));
+                  hoistedPostData = postObject;
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => StoryMaker(),
                   ));

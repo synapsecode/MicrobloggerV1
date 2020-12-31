@@ -24,6 +24,7 @@ Color bgCol = Colors.black;
 var currentDraggedIndex;
 
 List<dynamic> storyItems = [];
+Map hoistedPostData;
 
 class StoryMaker extends StatefulWidget {
   const StoryMaker();
@@ -46,11 +47,13 @@ class _StoryMakerState extends State<StoryMaker> {
   @override
   void dispose() {
     storyItems = [];
+    hoistedPostData = null;
     bgCol = Colors.black;
     super.dispose();
   }
 
   File _image;
+  File _video;
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +158,15 @@ class _StoryMakerState extends State<StoryMaker> {
                       ActionButton(
                         'Video',
                         Icons.video_call,
-                        () {},
+                        () {
+                          showAddVideoDialog(
+                            context: context,
+                            vid: _video,
+                            setState: setState,
+                            videoSetter: (v) => setState(() => _video = v),
+                          );
+                          setState(() => _video = null);
+                        },
                         color: Colors.white,
                       ),
                     ],
@@ -316,6 +327,12 @@ class _StoryEditorState extends State<StoryEditor> {
             );
           } else if (e.type == ItemType.DateTime) {
             showDateTimeEditDialog(
+              context: context,
+              e: e,
+              setState: setState,
+            );
+          } else if (e.type == ItemType.VideoItem) {
+            showVideoEditDialog(
               context: context,
               e: e,
               setState: setState,
