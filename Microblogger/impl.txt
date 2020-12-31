@@ -2,3 +2,6 @@ Hashtag (or) Topics Viewer
 Color State Change
 Microblogger Shorts
 Caching
+
+
+When post deleted, story should just say deleted post

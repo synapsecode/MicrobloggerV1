@@ -1,6 +1,0 @@
-package com.example.MicroBloggerX
-
-import io.flutter.embedding.android.FlutterActivity
-
-class MainActivity: FlutterActivity() {
-}

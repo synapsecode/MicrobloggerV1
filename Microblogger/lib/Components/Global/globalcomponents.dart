@@ -93,7 +93,8 @@ class _ImageCarouselState extends State<ImageCarousel> {
               margin: EdgeInsets.symmetric(horizontal: 5.0),
               decoration: BoxDecoration(
                   color: Colors.black,
-                  border: Border.all(color: Colors.white30, width: 1.0)),
+                  border:
+                      Border.all(color: CurrentPalette['border'], width: 1.0)),
               child: Image.network(
                 imgUrl,
                 fit: BoxFit.cover,
