@@ -8,7 +8,7 @@ import '../../Backend/server.dart';
 import '../../origin.dart';
 
 class UserFollowSuggestions extends StatefulWidget {
-  UserFollowSuggestions({Key key}) : super(key: key);
+  UserFollowSuggestions();
 
   @override
   _UserFollowSuggestionsState createState() => _UserFollowSuggestionsState();
@@ -100,11 +100,10 @@ class UserDisplayCard extends StatelessWidget {
   final Function(int) del;
 
   const UserDisplayCard({
-    Key key,
     this.user,
     this.userIndex,
     this.del,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -327,7 +327,7 @@ void showDateTimeEditDialog(
                   color: CurrentPalette['border'],
                 ),
               ),
-              child: getEditableStoryItem(e),
+              child: getEditableStoryItem(context, e),
             ),
             SizedBox(height: 10),
             RaisedButton(
@@ -383,6 +383,40 @@ void showDateTimeEditDialog(
           onDone: () {},
         );
       },
+    ),
+  );
+}
+
+void showPostEditDialog({BuildContext context, Function setState, dynamic e}) {
+  showDialog(
+    context: context,
+    builder: (context) => CustomAlertDialogScaffold(
+      title: "Edit Post",
+      height: 100,
+      children: [
+        RaisedButton(
+          padding: EdgeInsets.symmetric(horizontal: 65.0),
+          color: Colors.yellow,
+          onPressed: () {
+            storyItems.remove(e);
+            storyItems.add(e);
+            setState(() {});
+          },
+          child: Text("Bring to Front"),
+        ),
+        RaisedButton(
+          padding: EdgeInsets.symmetric(horizontal: 60.0),
+          color: CurrentPalette['errorColor'],
+          onPressed: () {
+            storyItems.remove(e);
+
+            setState(() {});
+            Navigator.pop(context);
+          },
+          child: Text("Delete Element"),
+        ),
+      ],
+      onDone: () {},
     ),
   );
 }

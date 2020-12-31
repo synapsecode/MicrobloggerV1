@@ -9,7 +9,7 @@ import 'package:MicroBlogger/palette.dart';
 import '../origin.dart';
 
 class HashPostsViewer extends StatelessWidget {
-  const HashPostsViewer({Key key}) : super(key: key);
+  const HashPostsViewer();
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +23,7 @@ class HashPostsViewer extends StatelessWidget {
 }
 
 class HashtagsListBody extends StatefulWidget {
-  const HashtagsListBody({
-    Key key,
-  }) : super(key: key);
+  const HashtagsListBody();
 
   @override
   _HashtagsListBodyState createState() => _HashtagsListBodyState();
@@ -125,8 +123,7 @@ class HashTagGroupItem extends StatelessWidget {
         "https://i.pinimg.com/originals/ce/df/85/cedf859f9ac47edc599cda3cd74998f6.jpg",
     this.cta = "Click to view posts",
     this.hashtag,
-    Key key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -209,8 +206,7 @@ class CustomInputBox extends StatefulWidget {
       this.isFilled,
       this.hintColor,
       this.hintText,
-      key})
-      : super(key: key);
+      key});
 
   @override
   _CustomInputBoxState createState() => _CustomInputBoxState();

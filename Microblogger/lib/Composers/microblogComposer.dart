@@ -7,8 +7,7 @@ import '../Backend/server.dart';
 class MicroBlogComposer extends StatefulWidget {
   final Map preExistingState;
   final bool isEditing;
-  const MicroBlogComposer({this.preExistingState, this.isEditing, key})
-      : super(key: key);
+  const MicroBlogComposer({this.preExistingState, this.isEditing});
 
   @override
   _MicroBlogComposerState createState() => _MicroBlogComposerState();

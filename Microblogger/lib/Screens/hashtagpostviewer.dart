@@ -11,7 +11,7 @@ import '../origin.dart';
 
 class HashtagPostViewer extends StatefulWidget {
   final String hashtag;
-  const HashtagPostViewer({Key key, this.hashtag}) : super(key: key);
+  const HashtagPostViewer({this.hashtag});
 
   @override
   _HashtagPostViewerState createState() => _HashtagPostViewerState();
@@ -72,7 +72,7 @@ class _HashtagPostViewerState extends State<HashtagPostViewer>
 
 class SliverChild extends StatelessWidget {
   final String hashtag;
-  const SliverChild({Key key, this.hashtag}) : super(key: key);
+  const SliverChild({this.hashtag});
 
   @override
   Widget build(BuildContext context) {
@@ -112,11 +112,9 @@ class SliverChild extends StatelessWidget {
 class PostViewer extends StatefulWidget {
   final Map data;
   const PostViewer({
-    Key key,
     @required TabController controller,
     this.data,
-  })  : _controller = controller,
-        super(key: key);
+  }) : _controller = controller;
 
   final TabController _controller;
 

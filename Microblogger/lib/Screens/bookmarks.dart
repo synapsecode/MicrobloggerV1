@@ -7,7 +7,7 @@ import '../Components/Templates/postTemplates.dart';
 
 class BookmarksPage extends StatefulWidget {
   final currentUser;
-  BookmarksPage({Key key, this.currentUser}) : super(key: key);
+  BookmarksPage({this.currentUser});
 
   @override
   _BookmarksPageState createState() => _BookmarksPageState();

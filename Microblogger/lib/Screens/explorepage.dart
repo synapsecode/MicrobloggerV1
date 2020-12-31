@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../Backend/server.dart';
 
 class ExplorePage extends StatefulWidget {
-  const ExplorePage({Key key}) : super(key: key);
+  const ExplorePage();
 
   @override
   _ExplorePageState createState() => _ExplorePageState();
@@ -174,10 +174,8 @@ class ExploreOthers extends StatelessWidget {
 class Explorer extends StatefulWidget {
   final TabController _controller;
   const Explorer({
-    Key key,
     @required TabController controller,
-  })  : _controller = controller,
-        super(key: key);
+  }) : _controller = controller;
 
   @override
   _ExplorerState createState() => _ExplorerState();

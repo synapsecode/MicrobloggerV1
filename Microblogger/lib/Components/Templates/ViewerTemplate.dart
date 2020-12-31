@@ -7,7 +7,7 @@ import '../Global/globalcomponents.dart';
 
 class BaseViewer extends StatefulWidget {
   final postObject;
-  BaseViewer({Key key, this.postObject}) : super(key: key);
+  BaseViewer({this.postObject});
 
   @override
   _BaseViewerState createState() => _BaseViewerState();
@@ -90,7 +90,7 @@ class _BaseViewerState extends State<BaseViewer> {
 
 class CommentSection extends StatefulWidget {
   final postObject;
-  const CommentSection({Key key, this.postObject}) : super(key: key);
+  const CommentSection({this.postObject});
 
   @override
   _CommentSectionState createState() => _CommentSectionState();

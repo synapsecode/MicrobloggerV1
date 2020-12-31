@@ -5,7 +5,7 @@ import 'dart:io' show Platform;
 
 class ShareableWebView extends StatelessWidget {
   final link;
-  const ShareableWebView({Key key, this.link}) : super(key: key);
+  const ShareableWebView({this.link});
 
   @override
   Widget build(BuildContext context) {

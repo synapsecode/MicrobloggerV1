@@ -8,7 +8,7 @@ import '../palette.dart';
 //! ADD EDIT POLL
 
 class PollComposer extends StatefulWidget {
-  const PollComposer({Key key}) : super(key: key);
+  const PollComposer();
 
   @override
   _PollComposerState createState() => _PollComposerState();

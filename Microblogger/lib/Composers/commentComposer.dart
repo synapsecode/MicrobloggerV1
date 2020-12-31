@@ -8,9 +8,7 @@ class CommentComposer extends StatefulWidget {
   final post;
   final Map preExistingState;
   final bool isEditing;
-  const CommentComposer(
-      {this.isEditing, this.preExistingState, Key key, this.post})
-      : super(key: key);
+  const CommentComposer({this.isEditing, this.preExistingState, this.post});
 
   @override
   _CommentComposerState createState() => _CommentComposerState();

@@ -6,7 +6,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 class ColorPalette extends StatelessWidget {
   final Function(Color) stateChanger;
 
-  const ColorPalette({Key key, this.stateChanger}) : super(key: key);
+  const ColorPalette({this.stateChanger});
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +54,9 @@ class ColorDot extends StatelessWidget {
   final Color color;
   final Function(Color) onPress;
   const ColorDot({
-    Key key,
     this.color,
     this.onPress,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +78,7 @@ class ColorPickerDialog extends StatefulWidget {
   final Color startColor;
   final String dialogHeading;
   ColorPickerDialog(
-      {Key key, this.onColorSelected, this.dialogHeading, this.startColor})
-      : super(key: key);
+      {this.onColorSelected, this.dialogHeading, this.startColor});
 
   @override
   _ColorPickerDialogState createState() => _ColorPickerDialogState();
@@ -141,7 +139,7 @@ class CustomAlertDialogScaffold extends StatelessWidget {
   final List<Widget> children;
   final Function onDone;
   const CustomAlertDialogScaffold(
-      {Key key, this.title, this.height, this.children, this.onDone});
+      {this.title, this.height, this.children, this.onDone});
 
   @override
   Widget build(BuildContext context) {

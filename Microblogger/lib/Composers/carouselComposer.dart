@@ -11,8 +11,7 @@ import '../Backend/server.dart';
 class CarouselComposer extends StatefulWidget {
   final Map preExistingState;
   final bool isEditing;
-  CarouselComposer({Key key, this.isEditing, this.preExistingState})
-      : super(key: key);
+  CarouselComposer({this.isEditing, this.preExistingState});
 
   @override
   _CarouselComposerState createState() => _CarouselComposerState();

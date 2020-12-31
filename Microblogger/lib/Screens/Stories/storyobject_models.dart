@@ -16,7 +16,7 @@ Impl
 -> Screenshot
 */
 
-enum ItemType { FileImage, Text, DateTime }
+enum ItemType { FileImage, Text, DateTime, PostItem }
 
 class EditableItem {
   Offset position = Offset(0.1, 0.1);
@@ -112,4 +112,12 @@ class DateTimeItem extends EditableItem {
     this.day,
     this.color,
   });
+}
+
+class PostStoryitem extends EditableItem {
+  final int id;
+  final Widget post;
+  ItemType type = ItemType.PostItem;
+
+  PostStoryitem({this.post, this.id});
 }

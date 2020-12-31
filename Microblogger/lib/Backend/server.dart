@@ -731,6 +731,29 @@ editCarousel(post_id, content, images) async {
 //-----------------------------------------EDIT POSTS------------------------------------------------
 
 //-----------------------------------------EXPLORE-------------------------------------------------
+
+safeGetRequest({
+  String url,
+  Function onSuccess,
+  Function onUnsuccessful,
+  Function onError,
+}) async {
+  http.Response response = await http.get(url);
+  try {
+    if (response.statusCode == 200) {
+      onSuccess(jsonDecode(response.body));
+    } else {
+      print("ResponseCode ->${response.statusCode}");
+      if (onUnsuccessful != null) onUnsuccessful(response);
+    }
+  } on HandshakeException {
+    print("Handshake Error has Occured");
+  } catch (e) {
+    print("Unknown Error: $e");
+    if (onError != null) onError(response);
+  }
+}
+
 exploreMicroblogs() async {
   http.Response response = await http
       .get("$serverURL/exploremicroblogs/${currentUser['user']['username']}");

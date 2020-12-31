@@ -6,7 +6,7 @@ import '../../palette.dart';
 
 class YoutubeElement extends StatefulWidget {
   final Map data;
-  YoutubeElement(this.data, {key}) : super(key: key);
+  YoutubeElement(this.data, {key});
 
   @override
   _YoutubeElementState createState() => _YoutubeElementState();

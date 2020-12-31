@@ -8,7 +8,7 @@ import '../Components/Templates/basetemplate.dart';
 
 class TimelineViewer extends StatefulWidget {
   final postObject;
-  TimelineViewer({Key key, this.postObject}) : super(key: key);
+  TimelineViewer({this.postObject});
 
   @override
   _TimelineViewerState createState() => _TimelineViewerState();

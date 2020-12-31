@@ -6,7 +6,7 @@ import 'dart:io' show Platform;
 
 class NewsViewer extends StatelessWidget {
   final link;
-  const NewsViewer({Key key, this.link}) : super(key: key);
+  const NewsViewer({this.link});
 
   @override
   Widget build(BuildContext context) {

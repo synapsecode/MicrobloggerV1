@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:MicroBlogger/Screens/Stories/storyobject_models.dart';
+import 'package:MicroBlogger/Screens/homepage.dart';
 import 'package:flutter/material.dart';
 
-Widget getEditableStoryItem(dynamic e) {
+Widget getEditableStoryItem(BuildContext context, dynamic e) {
   Widget widget;
   switch (e.type) {
     case ItemType.Text:
@@ -62,6 +63,11 @@ Widget getEditableStoryItem(dynamic e) {
           ],
         ),
       );
+      break;
+    case ItemType.PostItem:
+      print(e.post);
+      widget =
+          Container(child: e.post, width: MediaQuery.of(context).size.width);
       break;
   }
   return widget;

@@ -37,7 +37,7 @@ void main() async {
 }
 
 class Application extends StatelessWidget {
-  Application({Key key}) : super(key: key);
+  Application();
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class Application extends StatelessWidget {
 }
 
 class MainApp extends StatefulWidget {
-  MainApp({Key key}) : super(key: key);
+  MainApp();
 
   @override
   _MainAppState createState() => _MainAppState();

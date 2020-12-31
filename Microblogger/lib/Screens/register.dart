@@ -7,7 +7,7 @@ import 'package:MicroBlogger/Backend/server.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class RegisterPage extends StatefulWidget {
-  RegisterPage({Key key}) : super(key: key);
+  RegisterPage();
 
   @override
   _RegisterPageState createState() => _RegisterPageState();

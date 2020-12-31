@@ -5,7 +5,7 @@ import 'package:MicroBlogger/origin.dart';
 import 'package:flutter/material.dart';
 
 class NewsFeedPage extends StatelessWidget {
-  const NewsFeedPage({Key key}) : super(key: key);
+  const NewsFeedPage();
 
   @override
   Widget build(BuildContext context) {

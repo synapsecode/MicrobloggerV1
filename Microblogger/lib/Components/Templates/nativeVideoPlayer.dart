@@ -3,7 +3,7 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/src/chewie_player.dart';
 
 // class VideoCarousel extends StatefulWidget {
-//   VideoCarousel({Key key}) : super(key: key);
+//   VideoCarousel();
 
 //   @override
 //   _VideoCarouselState createState() => _VideoCarouselState();
@@ -25,7 +25,7 @@ import 'package:chewie/src/chewie_player.dart';
 
 class NativeVideoPlayer extends StatefulWidget {
   final String link;
-  NativeVideoPlayer(this.link, {Key key}) : super(key: key);
+  NativeVideoPlayer(this.link);
 
   @override
   _NativeVideoPlayerState createState() => _NativeVideoPlayerState();

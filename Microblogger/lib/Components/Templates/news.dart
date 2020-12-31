@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class NewsItem extends StatelessWidget {
   final newsObject;
-  const NewsItem({Key key, this.newsObject}) : super(key: key);
+  const NewsItem({this.newsObject});
 
   @override
   Widget build(BuildContext context) {

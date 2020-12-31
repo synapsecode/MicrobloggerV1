@@ -13,6 +13,7 @@ import 'package:MicroBlogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
@@ -25,7 +26,6 @@ var currentDraggedIndex;
 List<dynamic> storyItems = [];
 
 class StoryMaker extends StatefulWidget {
-  // final Widget post;
   const StoryMaker();
 
   @override
@@ -33,6 +33,16 @@ class StoryMaker extends StatefulWidget {
 }
 
 class _StoryMakerState extends State<StoryMaker> {
+  @override
+  void initState() {
+    // if (widget.post != null) {
+    //   var postObj = PostStoryitem(id: 0, post: widget.post);
+    //   storyItems.add(postObj);
+    // }
+
+    super.initState();
+  }
+
   @override
   void dispose() {
     storyItems = [];
@@ -162,7 +172,7 @@ class _StoryMakerState extends State<StoryMaker> {
 }
 
 class StoryEditor extends StatefulWidget {
-  StoryEditor({Key key}) : super(key: key);
+  StoryEditor();
 
   @override
   _StoryEditorState createState() => _StoryEditorState();
@@ -216,6 +226,16 @@ class _StoryEditorState extends State<StoryEditor> {
             children: [
               InkWell(
                 child: Container(color: bgCol),
+                onTap: () {
+                  int nid = (storyItems.length > 0) ? storyItems.last.id : 0;
+                  storyItems.add(
+                    TextItem(
+                      id: nid + 1,
+                      value: "Text",
+                    ),
+                  );
+                  setState(() {});
+                },
                 onLongPress: () {
                   showDialog(
                     context: context,
@@ -238,9 +258,10 @@ class _StoryEditorState extends State<StoryEditor> {
   Widget _buildItemWidget(dynamic e) {
     final screen = MediaQuery.of(context).size;
 
-    Widget widget = getEditableStoryItem(e);
+    Widget widget = getEditableStoryItem(context, e);
 
-    Widget StoryItemControllerWidget({Function editHandler, Widget child}) {
+    Widget StoryItemControllerWidget(
+        {Function editHandler, Widget child, Function longHandler}) {
       return Positioned(
         top: e.position.dy * screen.height,
         left: e.position.dx * screen.width,
@@ -266,6 +287,7 @@ class _StoryEditorState extends State<StoryEditor> {
                 setState(() {});
               },
               child: InkWell(
+                onLongPress: () => longHandler(),
                 onTap: () => editHandler(),
                 child: child,
               ),
@@ -276,32 +298,40 @@ class _StoryEditorState extends State<StoryEditor> {
     }
 
     return StoryItemControllerWidget(
-      editHandler: () {
-        cSelectedItemIndex = e.id;
-        print("Clicked on Item, ${e.type}, id: ${e.id}");
-        if (e.type == ItemType.Text) {
-          showTextEditDialog(
-            context: context,
-            nval: e.value,
-            e: e,
-            setState: setState,
-          );
-        } else if (e.type == ItemType.FileImage) {
-          showImageEditDialog(
-            context: context,
-            e: e,
-            setState: setState,
-          );
-        } else if (e.type == ItemType.DateTime) {
-          showDateTimeEditDialog(
-            context: context,
-            e: e,
-            setState: setState,
-          );
-        }
-      },
-      child: widget,
-    );
+        editHandler: () {
+          cSelectedItemIndex = e.id;
+          print("Clicked on Item, ${e.type}, id: ${e.id}");
+          if (e.type == ItemType.Text) {
+            showTextEditDialog(
+              context: context,
+              nval: e.value,
+              e: e,
+              setState: setState,
+            );
+          } else if (e.type == ItemType.FileImage) {
+            showImageEditDialog(
+              context: context,
+              e: e,
+              setState: setState,
+            );
+          } else if (e.type == ItemType.DateTime) {
+            showDateTimeEditDialog(
+              context: context,
+              e: e,
+              setState: setState,
+            );
+          }
+        },
+        child: widget,
+        longHandler: () {
+          if (e.type == ItemType.PostItem) {
+            showPostEditDialog(
+              context: context,
+              e: e,
+              setState: setState,
+            );
+          }
+        });
   }
 }
 

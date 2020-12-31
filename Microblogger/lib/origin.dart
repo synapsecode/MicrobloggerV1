@@ -6,7 +6,7 @@ import 'Backend/datastore.dart';
 class Origin extends StatefulWidget {
   final Function(BuildContext) builder;
 
-  const Origin({Key key, this.builder}) : super(key: key);
+  const Origin({this.builder});
 
   @override
   OriginState createState() => new OriginState();

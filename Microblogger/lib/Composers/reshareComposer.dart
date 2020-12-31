@@ -11,9 +11,7 @@ class ReshareComposer extends StatefulWidget {
   final postObject;
   final Map preExistingState;
   final bool isEditing;
-  ReshareComposer(
-      {this.preExistingState, this.isEditing, Key key, this.postObject})
-      : super(key: key);
+  ReshareComposer({this.preExistingState, this.isEditing, this.postObject});
 
   @override
   _ReshareComposerState createState() => _ReshareComposerState();

@@ -40,9 +40,8 @@ void PlatformCodeRunner(
 
 class ImageCarousel extends StatefulWidget {
   const ImageCarousel({
-    Key key,
     this.imagesSrcList,
-  }) : super(key: key);
+  });
 
   final List imagesSrcList;
 
@@ -132,13 +131,12 @@ class CachedFutureBuilder extends StatefulWidget {
   final Function(AsyncSnapshot) onUpdate;
 
   CachedFutureBuilder({
-    Key key,
     this.future,
     this.cacheStore,
     this.loader,
     this.onCacheUsed,
     this.onUpdate,
-  }) : super(key: key);
+  });
 
   @override
   _CachedFutureBuilderState createState() => _CachedFutureBuilderState();
@@ -191,8 +189,7 @@ class GeneralSliverPageView extends StatelessWidget {
   final Widget sliverChild;
   final List<Widget> children;
   const GeneralSliverPageView(
-      {Key key, this.appBarTitle, this.sliverChild, this.children})
-      : super(key: key);
+      {this.appBarTitle, this.sliverChild, this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -217,9 +214,7 @@ class GeneralSliverPageView extends StatelessWidget {
 }
 
 class BottomNavigator extends StatelessWidget {
-  const BottomNavigator({
-    Key key,
-  }) : super(key: key);
+  const BottomNavigator();
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +257,7 @@ class BottomNavigator extends StatelessWidget {
 }
 
 class MainAppDrawer extends StatelessWidget {
-  const MainAppDrawer({Key key}) : super(key: key);
+  const MainAppDrawer();
 
   @override
   Widget build(BuildContext context) {
@@ -482,7 +477,7 @@ class _FloatingCircleButtonState extends State<FloatingCircleButton> {
 }
 
 class CirclularLoader extends StatelessWidget {
-  const CirclularLoader({Key key}) : super(key: key);
+  const CirclularLoader();
 
   @override
   Widget build(BuildContext context) {
@@ -504,7 +499,7 @@ class CirclularLoader extends StatelessWidget {
 
 class ErrorPage extends StatelessWidget {
   final Widget child;
-  const ErrorPage({Key key, this.child}) : super(key: key);
+  const ErrorPage({this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -521,9 +516,7 @@ class ErrorPage extends StatelessWidget {
 }
 
 class BugReporterDialog extends StatefulWidget {
-  const BugReporterDialog({
-    Key key,
-  }) : super(key: key);
+  const BugReporterDialog();
 
   @override
   _BugReporterDialogState createState() => _BugReporterDialogState();
@@ -599,7 +592,7 @@ class _BugReporterDialogState extends State<BugReporterDialog> {
 }
 
 class OfflineAlert extends StatelessWidget {
-  const OfflineAlert({Key key}) : super(key: key);
+  const OfflineAlert();
 
   @override
   Widget build(BuildContext context) {
@@ -646,7 +639,7 @@ void dataLogger(String type, String content) {
 }
 
 class UserTaggingWidget extends StatefulWidget {
-  UserTaggingWidget({Key key}) : super(key: key);
+  UserTaggingWidget();
 
   @override
   _UserTaggingWidgetState createState() => _UserTaggingWidgetState();
@@ -770,16 +763,15 @@ class HashTagEnabledUserTaggableTextField extends StatefulWidget {
   final TextStyle style;
   final String hint;
 
-  HashTagEnabledUserTaggableTextField(
-      {@required this.controller,
-      @required this.maxlines,
-      this.style,
-      this.usernames,
-      this.hashtags,
-      this.onChange,
-      this.hint,
-      Key key})
-      : super(key: key);
+  HashTagEnabledUserTaggableTextField({
+    @required this.controller,
+    @required this.maxlines,
+    this.style,
+    this.usernames,
+    this.hashtags,
+    this.onChange,
+    this.hint,
+  });
 
   @override
   _HashTagEnabledUserTaggableTextFieldState createState() =>
@@ -789,6 +781,7 @@ class HashTagEnabledUserTaggableTextField extends StatefulWidget {
 class _HashTagEnabledUserTaggableTextFieldState
     extends State<HashTagEnabledUserTaggableTextField> {
   List words = [];
+
   String selectedUser = '';
   List usernames = UsernamesListCache;
   List hashtags = HashtagsListCache;
@@ -936,8 +929,7 @@ class _HashTagEnabledUserTaggableTextFieldState
 class HashTagEnabledUserTaggableTextDisplay extends StatelessWidget {
   final String text;
   final TextStyle style;
-  const HashTagEnabledUserTaggableTextDisplay(this.text, {Key key, this.style})
-      : super(key: key);
+  const HashTagEnabledUserTaggableTextDisplay(this.text, {this.style});
 
   @override
   Widget build(BuildContext context) {

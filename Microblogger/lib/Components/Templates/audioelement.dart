@@ -4,7 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
 class AudioElement extends StatefulWidget {
-  const AudioElement({Key key}) : super(key: key);
+  const AudioElement();
 
   @override
   _AudioElementState createState() => _AudioElementState();

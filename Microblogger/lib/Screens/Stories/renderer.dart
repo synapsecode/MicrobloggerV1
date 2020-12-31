@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class StoryRenderer extends StatefulWidget {
   final Map serializedTree;
   final Map data;
-  StoryRenderer({Key key, this.serializedTree, this.data}) : super(key: key);
+  StoryRenderer({this.serializedTree, this.data});
 
   @override
   _StoryRendererState createState() => _StoryRendererState();

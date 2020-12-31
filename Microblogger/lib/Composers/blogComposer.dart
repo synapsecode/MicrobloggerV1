@@ -10,8 +10,7 @@ import '../palette.dart';
 class BlogComposer extends StatefulWidget {
   final Map preExistingState;
   final bool isEditing;
-  BlogComposer({this.isEditing, Key key, this.preExistingState})
-      : super(key: key);
+  BlogComposer({this.isEditing, this.preExistingState});
 
   @override
   _BlogComposerState createState() => _BlogComposerState();

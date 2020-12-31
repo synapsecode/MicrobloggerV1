@@ -8,6 +8,8 @@ import 'package:MicroBlogger/Composers/microblogComposer.dart';
 import 'package:MicroBlogger/Composers/reshareComposer.dart';
 import 'package:MicroBlogger/Composers/shareableComposer.dart';
 import 'package:MicroBlogger/Composers/timelineComposer.dart';
+import 'package:MicroBlogger/Screens/Stories/storymaker.dart';
+import 'package:MicroBlogger/Screens/Stories/storyobject_models.dart';
 import 'package:MicroBlogger/Screens/editprofile.dart';
 import 'package:MicroBlogger/Screens/homepage.dart';
 import 'package:MicroBlogger/Screens/profile.dart';
@@ -28,12 +30,10 @@ class BasicTemplate extends StatefulWidget {
   final Widget widgetComponent;
 
   BasicTemplate(
-      {Key key,
-      this.postObject,
+      {this.postObject,
       this.widgetComponent,
       this.isInViewMode = false,
-      this.isHosted = false})
-      : super(key: key);
+      this.isHosted = false});
 
   @override
   _BasicTemplateState createState() => _BasicTemplateState();
@@ -151,8 +151,7 @@ class _BasicTemplateState extends State<BasicTemplate> {
 class TopBar extends StatelessWidget {
   final postObject;
   final isHosted;
-  const TopBar({Key key, this.postObject, this.isHosted = false})
-      : super(key: key);
+  const TopBar({this.postObject, this.isHosted = false});
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -371,7 +370,21 @@ class TopBar extends StatelessWidget {
             child: IconButton(
               onPressed: () {
                 print("Hoisting to Story");
-                // print("POST DATA ${widget.post}");
+
+                final post = feedBuilder(
+                  postObject['type'],
+                  postObject,
+                );
+
+                // print(post);
+                if (storyItems.length == 0) {
+                  storyItems.add(PostStoryitem(id: 0, post: post));
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => StoryMaker(),
+                  ));
+                } else {
+                  Fluttertoast.showToast(msg: "Cannot add multiple instances");
+                }
               },
               icon: Icon(Icons.ios_share),
             ),
@@ -511,8 +524,7 @@ class ActionBar extends StatefulWidget {
   final post;
   final Color backgroundColor;
   final bool noborder;
-  ActionBar({Key key, this.post, this.noborder = false, this.backgroundColor})
-      : super(key: key);
+  ActionBar({this.post, this.noborder = false, this.backgroundColor});
 
   @override
   _ActionBarState createState() => _ActionBarState();

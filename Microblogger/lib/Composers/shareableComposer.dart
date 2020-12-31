@@ -7,8 +7,10 @@ import '../palette.dart';
 class ShareableComposer extends StatefulWidget {
   final Map preExistingState;
   final bool isEditing;
-  const ShareableComposer({this.preExistingState, this.isEditing, Key key})
-      : super(key: key);
+  const ShareableComposer({
+    this.preExistingState,
+    this.isEditing,
+  });
 
   @override
   _ShareableComposerState createState() => _ShareableComposerState();

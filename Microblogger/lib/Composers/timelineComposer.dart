@@ -12,10 +12,9 @@ class TimelineComposer extends StatefulWidget {
   final Map preExistingState;
   final bool isEditing;
   TimelineComposer({
-    Key key,
     this.preExistingState,
     this.isEditing,
-  }) : super(key: key);
+  });
 
   @override
   _TimelineComposerState createState() => _TimelineComposerState();

@@ -6,7 +6,7 @@ import 'dart:io' show Platform;
 
 class GeneralBrowser extends StatelessWidget {
   final link;
-  const GeneralBrowser({Key key, this.link}) : super(key: key);
+  const GeneralBrowser({this.link});
 
   @override
   Widget build(BuildContext context) {

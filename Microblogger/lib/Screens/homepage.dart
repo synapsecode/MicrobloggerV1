@@ -125,9 +125,61 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+Widget feedBuilder(String postType, postData) {
+  // print("FB : ${postType} ${postData}");
+  Widget output;
+  switch (postType) {
+    case "storyfeed":
+      output = StoriesHolder(postObject: postData);
+      break;
+    case "microblog":
+      output = MicroBlogPost(postObject: postData);
+      break;
+    case "blog":
+      output = BlogPost(postData);
+      break;
+    case "carousel":
+      output = CarouselPost(postObject: postData);
+      break;
+    case "shareable":
+      output = ShareablePost(postObject: postData);
+      break;
+    case "timeline":
+      output = Timeline(postData);
+      break;
+    case "poll":
+      output = PollPost(postObject: postData);
+      break;
+    case "ResharedWithComment":
+      output = ReshareWithComment(
+        postObject: postData,
+      );
+      break;
+    case "SimpleReshare":
+      output = SimpleReshare(
+        postObject: postData,
+      );
+      break;
+    case "FollowSuggestions":
+      output = UserFollowSuggestions();
+      break;
+    case "YoutubeElement":
+      output = YoutubeElement(postData);
+      break;
+    case "Video":
+      output = VideoCarouselPost(
+        postObject: postData,
+      );
+      break;
+    default:
+      break;
+  }
+  return output;
+}
+
 class Feed extends StatefulWidget {
   final currentUser;
-  Feed({Key key, this.currentUser}) : super(key: key);
+  Feed({this.currentUser});
 
   @override
   _FeedState createState() => _FeedState();
@@ -139,57 +191,6 @@ class _FeedState extends State<Feed> {
   void initState() {
     super.initState();
     feedData = getFeed();
-  }
-
-  Widget feedBuilder(String postType, postData) {
-    Widget output;
-    switch (postType) {
-      case "storyfeed":
-        output = StoriesHolder(postObject: postData);
-        break;
-      case "microblog":
-        output = MicroBlogPost(postObject: postData);
-        break;
-      case "blog":
-        output = BlogPost(postData);
-        break;
-      case "carousel":
-        output = CarouselPost(postObject: postData);
-        break;
-      case "shareable":
-        output = ShareablePost(postObject: postData);
-        break;
-      case "timeline":
-        output = Timeline(postData);
-        break;
-      case "poll":
-        output = PollPost(postObject: postData);
-        break;
-      case "ResharedWithComment":
-        output = ReshareWithComment(
-          postObject: postData,
-        );
-        break;
-      case "SimpleReshare":
-        output = SimpleReshare(
-          postObject: postData,
-        );
-        break;
-      case "FollowSuggestions":
-        output = UserFollowSuggestions();
-        break;
-      case "YoutubeElement":
-        output = YoutubeElement(postData);
-        break;
-      case "Video":
-        output = VideoCarouselPost(
-          postObject: postData,
-        );
-        break;
-      default:
-        break;
-    }
-    return output;
   }
 
   bool first = true;

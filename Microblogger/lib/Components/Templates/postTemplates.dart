@@ -16,7 +16,9 @@ import '../../Backend/datastore.dart';
 
 class StoriesHolder extends StatelessWidget {
   final Map postObject;
-  const StoriesHolder({this.postObject, Key key}) : super(key: key);
+  const StoriesHolder({
+    this.postObject,
+  });
 
   Widget StoryItem({String uname, String thumbnailUrl}) {
     return InkWell(
@@ -83,11 +85,7 @@ class MicroBlogPost extends StatelessWidget {
   final isInViewMode;
   final bool isHosted;
   const MicroBlogPost(
-      {Key key,
-      this.postObject,
-      this.isHosted = false,
-      this.isInViewMode = false})
-      : super(key: key);
+      {this.postObject, this.isHosted = false, this.isInViewMode = false});
 
   @override
   Widget build(BuildContext context) {
@@ -107,11 +105,7 @@ class CarouselPost extends StatefulWidget {
   final isInViewMode;
   final bool isHosted;
   const CarouselPost(
-      {Key key,
-      this.postObject,
-      this.isHosted = false,
-      this.isInViewMode = false})
-      : super(key: key);
+      {this.postObject, this.isHosted = false, this.isInViewMode = false});
 
   @override
   _CarouselPostState createState() => _CarouselPostState();
@@ -151,7 +145,7 @@ class _CarouselPostState extends State<CarouselPost> {
 
 class LevelOneComment extends StatelessWidget {
   final commentObject;
-  const LevelOneComment({Key key, this.commentObject}) : super(key: key);
+  const LevelOneComment({this.commentObject});
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +160,7 @@ class LevelOneComment extends StatelessWidget {
 
 class PollPost extends StatefulWidget {
   final postObject;
-  const PollPost({Key key, this.postObject}) : super(key: key);
+  const PollPost({this.postObject});
 
   @override
   _PollPostState createState() => _PollPostState();
@@ -236,8 +230,7 @@ class _PollPostState extends State<PollPost> {
 class ShareablePost extends StatelessWidget {
   final postObject;
   final bool isHosted;
-  const ShareablePost({Key key, this.postObject, this.isHosted = false})
-      : super(key: key);
+  const ShareablePost({this.postObject, this.isHosted = false});
 
   @override
   Widget build(BuildContext context) {
@@ -274,7 +267,7 @@ class ShareablePost extends StatelessWidget {
 
 class SimpleReshare extends StatelessWidget {
   final postObject;
-  SimpleReshare({Key key, this.postObject}) : super(key: key);
+  SimpleReshare({this.postObject});
 
   @override
   Widget build(BuildContext context) {
@@ -559,11 +552,10 @@ class VideoCarouselPost extends StatefulWidget {
   // final isInViewMode;
   // final bool isHosted;
   const VideoCarouselPost({
-    Key key,
     this.postObject,
     // this.isHosted = false,
     // this.isInViewMode = false
-  }) : super(key: key);
+  });
 
   @override
   _VideoCarouselPostState createState() => _VideoCarouselPostState();

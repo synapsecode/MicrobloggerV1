@@ -28,7 +28,7 @@ class LinkerButton extends StatelessWidget {
 }
 
 class AboutPage extends StatelessWidget {
-  const AboutPage({Key key}) : super(key: key);
+  const AboutPage();
 
   @override
   Widget build(BuildContext context) {

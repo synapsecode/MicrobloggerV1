@@ -11,7 +11,7 @@ import '../origin.dart';
 
 class BlogViewer extends StatefulWidget {
   final postObject;
-  BlogViewer({Key key, this.postObject}) : super(key: key);
+  BlogViewer({this.postObject});
 
   @override
   _BlogViewerState createState() => _BlogViewerState();

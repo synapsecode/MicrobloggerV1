@@ -92,9 +92,7 @@ class _ProfileState extends State<ProfilePage>
 }
 
 class CLoader extends StatelessWidget {
-  const CLoader({
-    Key key,
-  }) : super(key: key);
+  const CLoader();
 
   @override
   Widget build(BuildContext context) {
@@ -391,10 +389,8 @@ class StatisticsBar extends StatelessWidget {
 
 class MyPostView extends StatefulWidget {
   const MyPostView({
-    Key key,
     @required TabController controller,
-  })  : _controller = controller,
-        super(key: key);
+  }) : _controller = controller;
 
   final TabController _controller;
 
