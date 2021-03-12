@@ -1,0 +1,87 @@
+PODS:
+  - audioplayers (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - flutter_inappwebview (0.0.1):
+    - Flutter
+  - fluttertoast (0.0.2):
+    - Flutter
+    - Toast
+  - image_cropper (0.0.1):
+    - Flutter
+    - TOCropViewController (~> 2.5.0)
+  - image_picker (0.0.1):
+    - Flutter
+  - path_provider (0.0.1):
+    - Flutter
+  - sensors (0.0.1):
+    - Flutter
+  - shared_preferences (0.0.1):
+    - Flutter
+  - Toast (4.0.0)
+  - TOCropViewController (2.5.5)
+  - video_player (0.0.1):
+    - Flutter
+  - webview_flutter (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - audioplayers (from `.symlinks/plugins/audioplayers/ios`)
+  - Flutter (from `Flutter`)
+  - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
+  - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - sensors (from `.symlinks/plugins/sensors/ios`)
+  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - video_player (from `.symlinks/plugins/video_player/ios`)
+  - webview_flutter (from `.symlinks/plugins/webview_flutter/ios`)
+
+SPEC REPOS:
+  trunk:
+    - Toast
+    - TOCropViewController
+
+EXTERNAL SOURCES:
+  audioplayers:
+    :path: ".symlinks/plugins/audioplayers/ios"
+  Flutter:
+    :path: Flutter
+  flutter_inappwebview:
+    :path: ".symlinks/plugins/flutter_inappwebview/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
+  image_cropper:
+    :path: ".symlinks/plugins/image_cropper/ios"
+  image_picker:
+    :path: ".symlinks/plugins/image_picker/ios"
+  path_provider:
+    :path: ".symlinks/plugins/path_provider/ios"
+  sensors:
+    :path: ".symlinks/plugins/sensors/ios"
+  shared_preferences:
+    :path: ".symlinks/plugins/shared_preferences/ios"
+  video_player:
+    :path: ".symlinks/plugins/video_player/ios"
+  webview_flutter:
+    :path: ".symlinks/plugins/webview_flutter/ios"
+
+SPEC CHECKSUMS:
+  audioplayers: 53f0f30789b10ab2009771c6c79def00980945e4
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  flutter_inappwebview: 69dfbac46157b336ffbec19ca6dfd4638c7bf189
+  fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
+  image_cropper: f25bdfbf1ef970c9a0a0f78306fb6a0aaac7229e
+  image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
+  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  sensors: 84eb7a30e47a649e4172b71d6e81be614c280336
+  shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
+  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
+  TOCropViewController: da59f531f8ac8a94ef6d6c0fc34009350f9e8bfe
+  video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e
+  webview_flutter: 9f491a9b5a66f2573946a389b2677987b0ff8c0b
+
+PODFILE CHECKSUM: de2120689bd64c50778c43ebcd6de450aa1587e0
+
+COCOAPODS: 1.10.1

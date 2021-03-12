@@ -28,19 +28,19 @@ dependencies:
   font_awesome_flutter:
   image_cropper: 1.0.2
   image_picker: 0.6.7+12
-  fluttertoast:
+  fluttertoast: ^7.1.6
   http:
   shake:
   carousel_slider: ^1.3.0
   data_connection_checker: ^0.3.4
   youtube_player_flutter: ^7.0.0+7
-  chewie:
+  # chewie:
   audioplayers: ^0.16.1
   # Add the dependency for the FlutterFire plugin for Google Analytics
-  hydrated_bloc: ^3.0.0
-  flutter_bloc: ^3.2.0
-  equatable: ^1.1.1
-  flutter_phoenix: "^0.1.0"
+  # hydrated_bloc: ^3.0.0
+  # flutter_bloc: ^3.2.0
+  # equatable: ^1.1.1
+  # flutter_phoenix: "^0.1.0"
   video_player:
   flutter_colorpicker:
 

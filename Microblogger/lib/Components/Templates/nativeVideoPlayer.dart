@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:chewie/src/chewie_player.dart';
+// import 'package:chewie/src/chewie_player.dart';
 
 // class VideoCarousel extends StatefulWidget {
 //   VideoCarousel();
@@ -54,39 +54,9 @@ class Player extends StatefulWidget {
 }
 
 class _PlayerState extends State<Player> {
-  ChewieController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = ChewieController(
-        videoPlayerController: widget.videoPlayerController,
-        aspectRatio: 16 / 9,
-        autoInitialize: true,
-        looping: widget.looping,
-        errorBuilder: (BuildContext context, String errorMessage) {
-          return Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Center(
-                child: Text(
-              errorMessage,
-              style: TextStyle(color: Colors.white),
-            )),
-          );
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Chewie(
-      controller: _controller,
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    widget.videoPlayerController.dispose();
-    _controller.dispose();
+    // TODO: implement build
+    return Container();
   }
 }

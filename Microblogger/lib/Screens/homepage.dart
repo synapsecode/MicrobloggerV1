@@ -4,8 +4,6 @@ import 'package:MicroBlogger/Components/Templates/followsuggestions.dart';
 import 'package:MicroBlogger/Components/Templates/nativeVideoPlayer.dart';
 import 'package:MicroBlogger/Components/Templates/youtubePlayer.dart';
 import 'package:MicroBlogger/globals.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/datastore.dart';
 import '../Components/Global/globalcomponents.dart';

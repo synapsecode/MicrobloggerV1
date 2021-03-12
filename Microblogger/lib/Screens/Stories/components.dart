@@ -217,7 +217,7 @@ class _FileVideoState extends State<FileVideo> {
   Widget build(BuildContext context) {
     _controller.setVolume(widget.isMuted ? 0 : 1);
     return Container(
-      child: _controller.value.initialized
+      child: _controller.value.isInitialized
           ? FittedBox(
               fit: BoxFit.cover,
               child: SizedBox(
@@ -282,7 +282,7 @@ class _NetworkVideoState extends State<NetworkVideo> {
   Widget build(BuildContext context) {
     _controller.setVolume(widget.isMuted ? 0 : 1);
     return Container(
-      child: _controller.value.initialized
+      child: _controller.value.isInitialized
           ? FittedBox(
               fit: BoxFit.cover,
               child: SizedBox(
