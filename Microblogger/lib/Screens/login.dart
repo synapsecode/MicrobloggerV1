@@ -1,11 +1,9 @@
-import 'dart:io';
-import 'package:MicroBlogger/Backend/datastore.dart';
-import 'package:MicroBlogger/Screens/homepage.dart';
-import 'package:MicroBlogger/Screens/register.dart';
+import 'package:microblogger/Backend/datastore.dart';
+import 'package:microblogger/Screens/homepage.dart';
+import 'package:microblogger/Screens/register.dart';
 import 'package:flutter/material.dart';
-import 'package:MicroBlogger/Backend/server.dart';
+import 'package:microblogger/Backend/server.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage();
@@ -25,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
               title: Text("$title"),
               content: Text("$content"),
               actions: [
-                FlatButton(
+                TextButton(
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text("Back"))
               ],
@@ -63,9 +61,11 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                     SizedBox(
                                       width: double.infinity,
-                                      child: RaisedButton(
-                                          color:
-                                              Color.fromARGB(200, 220, 20, 60),
+                                      child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            primary: Color.fromARGB(
+                                                200, 220, 20, 60),
+                                          ),
                                           child: Text("Initialize Server"),
                                           onPressed: () async {
                                             print(serverURL);
@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                             ));
                   }),
               Text(
-                'MicroBlogger',
+                'microblogger',
                 style: Theme.of(context).textTheme.headline4,
               ),
               SizedBox(
@@ -123,10 +123,12 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(
                         width: double.infinity,
-                        child: RaisedButton(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 20.0, horizontal: 12.0),
-                          color: Color.fromARGB(200, 220, 20, 60),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 20.0, horizontal: 12.0),
+                            primary: Color.fromARGB(200, 220, 20, 60),
+                          ),
                           child: Text(
                             "Login",
                             style: TextStyle(color: Colors.white),

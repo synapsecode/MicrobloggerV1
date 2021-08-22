@@ -1,7 +1,7 @@
 // import 'dart:io';
 
-// import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-// import 'package:MicroBlogger/palette.dart';
+// import 'package:microblogger/Components/Global/globalcomponents.dart';
+// import 'package:microblogger/palette.dart';
 // import 'package:flutter/material.dart';
 // import 'package:image_picker/image_picker.dart';
 // import 'package:video_player/video_player.dart';

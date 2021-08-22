@@ -1,4 +1,4 @@
-# MicroBlogger
+# microblogger
 
 A new Flutter project.
 

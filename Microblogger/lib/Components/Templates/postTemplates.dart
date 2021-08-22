@@ -1,18 +1,16 @@
 import 'dart:ui';
 
-import 'package:MicroBlogger/Backend/server.dart';
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/Components/Templates/nativeVideoPlayer.dart';
-import 'package:MicroBlogger/Screens/profile.dart';
-import 'package:MicroBlogger/Views/blog_viewer.dart';
-import 'package:MicroBlogger/Views/shareableWebViewer.dart';
-import 'package:MicroBlogger/Views/timeline_viewer.dart';
-import 'package:MicroBlogger/palette.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:microblogger/Backend/server.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Components/Templates/nativeVideoPlayer.dart';
+import 'package:microblogger/Screens/profile.dart';
+import 'package:microblogger/Views/blog_viewer.dart';
+import 'package:microblogger/Views/shareableWebViewer.dart';
+import 'package:microblogger/Views/timeline_viewer.dart';
+import 'package:microblogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'basetemplate.dart';
-import '../../Backend/datastore.dart';
 
 class StoriesHolder extends StatelessWidget {
   final Map postObject;
@@ -20,7 +18,7 @@ class StoriesHolder extends StatelessWidget {
     this.postObject,
   });
 
-  Widget StoryItem({String uname, String thumbnailUrl}) {
+  Widget storyItemElement({String uname, String thumbnailUrl}) {
     return InkWell(
       onTap: () {
         print("Open Story");
@@ -73,7 +71,7 @@ class StoriesHolder extends StatelessWidget {
         itemCount: postObject['stories'],
         itemBuilder: (context, index) {
           Map story = postObject['stories'][index];
-          return StoryItem(uname: story['username']);
+          return storyItemElement(uname: story['username']);
         },
       ),
     );
@@ -119,8 +117,6 @@ class _CarouselPostState extends State<CarouselPost> {
     }
     return result;
   }
-
-  int _current = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -190,8 +186,10 @@ class _PollPostState extends State<PollPost> {
               c += 1;
               return Row(children: <Widget>[
                 Expanded(
-                    child: RaisedButton(
-                  color: (votedFor == c) ? Colors.green : Colors.black,
+                    child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: (votedFor == c) ? Colors.green : Colors.black,
+                  ),
                   onPressed: () {
                     print("Clicked on option (${x['name']}) in Poll");
                     if (votedFor == -1) {
@@ -246,8 +244,10 @@ class ShareablePost extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RaisedButton.icon(
-                  color: Color.fromARGB(200, 220, 20, 60),
+              ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    primary: Color.fromARGB(200, 220, 20, 60),
+                  ),
                   onPressed: () {
                     print("Visiting ${postObject['link']}");
                     Navigator.push(
@@ -562,7 +562,6 @@ class VideoCarouselPost extends StatefulWidget {
 }
 
 class _VideoCarouselPostState extends State<VideoCarouselPost> {
-  PageController _controller = new PageController();
   @override
   Widget build(BuildContext context) {
     return BasicTemplate(

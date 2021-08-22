@@ -1,13 +1,13 @@
-import 'package:MicroBlogger/Backend/datastore.dart';
-import 'package:MicroBlogger/Backend/server.dart';
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/Screens/browser.dart';
-import 'package:MicroBlogger/globals.dart';
+import 'package:microblogger/Backend/datastore.dart';
+import 'package:microblogger/Backend/server.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Screens/browser.dart';
+import 'package:microblogger/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Components/Templates/postTemplates.dart';
 import 'editprofile.dart';
-import 'package:MicroBlogger/palette.dart';
+import 'package:microblogger/palette.dart';
 
 Map user = {};
 
@@ -71,14 +71,14 @@ class _ProfileState extends State<ProfilePage>
 
     CachedFutureBuilder cbdr = CachedFutureBuilder(
       future: profileData,
-      cacheStore: GlobalProfileDataCache,
+      cacheStore: globalProfileDataCache,
       onCacheUsed: (cache) {
-        user = GlobalProfileDataCache;
+        user = globalProfileDataCache;
         return generateProfileView();
       },
       onUpdate: (AsyncSnapshot snapshot) {
         user = snapshot.data;
-        GlobalProfileDataCache = user;
+        globalProfileDataCache = user;
         return generateProfileView();
       },
     );
@@ -207,7 +207,7 @@ class _FollowUnfollowButtonState extends State<FollowUnfollowButton> {
   Widget build(BuildContext context) {
     return Container(
         width: 140,
-        child: RaisedButton(
+        child: ElevatedButton(
           onPressed: () async {
             if (currentUser['user']['username'] != user['user']['username']) {
               if (user['isFollowing']) {
@@ -243,9 +243,11 @@ class _FollowUnfollowButtonState extends State<FollowUnfollowButton> {
               Text(op)
             ],
           ),
-          color: Colors.black54,
-          shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(30.0),
+          style: ElevatedButton.styleFrom(
+            primary: Colors.black54,
+            shape: new RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(30.0),
+            ),
           ),
         ));
   }
@@ -493,6 +495,7 @@ class _MyPostViewState extends State<MyPostView> {
                       else if (blogandTimelineFeed[index]['type'] == 'carousel')
                         return CarouselPost(
                             postObject: blogandTimelineFeed[index]);
+                      return Container();
                     },
                   ),
                 ),

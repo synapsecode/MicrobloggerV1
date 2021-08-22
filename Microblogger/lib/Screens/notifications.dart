@@ -1,9 +1,7 @@
 import '../Components/Global/globalcomponents.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
 import '../palette.dart';
-import 'homepage.dart';
 
 class NotificationsPage extends StatelessWidget {
   @override

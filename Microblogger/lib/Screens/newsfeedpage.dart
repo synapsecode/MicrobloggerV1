@@ -1,7 +1,7 @@
-import 'package:MicroBlogger/Backend/server.dart';
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/Components/Templates/news.dart';
-import 'package:MicroBlogger/origin.dart';
+import 'package:microblogger/Backend/server.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Components/Templates/news.dart';
+import 'package:microblogger/origin.dart';
 import 'package:flutter/material.dart';
 
 class NewsFeedPage extends StatelessWidget {

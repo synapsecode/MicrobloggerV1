@@ -1,19 +1,15 @@
 import 'dart:async';
-import 'package:MicroBlogger/Backend/server.dart';
-import 'package:MicroBlogger/Components/Templates/followsuggestions.dart';
-import 'package:MicroBlogger/Components/Templates/nativeVideoPlayer.dart';
-import 'package:MicroBlogger/Components/Templates/youtubePlayer.dart';
-import 'package:MicroBlogger/globals.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:microblogger/Backend/server.dart';
+import 'package:microblogger/Components/Templates/followsuggestions.dart';
+import 'package:microblogger/Components/Templates/youtubePlayer.dart';
+import 'package:microblogger/globals.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/datastore.dart';
 import '../Components/Global/globalcomponents.dart';
 import 'dart:developer';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter/material.dart';
 import '../Components/Templates/postTemplates.dart';
-import 'package:MicroBlogger/palette.dart';
+import 'package:microblogger/palette.dart';
 
 import '../origin.dart';
 
@@ -227,23 +223,23 @@ class _FeedState extends State<Feed> {
 
     CachedFutureBuilder cbdr = CachedFutureBuilder(
       future: feedData,
-      cacheStore: GlobalFeedCache,
+      cacheStore: globalFeedCache,
       onCacheUsed: (cache) {
         print("Using Cache");
         return ListView.builder(
           shrinkWrap: true,
           // physics: NeverScrollableScrollPhysics(),
-          itemCount: GlobalFeedCache.length,
+          itemCount: globalFeedCache.length,
           itemBuilder: (context, index) {
             return feedBuilder(
-              GlobalFeedCache[index]['type'],
-              GlobalFeedCache[index],
+              globalFeedCache[index]['type'],
+              globalFeedCache[index],
             );
           },
         );
       },
       onUpdate: (AsyncSnapshot snapshot) {
-        GlobalFeedCache = [...snapshot.data];
+        globalFeedCache = [...snapshot.data];
         return ListView.builder(
           shrinkWrap: true,
           // physics: NeverScrollableScrollPhysics(),

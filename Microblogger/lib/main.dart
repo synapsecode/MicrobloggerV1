@@ -1,26 +1,26 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:MicroBlogger/palette.dart';
-import 'package:MicroBlogger/Backend/datastore.dart';
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/Composers/blogComposer.dart';
-import 'package:MicroBlogger/Composers/carouselComposer.dart';
-import 'package:MicroBlogger/Composers/microblogComposer.dart';
-import 'package:MicroBlogger/Composers/pollComposer.dart';
-import 'package:MicroBlogger/Composers/shareableComposer.dart';
-import 'package:MicroBlogger/Composers/timelineComposer.dart';
-import 'package:MicroBlogger/Screens/about.dart';
-import 'package:MicroBlogger/Screens/bookmarks.dart';
-import 'package:MicroBlogger/Screens/editprofile.dart';
-import 'package:MicroBlogger/Screens/explorepage.dart';
-import 'package:MicroBlogger/Screens/homepage.dart';
-import 'package:MicroBlogger/Screens/login.dart';
-import 'package:MicroBlogger/Screens/newsfeedpage.dart';
-import 'package:MicroBlogger/Screens/notifications.dart';
-import 'package:MicroBlogger/Screens/profile.dart';
-import 'package:MicroBlogger/Screens/register.dart';
-import 'package:MicroBlogger/Screens/setting.dart';
-import 'package:MicroBlogger/origin.dart';
+import 'package:microblogger/palette.dart';
+import 'package:microblogger/Backend/datastore.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Composers/blogComposer.dart';
+import 'package:microblogger/Composers/carouselComposer.dart';
+import 'package:microblogger/Composers/microblogComposer.dart';
+import 'package:microblogger/Composers/pollComposer.dart';
+import 'package:microblogger/Composers/shareableComposer.dart';
+import 'package:microblogger/Composers/timelineComposer.dart';
+import 'package:microblogger/Screens/about.dart';
+import 'package:microblogger/Screens/bookmarks.dart';
+import 'package:microblogger/Screens/editprofile.dart';
+import 'package:microblogger/Screens/explorepage.dart';
+import 'package:microblogger/Screens/homepage.dart';
+import 'package:microblogger/Screens/login.dart';
+import 'package:microblogger/Screens/newsfeedpage.dart';
+import 'package:microblogger/Screens/notifications.dart';
+import 'package:microblogger/Screens/profile.dart';
+import 'package:microblogger/Screens/register.dart';
+import 'package:microblogger/Screens/setting.dart';
+import 'package:microblogger/origin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shake/shake.dart';
@@ -45,7 +45,7 @@ class Application extends StatelessWidget {
       builder: (context) {
         return MaterialApp(
           routes: routes,
-          title: 'MicroBlogger',
+          title: 'microblogger',
           debugShowCheckedModeBanner: false,
           theme: CurrentTheme,
           home: MainApp(),
@@ -82,7 +82,7 @@ class _MainAppState extends State<MainApp> {
     ),
   );
 
-  String user_id = "";
+  String userID = "";
 
   @override
   void initState() {
@@ -153,7 +153,7 @@ class _MainAppState extends State<MainApp> {
       payload = servErrorPage;
       setState(() {
         payload = payload;
-        user_id = "";
+        userID = "";
       });
     } else {
       String x = await loadSavedUsername();
@@ -161,12 +161,12 @@ class _MainAppState extends State<MainApp> {
         payload = servErrorPage;
         setState(() {
           payload = payload;
-          user_id = "";
+          userID = "";
         });
       } else {
         setState(() {
           payload = (x == "") ? LoginPage() : HomePage();
-          user_id = x;
+          userID = x;
         });
       }
     }

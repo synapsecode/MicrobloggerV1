@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/Composers/blogComposer.dart';
-import 'package:MicroBlogger/Composers/carouselComposer.dart';
-import 'package:MicroBlogger/Composers/timelineComposer.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Composers/blogComposer.dart';
+import 'package:microblogger/Composers/carouselComposer.dart';
+import 'package:microblogger/Composers/timelineComposer.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -94,7 +94,7 @@ class _ImageCaptureState extends State<ImageCapture> {
             ),
             Row(
               children: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Icon(
                     Icons.crop,
                     color: CurrentPalette['transparent_text'],
@@ -108,7 +108,7 @@ class _ImageCaptureState extends State<ImageCapture> {
                   //   );
                   // },
                 ),
-                FlatButton(
+                TextButton(
                   child: Icon(
                     Icons.clear,
                     color: CurrentPalette['transparent_text'],
@@ -205,9 +205,11 @@ class _UploaderState extends State<Uploader> {
     return Container(
         margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         child: (!isUploading)
-            ? FlatButton.icon(
-                padding: EdgeInsets.all(10.0),
-                color: Color.fromARGB(200, 220, 20, 60),
+            ? TextButton.icon(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.all(10.0),
+                  primary: Color.fromARGB(200, 220, 20, 60),
+                ),
                 label: Text('Upload to Server'),
                 icon: Icon(Icons.cloud_upload),
                 onPressed: _startUpload,

@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/origin.dart';
-import 'package:MicroBlogger/palette.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/origin.dart';
+import 'package:microblogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
@@ -110,7 +110,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
         ),
       ),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           child: Text(
             'Cancel',
             style: TextStyle(
@@ -120,7 +120,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        FlatButton(
+        TextButton(
           child: Text(
             'Done',
             style: TextStyle(
@@ -157,7 +157,7 @@ class CustomAlertDialogScaffold extends StatelessWidget {
         ),
       ),
       actions: [
-        FlatButton(
+        TextButton(
           onPressed: () => Navigator.pop(context),
           child: Text(
             'Cancel',
@@ -166,7 +166,7 @@ class CustomAlertDialogScaffold extends StatelessWidget {
             ),
           ),
         ),
-        FlatButton(
+        TextButton(
           onPressed: () {
             onDone();
             Navigator.pop(context);
@@ -217,7 +217,7 @@ class _FileVideoState extends State<FileVideo> {
   Widget build(BuildContext context) {
     _controller.setVolume(widget.isMuted ? 0 : 1);
     return Container(
-      child: _controller.value.initialized
+      child: _controller.value.isInitialized
           ? FittedBox(
               fit: BoxFit.cover,
               child: SizedBox(
@@ -282,7 +282,7 @@ class _NetworkVideoState extends State<NetworkVideo> {
   Widget build(BuildContext context) {
     _controller.setVolume(widget.isMuted ? 0 : 1);
     return Container(
-      child: _controller.value.initialized
+      child: _controller.value.isInitialized
           ? FittedBox(
               fit: BoxFit.cover,
               child: SizedBox(

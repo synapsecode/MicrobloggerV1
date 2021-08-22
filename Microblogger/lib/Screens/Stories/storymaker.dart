@@ -1,21 +1,14 @@
 import 'dart:io';
 import 'dart:ui';
-
-import 'package:MicroBlogger/Backend/datastore.dart';
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/Screens/Stories/components.dart';
-import 'package:MicroBlogger/Screens/Stories/dialogs.dart';
-import 'package:MicroBlogger/Screens/Stories/renderer.dart';
-import 'package:MicroBlogger/Screens/Stories/story_items.dart';
-import 'package:MicroBlogger/Screens/Stories/storyobject_models.dart';
-import 'package:MicroBlogger/origin.dart';
-import 'package:MicroBlogger/palette.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Screens/Stories/components.dart';
+import 'package:microblogger/Screens/Stories/dialogs.dart';
+import 'package:microblogger/Screens/Stories/renderer.dart';
+import 'package:microblogger/Screens/Stories/story_items.dart';
+import 'package:microblogger/Screens/Stories/storyobject_models.dart';
+import 'package:microblogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:video_player/video_player.dart';
 
 var scr = new GlobalKey();
 

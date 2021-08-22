@@ -1,17 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'datastore.dart';
-import 'package:http_parser/http_parser.dart';
 import '../Backend/datastore.dart';
 
 serverCheckRequest() async {
   print("SERVCHECK");
   final response = await http.get('$serverURL/');
   final res = response.body;
+  print(res);
   if (res != "MICROBLOGGER_API") {
     return null;
   }
@@ -74,7 +71,7 @@ getAllUsers() async {
   http.Response response = await http.get("$serverURL/all_users");
   if (response.statusCode == 200) {
     var obj = jsonDecode(response.body);
-    print("Number of MicroBlogger Users: ${obj['length']}");
+    print("Number of microblogger Users: ${obj['length']}");
     return obj['users'];
   }
   return {'code': 'ERR'};
@@ -121,7 +118,6 @@ updateProfile(name, location, bio, email, website) async {
     }),
   );
   if (response.statusCode == 200) {
-    Map obj = json.decode(response.body);
     print("Saving User Object");
     await saveUserLoginInfo(currentUser['user']['username']);
   }
@@ -282,7 +278,7 @@ getBlogData(post) async {
   }
 }
 
-getSpecificPost(post_id, post_type) async {
+getSpecificPost(postID, postType) async {
   final response = await http.post(
     '$serverURL/getspecificpost',
     headers: <String, String>{
@@ -290,8 +286,8 @@ getSpecificPost(post_id, post_type) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'post_type': post_type,
-      'post_id': post_id
+      'post_type': postType,
+      'post_id': postID,
     }),
   );
   if (response.statusCode == 200) {
@@ -322,7 +318,6 @@ getFollowSuggestions() async {
       "$serverURL/${currentUser['user']['username']}/getfollowsuggestions");
   final response = await http.get(
       "$serverURL/${currentUser['user']['username']}/getfollowsuggestions");
-  Map x = json.decode(response.body);
   if (response.statusCode == 200) {
     Map x = json.decode(response.body);
     print(x);
@@ -434,7 +429,7 @@ createTimeline(timelineName, events, {cover}) async {
 
 //------------------------------------------POST ACTIONS-------------------------------------------
 
-likePost(post_id, post_type) async {
+likePost(postID, postType) async {
   final response = await http.post(
     '$serverURL/likepost',
     headers: <String, String>{
@@ -442,14 +437,14 @@ likePost(post_id, post_type) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'post_id': post_id,
-      'post_type': post_type
+      'post_id': postID,
+      'post_type': postType
     }),
   );
   print(json.decode(response.body));
 }
 
-unlikePost(post_id, post_type) async {
+unlikePost(postID, postType) async {
   final response = await http.post(
     '$serverURL/unlikepost',
     headers: <String, String>{
@@ -457,14 +452,14 @@ unlikePost(post_id, post_type) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'post_id': post_id,
-      'post_type': post_type
+      'post_id': postID,
+      'post_type': postType
     }),
   );
   print(json.decode(response.body));
 }
 
-resharePost(host_id, host_type, reshareType,
+resharePost(hostID, hostType, reshareType,
     {content = "", category = ""}) async {
   final response = await http.post(
     '$serverURL/reshare',
@@ -473,8 +468,8 @@ resharePost(host_id, host_type, reshareType,
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'host_id': host_id,
-      'host_type': host_type,
+      'host_id': hostID,
+      'host_type': hostType,
       'reshare_type': reshareType,
       'content': content,
       'category': category
@@ -483,7 +478,7 @@ resharePost(host_id, host_type, reshareType,
   print(json.decode(response.body));
 }
 
-unresharePost(host_id, host_type) async {
+unresharePost(hostID, hostType) async {
   final response = await http.post(
     '$serverURL/unreshare',
     headers: <String, String>{
@@ -491,14 +486,14 @@ unresharePost(host_id, host_type) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'host_id': host_id,
-      'host_type': host_type,
+      'host_id': hostID,
+      'host_type': hostType,
     }),
   );
   print(json.decode(response.body));
 }
 
-bookmarkPost(post_id, post_type) async {
+bookmarkPost(postID, postType) async {
   final response = await http.post(
     '$serverURL/bookmarkpost',
     headers: <String, String>{
@@ -506,14 +501,14 @@ bookmarkPost(post_id, post_type) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'post_id': post_id,
-      'post_type': post_type,
+      'post_id': postID,
+      'post_type': postType,
     }),
   );
   print(json.decode(response.body));
 }
 
-unbookmarkPost(post_id, post_type) async {
+unbookmarkPost(postID, postType) async {
   final response = await http.post(
     '$serverURL/unbookmarkpost',
     headers: <String, String>{
@@ -521,14 +516,14 @@ unbookmarkPost(post_id, post_type) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'post_id': post_id,
-      'post_type': post_type,
+      'post_id': postID,
+      'post_type': postType,
     }),
   );
   print(json.decode(response.body));
 }
 
-addCommentToPost(post_id, post_type, content, category) async {
+addCommentToPost(postID, postType, content, category) async {
   final response = await http.post(
     '$serverURL/comment',
     headers: <String, String>{
@@ -536,8 +531,8 @@ addCommentToPost(post_id, post_type, content, category) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'post_id': post_id,
-      'post_type': post_type,
+      'post_id': postID,
+      'post_type': postType,
       'content': content,
       'category': category
     }),
@@ -545,7 +540,7 @@ addCommentToPost(post_id, post_type, content, category) async {
   print(json.decode(response.body));
 }
 
-deleteCommentFromPost(comment_id) async {
+deleteCommentFromPost(commentID) async {
   final response = await http.post(
     '$serverURL/deletecomment',
     headers: <String, String>{
@@ -553,14 +548,14 @@ deleteCommentFromPost(comment_id) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'comment_id': comment_id,
+      'comment_id': commentID,
     }),
   );
   print(json.decode(response.body));
 }
 
-deletePost(post_id, post_type) async {
-  print("VAL: ${post_id} ${post_type}");
+deletePost(postID, postType) async {
+  print("VAL: $postID $postType");
   final response = await http.post(
     '$serverURL/deletepost',
     headers: <String, String>{
@@ -568,14 +563,14 @@ deletePost(post_id, post_type) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'post_id': post_id,
-      'post_type': post_type,
+      'post_id': postID,
+      'post_type': postType,
     }),
   );
   print(json.decode(response.body));
 }
 
-submitVote(poll_id, selected) async {
+submitVote(pollID, selected) async {
   final response = await http.post(
     '$serverURL/submitvote',
     headers: <String, String>{
@@ -583,7 +578,7 @@ submitVote(poll_id, selected) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'poll_id': poll_id,
+      'poll_id': pollID,
       'selected': selected,
     }),
   );
@@ -593,7 +588,7 @@ submitVote(poll_id, selected) async {
 //------------------------------------------POST ACTIONS-------------------------------------------
 
 //-----------------------------------------EDIT POSTS------------------------------------------------
-editMicroblog(post_id, content, category) async {
+editMicroblog(postID, content, category) async {
   final response = await http.post(
     '$serverURL/editmicroblog',
     headers: <String, String>{
@@ -601,7 +596,7 @@ editMicroblog(post_id, content, category) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'post_id': post_id,
+      'post_id': postID,
       'content': content,
       'category': category
     }),
@@ -612,7 +607,7 @@ editMicroblog(post_id, content, category) async {
     print("Server Error");
 }
 
-editBlog(post_id, content, blog_name, cover) async {
+editBlog(postID, content, blogName, cover) async {
   final response = await http.post(
     '$serverURL/editblog',
     headers: <String, String>{
@@ -620,9 +615,9 @@ editBlog(post_id, content, blog_name, cover) async {
     },
     body: jsonEncode(<String, dynamic>{
       'username': currentUser['user']['username'],
-      'post_id': post_id,
+      'post_id': postID,
       'content': content,
-      'blog_name': blog_name,
+      'blog_name': blogName,
       'cover': cover
     }),
   );
@@ -632,7 +627,7 @@ editBlog(post_id, content, blog_name, cover) async {
     print("Server Error");
 }
 
-editTimeline(post_id, title, events, cover) async {
+editTimeline(postID, title, events, cover) async {
   final response = await http.post(
     '$serverURL/edittimeline',
     headers: <String, String>{
@@ -640,7 +635,7 @@ editTimeline(post_id, title, events, cover) async {
     },
     body: jsonEncode(<String, dynamic>{
       'username': currentUser['user']['username'],
-      'post_id': post_id,
+      'post_id': postID,
       'title': title,
       'events': events,
       'cover': cover
@@ -652,7 +647,7 @@ editTimeline(post_id, title, events, cover) async {
     print("Server Error");
 }
 
-editResharedWithComment(post_id, content, category) async {
+editResharedWithComment(postID, content, category) async {
   final response = await http.post(
     '$serverURL/editrwc',
     headers: <String, String>{
@@ -660,7 +655,7 @@ editResharedWithComment(post_id, content, category) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'post_id': post_id,
+      'post_id': postID,
       'content': content,
       'category': category
     }),
@@ -671,7 +666,7 @@ editResharedWithComment(post_id, content, category) async {
     print("Server Error");
 }
 
-editShareable(post_id, content, link, name) async {
+editShareable(postID, content, link, name) async {
   final response = await http.post(
     '$serverURL/editshareable',
     headers: <String, String>{
@@ -679,7 +674,7 @@ editShareable(post_id, content, link, name) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'post_id': post_id,
+      'post_id': postID,
       'content': content,
       'link': link,
       'name': name
@@ -691,7 +686,7 @@ editShareable(post_id, content, link, name) async {
     print("Server Error");
 }
 
-editComment(post_id, comment, category) async {
+editComment(postID, comment, category) async {
   final response = await http.post(
     '$serverURL/editcomment',
     headers: <String, String>{
@@ -699,7 +694,7 @@ editComment(post_id, comment, category) async {
     },
     body: jsonEncode(<String, String>{
       'username': currentUser['user']['username'],
-      'comment_id': post_id,
+      'comment_id': postID,
       'comment': comment,
       'category': category
     }),
@@ -710,7 +705,7 @@ editComment(post_id, comment, category) async {
     print("Server Error");
 }
 
-editCarousel(post_id, content, images) async {
+editCarousel(postID, content, images) async {
   final response = await http.post(
     '$serverURL/editcarousel',
     headers: <String, String>{
@@ -718,7 +713,7 @@ editCarousel(post_id, content, images) async {
     },
     body: jsonEncode(<String, dynamic>{
       'username': currentUser['user']['username'],
-      'post_id': post_id,
+      'post_id': postID,
       'content': content,
       'images': images,
     }),

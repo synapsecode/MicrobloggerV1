@@ -1,9 +1,7 @@
-import 'dart:io';
-
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/Screens/imageupload.dart';
-import 'package:MicroBlogger/origin.dart';
-import 'package:MicroBlogger/palette.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Screens/imageupload.dart';
+import 'package:microblogger/origin.dart';
+import 'package:microblogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
@@ -89,7 +87,7 @@ class _TimelineComposerState extends State<TimelineComposer> {
         actions: [
           Container(
             margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: () async {
                 print("TSTATE: $state");
                 //upload
@@ -119,12 +117,14 @@ class _TimelineComposerState extends State<TimelineComposer> {
                 Navigator.pushNamed(context, '/HomePage');
               },
               child: Text((widget.isEditing) ? "Update" : "Publish"),
-              color: Colors.black,
+              style: ElevatedButton.styleFrom(
+                primary: Colors.black,
+              ),
             ),
           ),
           Container(
             margin: EdgeInsets.all(10.0),
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: () async {
                 print(state);
                 (widget.isEditing)
@@ -140,7 +140,9 @@ class _TimelineComposerState extends State<TimelineComposer> {
               },
               child: Text(
                   (widget.isEditing) ? "Edit Cover Image" : "Add Cover Image"),
-              color: Color.fromARGB(200, 220, 20, 60),
+              style: ElevatedButton.styleFrom(
+                primary: Color.fromARGB(200, 220, 20, 60),
+              ),
             ),
           ),
         ],

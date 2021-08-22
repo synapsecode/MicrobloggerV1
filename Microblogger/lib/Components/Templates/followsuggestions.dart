@@ -1,7 +1,7 @@
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/Screens/profile.dart';
-import 'package:MicroBlogger/globals.dart';
-import 'package:MicroBlogger/palette.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Screens/profile.dart';
+import 'package:microblogger/globals.dart';
+import 'package:microblogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../Backend/server.dart';
@@ -23,7 +23,7 @@ class _UserFollowSuggestionsState extends State<UserFollowSuggestions> {
   }
 
   void removeSuggestion(int index) {
-    FollowSuggestionsCache.removeAt(index);
+    followSuggestionsCache.removeAt(index);
     setState(() {});
   }
 
@@ -79,15 +79,15 @@ class _UserFollowSuggestionsState extends State<UserFollowSuggestions> {
   @override
   Widget build(BuildContext context) {
     return CachedFutureBuilder(
-      cacheStore: FollowSuggestionsCache,
+      cacheStore: followSuggestionsCache,
       future: suggestionFuture,
       onCacheUsed: (cache) {
         print("CACHE");
-        return generateSuggestions(FollowSuggestionsCache);
+        return generateSuggestions(followSuggestionsCache);
       },
       onUpdate: (AsyncSnapshot snapshot) {
         print("UPDT");
-        FollowSuggestionsCache = snapshot.data;
+        followSuggestionsCache = snapshot.data;
         return generateSuggestions(snapshot.data);
       },
     );
@@ -157,7 +157,7 @@ class UserDisplayCard extends StatelessWidget {
           ),
           Container(
             width: 140,
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: () async {
                 await followProfile(user['username']);
                 Fluttertoast.showToast(
@@ -175,9 +175,11 @@ class UserDisplayCard extends StatelessWidget {
                   Text("Follow")
                 ],
               ),
-              color: Colors.black54,
-              shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(30.0),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.black54,
+                shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30.0),
+                ),
               ),
             ),
           )
@@ -200,7 +202,6 @@ class _FollowSuggestionsState extends State<FollowSuggestions> {
   @override
   void initState() {
     super.initState();
-    Future suggestionDataFuture = getFollowSuggestions();
     data = [
       {
         'username': 'synapsecode',
@@ -328,7 +329,7 @@ class _UserCardState extends State<UserCard> {
             ),
             Container(
                 width: 140,
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: () async {
                     setState(() {
                       isFollowing = !isFollowing;
@@ -343,9 +344,11 @@ class _UserCardState extends State<UserCard> {
                       Text("Follow")
                     ],
                   ),
-                  color: Colors.black54,
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(30.0),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.black54,
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30.0),
+                    ),
                   ),
                 ))
           ],
@@ -405,7 +408,7 @@ class _UserCardState extends State<UserCard> {
   //               ),
   //               Container(
   //                   width: 140,
-  //                   child: RaisedButton(
+  //                   child: ElevatedButton(
   //                     onPressed: () async {
   //                       print("Following..");
   //                     },

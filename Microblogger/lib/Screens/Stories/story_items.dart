@@ -1,8 +1,7 @@
 import 'dart:io';
-import 'package:MicroBlogger/Components/Global/tester.dart';
-import 'package:MicroBlogger/Screens/Stories/components.dart';
-import 'package:MicroBlogger/Screens/Stories/storyobject_models.dart';
-import 'package:MicroBlogger/Screens/homepage.dart';
+import 'package:microblogger/Screens/Stories/components.dart';
+import 'package:microblogger/Screens/Stories/storyobject_models.dart';
+import 'package:microblogger/Screens/homepage.dart';
 import 'package:flutter/material.dart';
 
 Widget getEditableStoryItem(BuildContext context, dynamic e) {

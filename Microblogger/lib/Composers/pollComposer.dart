@@ -1,5 +1,5 @@
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/origin.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/origin.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
@@ -20,7 +20,6 @@ class _PollComposerState extends State<PollComposer> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     checkConnection(context);
   }
@@ -60,7 +59,7 @@ class _PollComposerState extends State<PollComposer> {
         actions: [
           Container(
             margin: EdgeInsets.all(10.0),
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: () async {
                 print(pollItems);
                 print(content);
@@ -72,7 +71,7 @@ class _PollComposerState extends State<PollComposer> {
                 Navigator.pushNamed(context, '/HomePage');
               },
               child: Text("Publish"),
-              color: Colors.black,
+              style: ElevatedButton.styleFrom(primary: Colors.black),
             ),
           )
         ],
@@ -108,7 +107,6 @@ class _ComposerComponentState extends State<ComposerComponent> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     contentController = new TextEditingController();
     contentController.text = "";

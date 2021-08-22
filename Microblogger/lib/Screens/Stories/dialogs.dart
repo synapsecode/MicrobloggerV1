@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:MicroBlogger/Screens/Stories/components.dart';
-import 'package:MicroBlogger/Screens/Stories/story_items.dart';
-import 'package:MicroBlogger/Screens/Stories/storymaker.dart';
-import 'package:MicroBlogger/Screens/Stories/storyobject_models.dart';
+import 'package:microblogger/Screens/Stories/components.dart';
+import 'package:microblogger/Screens/Stories/story_items.dart';
+import 'package:microblogger/Screens/Stories/storymaker.dart';
+import 'package:microblogger/Screens/Stories/storyobject_models.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -155,9 +155,11 @@ void showTextEditDialog({
                   },
                 ),
                 SizedBox(height: 10.0),
-                RaisedButton(
-                  padding: EdgeInsets.symmetric(horizontal: 30.0),
-                  color: Colors.yellow,
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 30.0),
+                    primary: Colors.yellow,
+                  ),
                   onPressed: () {
                     storyItems.remove(e);
                     storyItems.add(e);
@@ -172,9 +174,11 @@ void showTextEditDialog({
                       setBuilderState(() => tColor = color),
                 ),
                 SizedBox(height: 10),
-                RaisedButton(
-                  padding: EdgeInsets.symmetric(horizontal: 50.0),
-                  color: Colors.black,
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 50.0),
+                    primary: Colors.black,
+                  ),
                   onPressed: () {
                     showDialog(
                       context: context,
@@ -210,9 +214,11 @@ void showTextEditDialog({
                       setBuilderState(() => bColor = color),
                 ),
                 SizedBox(height: 10),
-                RaisedButton(
-                  padding: EdgeInsets.symmetric(horizontal: 28.0),
-                  color: Colors.black,
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 28.0),
+                    primary: Colors.black,
+                  ),
                   onPressed: () {
                     showDialog(
                       context: context,
@@ -226,9 +232,11 @@ void showTextEditDialog({
                   },
                   child: Text("Custom Background Color"),
                 ),
-                RaisedButton(
-                  padding: EdgeInsets.symmetric(horizontal: 60.0),
-                  color: CurrentPalette['errorColor'],
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 60.0),
+                    primary: CurrentPalette['errorColor'],
+                  ),
                   onPressed: () {
                     storyItems.remove(e);
 
@@ -263,9 +271,11 @@ void showImageEditDialog({BuildContext context, Function setState, dynamic e}) {
           title: "Edit Image",
           height: 200,
           children: [
-            RaisedButton(
-              padding: EdgeInsets.symmetric(horizontal: 65.0),
-              color: Colors.yellow,
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 65.0),
+                primary: Colors.yellow,
+              ),
               onPressed: () {
                 storyItems.remove(e);
                 storyItems.add(e);
@@ -276,9 +286,11 @@ void showImageEditDialog({BuildContext context, Function setState, dynamic e}) {
             SizedBox(
               height: 5.0,
             ),
-            RaisedButton(
-              padding: EdgeInsets.symmetric(horizontal: 60.0),
-              color: CurrentPalette['errorColor'],
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 60.0),
+                primary: CurrentPalette['errorColor'],
+              ),
               onPressed: () {
                 storyItems.remove(e);
 
@@ -330,9 +342,11 @@ void showDateTimeEditDialog(
               child: getEditableStoryItem(context, e),
             ),
             SizedBox(height: 10),
-            RaisedButton(
-              padding: EdgeInsets.symmetric(horizontal: 65.0),
-              color: Colors.yellow,
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 65.0),
+                primary: Colors.yellow,
+              ),
               onPressed: () {
                 storyItems.remove(e);
                 storyItems.add(e);
@@ -340,9 +354,11 @@ void showDateTimeEditDialog(
               },
               child: Text("Bring to Front"),
             ),
-            RaisedButton(
-              padding: EdgeInsets.symmetric(horizontal: 60.0),
-              color: CurrentPalette['errorColor'],
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 60.0),
+                primary: CurrentPalette['errorColor'],
+              ),
               onPressed: () {
                 storyItems.remove(e);
 
@@ -361,9 +377,11 @@ void showDateTimeEditDialog(
               },
             ),
             SizedBox(height: 10),
-            RaisedButton(
-              padding: EdgeInsets.symmetric(horizontal: 28.0),
-              color: Colors.black,
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 28.0),
+                primary: Colors.black,
+              ),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -394,9 +412,11 @@ void showPostEditDialog({BuildContext context, Function setState, dynamic e}) {
       title: "Edit Post",
       height: 100,
       children: [
-        RaisedButton(
-          padding: EdgeInsets.symmetric(horizontal: 65.0),
-          color: Colors.yellow,
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 65.0),
+            primary: Colors.yellow,
+          ),
           onPressed: () {
             storyItems.remove(e);
             storyItems.add(e);
@@ -404,9 +424,11 @@ void showPostEditDialog({BuildContext context, Function setState, dynamic e}) {
           },
           child: Text("Bring to Front"),
         ),
-        RaisedButton(
-          padding: EdgeInsets.symmetric(horizontal: 60.0),
-          color: CurrentPalette['errorColor'],
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 60.0),
+            primary: CurrentPalette['errorColor'],
+          ),
           onPressed: () {
             storyItems.remove(e);
 
@@ -430,9 +452,11 @@ void showVideoEditDialog({BuildContext context, Function setState, dynamic e}) {
           title: "Edit Video",
           height: 160,
           children: [
-            RaisedButton(
-              padding: EdgeInsets.symmetric(horizontal: 65.0),
-              color: Colors.yellow,
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 65.0),
+                primary: Colors.yellow,
+              ),
               onPressed: () {
                 storyItems.remove(e);
                 storyItems.add(e);
@@ -440,9 +464,11 @@ void showVideoEditDialog({BuildContext context, Function setState, dynamic e}) {
               },
               child: Text("Bring to Front"),
             ),
-            RaisedButton(
-              padding: EdgeInsets.symmetric(horizontal: 70.0),
-              color: Colors.yellow,
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 70.0),
+                primary: Colors.yellow,
+              ),
               onPressed: () {
                 setState(() {
                   e.muted = !e.muted;
@@ -451,9 +477,11 @@ void showVideoEditDialog({BuildContext context, Function setState, dynamic e}) {
               },
               child: Text("${e.muted ? 'Unmute' : 'Mute'} Video"),
             ),
-            RaisedButton(
-              padding: EdgeInsets.symmetric(horizontal: 60.0),
-              color: CurrentPalette['errorColor'],
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 60.0),
+                primary: CurrentPalette['errorColor'],
+              ),
               onPressed: () {
                 storyItems.remove(e);
 

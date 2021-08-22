@@ -1,7 +1,5 @@
-import 'dart:io';
-
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/Screens/imageupload.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Screens/imageupload.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
@@ -52,7 +50,7 @@ class _BlogComposerState extends State<BlogComposer> {
           actions: [
             Container(
               margin: EdgeInsets.symmetric(vertical: 10.0),
-              child: RaisedButton(
+              child: ElevatedButton(
                 onPressed: () async {
                   print("Updating Blog");
                   Fluttertoast.showToast(
@@ -81,12 +79,14 @@ class _BlogComposerState extends State<BlogComposer> {
                 child: (widget.isEditing) ?? (widget.isEditing)
                     ? Text("Update")
                     : Text("Publish"),
-                color: Colors.black,
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.black,
+                ),
               ),
             ),
             Container(
               margin: EdgeInsets.all(10.0),
-              child: RaisedButton(
+              child: ElevatedButton(
                 onPressed: () async {
                   print(state);
                   (widget.isEditing)
@@ -105,7 +105,9 @@ class _BlogComposerState extends State<BlogComposer> {
                 child: Text((widget.isEditing)
                     ? "Edit Cover Image"
                     : "Add Cover Image"),
-                color: Color.fromARGB(200, 220, 20, 60),
+                style: ElevatedButton.styleFrom(
+                  primary: Color.fromARGB(200, 220, 20, 60),
+                ),
               ),
             ),
           ],

@@ -1,6 +1,6 @@
-import 'package:MicroBlogger/Backend/server.dart';
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/palette.dart';
+import 'package:microblogger/Backend/server.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/palette.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../Components/Templates/postTemplates.dart';
@@ -81,19 +81,21 @@ class _ReshareComposerState extends State<ReshareComposer> {
         actions: [
           Container(
             margin: EdgeInsets.only(top: 10.0, left: 10.0, bottom: 10.0),
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: () {
                 setState(() {
                   state['isFact'] = !state['isFact'];
                 });
               },
               child: (state['isFact']) ? Text("Fact") : Text("Opinion"),
-              color: (state['isFact']) ? Colors.green : Colors.red,
+              style: ElevatedButton.styleFrom(
+                primary: (state['isFact']) ? Colors.green : Colors.red,
+              ),
             ),
           ),
           Container(
             margin: EdgeInsets.all(10.0),
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: () async {
                 if (!widget.isEditing) {
                   Fluttertoast.showToast(
@@ -122,7 +124,9 @@ class _ReshareComposerState extends State<ReshareComposer> {
                 Navigator.pushNamed(context, '/HomePage');
               },
               child: Text((widget.isEditing) ? "Update" : "Publish"),
-              color: Colors.black,
+              style: ElevatedButton.styleFrom(
+                primary: Colors.black,
+              ),
             ),
           )
         ],

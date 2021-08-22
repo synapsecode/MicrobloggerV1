@@ -1,5 +1,5 @@
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/palette.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
@@ -40,16 +40,18 @@ class _MicroBlogComposerState extends State<MicroBlogComposer> {
         actions: [
           Container(
             margin: EdgeInsets.only(top: 10.0, left: 10.0, bottom: 10.0),
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: () =>
                   setState(() => state['isFact'] = !state['isFact']),
               child: (state['isFact']) ? Text("Fact") : Text("Opinion"),
-              color: (state['isFact']) ? Colors.green : Colors.red,
+              style: ElevatedButton.styleFrom(
+                primary: (state['isFact']) ? Colors.green : Colors.red,
+              ),
             ),
           ),
           Container(
             margin: EdgeInsets.all(10.0),
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: () async {
                 //upload
                 String category = (state['isFact']) ? "Fact" : "Opinion";
@@ -78,7 +80,7 @@ class _MicroBlogComposerState extends State<MicroBlogComposer> {
                 Navigator.pushNamed(context, '/HomePage');
               },
               child: Text((widget.isEditing) ? "Update" : "Publish"),
-              color: Colors.black,
+              style: ElevatedButton.styleFrom(primary: Colors.black),
             ),
           )
         ],

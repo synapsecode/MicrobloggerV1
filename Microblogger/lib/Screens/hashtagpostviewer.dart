@@ -1,13 +1,10 @@
 import 'dart:ui';
-
-import 'package:MicroBlogger/Backend/datastore.dart';
-import 'package:MicroBlogger/Backend/server.dart';
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/Components/Templates/postTemplates.dart';
-import 'package:MicroBlogger/palette.dart';
+import 'package:microblogger/Backend/datastore.dart';
+import 'package:microblogger/Backend/server.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Components/Templates/postTemplates.dart';
+import 'package:microblogger/palette.dart';
 import 'package:flutter/material.dart';
-
-import '../origin.dart';
 
 class HashtagPostViewer extends StatefulWidget {
   final String hashtag;
@@ -211,6 +208,7 @@ class _PostViewerState extends State<PostViewer> {
                       else if (blogandTimelineFeed[index]['type'] == 'carousel')
                         return CarouselPost(
                             postObject: blogandTimelineFeed[index]);
+                      return Container();
                     },
                   ),
                 ),

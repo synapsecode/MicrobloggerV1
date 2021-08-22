@@ -1,9 +1,9 @@
-import 'package:MicroBlogger/Backend/datastore.dart';
-import 'package:MicroBlogger/Screens/editprofile.dart';
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/Screens/login.dart';
+import 'package:microblogger/Backend/datastore.dart';
+import 'package:microblogger/Screens/editprofile.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Screens/login.dart';
 import 'package:flutter/material.dart';
-import 'package:MicroBlogger/Backend/server.dart';
+import 'package:microblogger/Backend/server.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -26,7 +26,7 @@ class _RegisterPageState extends State<RegisterPage> {
               title: Text("$title"),
               content: Text("$content"),
               actions: [
-                FlatButton(
+                TextButton(
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text("Back"))
               ],
@@ -48,7 +48,7 @@ class _RegisterPageState extends State<RegisterPage> {
             children: [
               Image(image: AssetImage('assets/env.png')),
               Text(
-                'Microblogger',
+                'microblogger',
                 style: Theme.of(context).textTheme.headline4,
               ),
               Text(
@@ -102,10 +102,12 @@ class _RegisterPageState extends State<RegisterPage> {
                       SizedBox(
                         height: 20.0,
                       ),
-                      RaisedButton(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 20.0, horizontal: 81.0),
-                        color: Color.fromARGB(200, 220, 20, 60),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20.0, horizontal: 81.0),
+                          primary: Color.fromARGB(200, 220, 20, 60),
+                        ),
                         child: Text(
                           "Register Account",
                           style: TextStyle(color: Colors.white),

@@ -1,14 +1,12 @@
-import 'package:MicroBlogger/palette.dart';
-import 'package:flutter/material.dart';
+import 'package:microblogger/palette.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show Platform;
-import '../origin.dart';
 import 'server.dart';
 
 Map currentUser = {};
 Map currentPallete = {};
-String serverURL = "https://bc449083b6a6.ngrok.io";
+String serverURL = "https://4dcb-106-51-27-13.ngrok.io";
 
 saveUserLoginInfo(username) async {
   if (!Platform.isWindows) {

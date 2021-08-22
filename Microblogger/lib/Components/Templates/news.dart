@@ -1,5 +1,5 @@
-import 'package:MicroBlogger/Views/news_viewer.dart';
-import 'package:MicroBlogger/palette.dart';
+import 'package:microblogger/Views/news_viewer.dart';
+import 'package:microblogger/palette.dart';
 import 'package:flutter/material.dart';
 
 class NewsItem extends StatelessWidget {

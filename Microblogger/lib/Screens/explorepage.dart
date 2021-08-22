@@ -1,4 +1,4 @@
-import 'package:MicroBlogger/Components/Templates/postTemplates.dart';
+import 'package:microblogger/Components/Templates/postTemplates.dart';
 import 'profile.dart';
 import '../Components/Global/globalcomponents.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +30,7 @@ class _ExplorePageState extends State<ExplorePage>
 
   @override
   Widget build(BuildContext context) {
-    Future microBloggerUsers = getAllUsers();
+    Future microbloggerUsers = getAllUsers();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -42,7 +42,7 @@ class _ExplorePageState extends State<ExplorePage>
               icon: Icon(Icons.search),
               onPressed: () {
                 showSearch(
-                    context: context, delegate: DataSearch(microBloggerUsers));
+                    context: context, delegate: DataSearch(microbloggerUsers));
               })
         ],
       ),

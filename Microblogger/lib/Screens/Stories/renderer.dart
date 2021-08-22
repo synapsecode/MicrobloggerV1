@@ -1,4 +1,4 @@
-import 'package:MicroBlogger/Screens/Stories/story_items.dart';
+import 'package:microblogger/Screens/Stories/story_items.dart';
 import 'package:flutter/material.dart';
 
 class StoryRenderer extends StatefulWidget {

@@ -1,42 +1,53 @@
 import 'dart:io';
-import 'package:MicroBlogger/Components/Global/tester.dart';
-import 'package:MicroBlogger/Screens/hashtaglistviewer.dart';
-import 'package:MicroBlogger/Screens/hashtagpostviewer.dart';
-import 'package:MicroBlogger/globals.dart';
-import 'package:MicroBlogger/palette.dart';
-import 'package:MicroBlogger/Backend/server.dart';
-import 'package:MicroBlogger/Screens/homepage.dart';
-import 'package:MicroBlogger/Screens/profile.dart';
+import 'package:microblogger/Screens/hashtaglistviewer.dart';
+import 'package:microblogger/Screens/hashtagpostviewer.dart';
+import 'package:microblogger/globals.dart';
+import 'package:microblogger/palette.dart';
+import 'package:microblogger/Backend/server.dart';
+import 'package:microblogger/Screens/homepage.dart';
+import 'package:microblogger/Screens/profile.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
 import '../../Backend/datastore.dart';
-import 'package:MicroBlogger/palette.dart';
 
-void PlatformCodeRunner(
-  Function web,
-  Function android,
-  Function iOS,
-  Function windows,
-  Function macOS,
-  Function linux,
-  Function fuchsia,
-) {
-  if (kIsWeb) {
-    if (web != null) web();
-  } else {
-    if (Platform.isWindows && windows != null) windows();
-    if (Platform.isMacOS && macOS != null) macOS();
-    if (Platform.isAndroid && android != null) android();
-    if (Platform.isIOS && android != null) iOS();
-    if (Platform.isLinux && linux != null) linux();
-    if (Platform.isFuchsia && fuchsia != null) fuchsia();
+class PlatformCodeRunner extends StatelessWidget {
+  final Function web;
+  final Function android;
+  final Function iOS;
+  final Function windows;
+  final Function macOS;
+  final Function linux;
+  final Function fuchsia;
+  const PlatformCodeRunner(
+      {Key key,
+      this.web,
+      this.android,
+      this.iOS,
+      this.windows,
+      this.macOS,
+      this.linux,
+      this.fuchsia})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (kIsWeb) {
+      if (web != null) return web();
+    } else {
+      if (Platform.isWindows && windows != null) return windows();
+      if (Platform.isMacOS && macOS != null) return macOS();
+      if (Platform.isAndroid && android != null) return android();
+      if (Platform.isIOS && android != null) return iOS();
+      if (Platform.isLinux && linux != null) return linux();
+      if (Platform.isFuchsia && fuchsia != null) return fuchsia();
+      return Container();
+    }
+    return Container();
   }
-  return;
 }
 
 class ImageCarousel extends StatefulWidget {
@@ -541,7 +552,7 @@ class _BugReporterDialogState extends State<BugReporterDialog> {
           content: Column(
             children: [
               Text(
-                "MicroBlogger is in its early stages! There will be several bugs in the Platform. Please describe the bug or inconsistency that you found! If possible, please add your contact information so that we can discuss the issue elaborately! Thank you for your time!",
+                "microblogger is in its early stages! There will be several bugs in the Platform. Please describe the bug or inconsistency that you found! If possible, please add your contact information so that we can discuss the issue elaborately! Thank you for your time!",
                 style: TextStyle(color: Colors.white),
               ),
               SizedBox(
@@ -575,7 +586,7 @@ class _BugReporterDialogState extends State<BugReporterDialog> {
             Text("Report a Bug", style: TextStyle(color: Colors.white))
           ]),
           actions: [
-            FlatButton(
+            TextButton(
               child: Text("Report", style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 await reportBug(
@@ -588,7 +599,7 @@ class _BugReporterDialogState extends State<BugReporterDialog> {
                 Navigator.pop(context);
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text("Cancel", style: TextStyle(color: Colors.white)),
               onPressed: () => Navigator.pop(context),
             )
@@ -619,7 +630,7 @@ class OfflineAlert extends StatelessWidget {
         Text("Offline Alert!")
       ]),
       actions: [
-        FlatButton(
+        TextButton(
           child: Text("Close"),
           onPressed: () => Navigator.pop(context),
         )
@@ -791,18 +802,18 @@ class _HashTagEnabledUserTaggableTextFieldState
   List words = [];
 
   String selectedUser = '';
-  List usernames = UsernamesListCache;
-  List hashtags = HashtagsListCache;
+  List usernames = usernamesListCache;
+  List hashtags = hashtagsListCache;
 
   @override
   void initState() {
     getUsersList().then((x) {
       usernames = x;
-      UsernamesListCache = x;
+      usernamesListCache = x;
     });
     getHashtags().then((x) {
       hashtags = x;
-      HashtagsListCache = x;
+      hashtagsListCache = x;
     });
 
     super.initState();

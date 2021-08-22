@@ -1,7 +1,5 @@
-import 'package:MicroBlogger/Backend/server.dart';
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/palette.dart';
-
+import 'package:microblogger/Backend/server.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
 import '../Components/Templates/ViewerTemplate.dart';
 import '../Components/Templates/basetemplate.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
 import 'package:flutter/material.dart';
 
 class LinkerButton extends StatelessWidget {
@@ -48,7 +48,7 @@ class AboutPage extends StatelessWidget {
               height: 10.0,
             ),
             Text(
-              'MicroBlogger',
+              'microblogger',
               style: Theme.of(context).textTheme.headline4,
             ),
             SizedBox(
@@ -77,7 +77,7 @@ class AboutPage extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Text(
-                      "MicroBlogger is a Completely Indian Initiative to create a microblogging platform that incorporates elements from various different social media platforms. It is created by Manas Hejmadi, a solo developer from Bengaluru, Karnataka (India).",
+                      "microblogger is a Completely Indian Initiative to create a microblogging platform that incorporates elements from various different social media platforms. It is created by Manas Hejmadi, a solo developer from Bengaluru, Karnataka (India).",
                       style: TextStyle(color: Colors.white),
                     ),
                   ),

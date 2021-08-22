@@ -1,6 +1,4 @@
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-
-import '../Backend/datastore.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
 import '../Backend/server.dart';
 import 'package:flutter/material.dart';
 import '../Components/Templates/postTemplates.dart';

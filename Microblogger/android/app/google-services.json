@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:1085861554236:android:2350d71baf697e34c97b39",
         "android_client_info": {
-          "package_name": "com.example.MicroBlogger"
+          "package_name": "com.example.microblogger"
         }
       },
       "oauth_client": [

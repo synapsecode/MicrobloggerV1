@@ -1,27 +1,23 @@
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/Components/Templates/ViewerTemplate.dart';
-import 'package:MicroBlogger/Components/Templates/postTemplates.dart';
-import 'package:MicroBlogger/Composers/blogComposer.dart';
-import 'package:MicroBlogger/Composers/commentComposer.dart';
-import 'package:MicroBlogger/Composers/carouselComposer.dart';
-import 'package:MicroBlogger/Composers/microblogComposer.dart';
-import 'package:MicroBlogger/Composers/reshareComposer.dart';
-import 'package:MicroBlogger/Composers/shareableComposer.dart';
-import 'package:MicroBlogger/Composers/timelineComposer.dart';
-import 'package:MicroBlogger/Screens/Stories/storymaker.dart';
-import 'package:MicroBlogger/Screens/Stories/storyobject_models.dart';
-import 'package:MicroBlogger/Screens/editprofile.dart';
-import 'package:MicroBlogger/Screens/homepage.dart';
-import 'package:MicroBlogger/Screens/profile.dart';
-import 'package:MicroBlogger/Views/blog_viewer.dart';
-import 'package:MicroBlogger/Views/timeline_viewer.dart';
-import 'package:MicroBlogger/origin.dart';
-import 'package:flutter/gestures.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Components/Templates/ViewerTemplate.dart';
+import 'package:microblogger/Composers/blogComposer.dart';
+import 'package:microblogger/Composers/commentComposer.dart';
+import 'package:microblogger/Composers/carouselComposer.dart';
+import 'package:microblogger/Composers/microblogComposer.dart';
+import 'package:microblogger/Composers/reshareComposer.dart';
+import 'package:microblogger/Composers/shareableComposer.dart';
+import 'package:microblogger/Composers/timelineComposer.dart';
+import 'package:microblogger/Screens/Stories/storymaker.dart';
+import 'package:microblogger/Screens/Stories/storyobject_models.dart';
+import 'package:microblogger/Screens/homepage.dart';
+import 'package:microblogger/Screens/profile.dart';
+import 'package:microblogger/Views/blog_viewer.dart';
+import 'package:microblogger/Views/timeline_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../Backend/datastore.dart';
 import '../../Backend/server.dart';
-import 'package:MicroBlogger/palette.dart';
+import 'package:microblogger/palette.dart';
 
 class BasicTemplate extends StatefulWidget {
   final postObject;
@@ -234,7 +230,7 @@ class TopBar extends StatelessWidget {
                                               style: TextStyle(
                                                   color: Colors.white)),
                                           actions: [
-                                            FlatButton(
+                                            TextButton(
                                               child: Text("Delete",
                                                   style: TextStyle(
                                                       color: Colors.white)),
@@ -254,7 +250,7 @@ class TopBar extends StatelessWidget {
                                                     context, '/HomePage');
                                               },
                                             ),
-                                            FlatButton(
+                                            TextButton(
                                               child: Text("Cancel",
                                                   style: TextStyle(
                                                       color: Colors.white)),
@@ -294,7 +290,7 @@ class TopBar extends StatelessWidget {
                                               style: TextStyle(
                                                   color: Colors.white)),
                                           actions: [
-                                            FlatButton(
+                                            TextButton(
                                               child: Text("Delete",
                                                   style: TextStyle(
                                                       color: Colors.white)),
@@ -313,7 +309,7 @@ class TopBar extends StatelessWidget {
                                                     context, '/HomePage');
                                               },
                                             ),
-                                            FlatButton(
+                                            TextButton(
                                               child: Text("Cancel",
                                                   style: TextStyle(
                                                       color: Colors.white)),
@@ -589,10 +585,10 @@ class _ActionBarState extends State<ActionBar> {
           "${widget.post['id']}, ${widget.post['type']}, ${widget.post['author']['username']}");
       return;
     }
-    Scaffold.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Row(
         children: [
-          RaisedButton(
+          ElevatedButton(
               onPressed: () async {
                 //Initiated a simple reshare from the server
                 setState(() {
@@ -610,12 +606,12 @@ class _ActionBarState extends State<ActionBar> {
                   backgroundColor: Color.fromARGB(200, 220, 20, 60),
                 );
               },
-              color: Colors.white10,
+              style: ElevatedButton.styleFrom(primary: Colors.white10),
               child: Text("Reshare", style: TextStyle(color: Colors.white))),
           SizedBox(
             width: 5.0,
           ),
-          RaisedButton(
+          ElevatedButton(
             onPressed: () {
               setState(() {
                 _reshared = !_reshared;
@@ -638,7 +634,7 @@ class _ActionBarState extends State<ActionBar> {
               print(
                   "Initiated ResharedWithComment for this post by currentUser (${currentUser['username']})");
             },
-            color: Colors.white10,
+            style: ElevatedButton.styleFrom(primary: Colors.white10),
             child: Text("Reshare with Comment",
                 style: TextStyle(color: Colors.white)),
           ),

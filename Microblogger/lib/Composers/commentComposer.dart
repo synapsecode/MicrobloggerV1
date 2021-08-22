@@ -1,4 +1,4 @@
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
@@ -42,16 +42,18 @@ class _CommentComposerState extends State<CommentComposer> {
         actions: [
           Container(
             margin: EdgeInsets.only(top: 10.0, left: 10.0, bottom: 10.0),
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: () =>
                   setState(() => state['isFact'] = !state['isFact']),
               child: (state['isFact']) ? Text("Fact") : Text("Opinion"),
-              color: (state['isFact']) ? Colors.green : Colors.red,
+              style: ElevatedButton.styleFrom(
+                primary: (state['isFact']) ? Colors.green : Colors.red,
+              ),
             ),
           ),
           Container(
             margin: EdgeInsets.all(10.0),
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: () async {
                 String category = (state['isFact']) ? "Fact" : "Opinion";
                 if (!widget.isEditing) {
@@ -80,7 +82,9 @@ class _CommentComposerState extends State<CommentComposer> {
                 Navigator.pushNamed(context, '/HomePage');
               },
               child: Text((widget.isEditing) ? "Update Comment" : "Publish"),
-              color: Colors.black,
+              style: ElevatedButton.styleFrom(
+                primary: Colors.black,
+              ),
             ),
           )
         ],

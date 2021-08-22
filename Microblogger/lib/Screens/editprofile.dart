@@ -1,4 +1,4 @@
-import 'package:MicroBlogger/Screens/imageupload.dart';
+import 'package:microblogger/Screens/imageupload.dart';
 import 'package:flutter/material.dart';
 import '../Backend/datastore.dart';
 import '../Backend/server.dart';
@@ -126,9 +126,12 @@ class _EditCardState extends State<EditCard> {
             ),
             SizedBox(
               width: double.infinity,
-              child: RaisedButton(
-                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
-                color: Colors.black26,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
+                  primary: Colors.black26,
+                ),
                 child: Text(
                   "Update Background Picture",
                   style: TextStyle(color: Colors.white),
@@ -148,9 +151,12 @@ class _EditCardState extends State<EditCard> {
             ),
             SizedBox(
               width: double.infinity,
-              child: RaisedButton(
-                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
-                color: Colors.black26,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
+                  primary: Colors.black26,
+                ),
                 child: Text(
                   "Update Profile Picture",
                   style: TextStyle(color: Colors.white),
@@ -170,9 +176,12 @@ class _EditCardState extends State<EditCard> {
             ),
             SizedBox(
               width: double.infinity,
-              child: RaisedButton(
-                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
-                color: Color.fromARGB(200, 220, 20, 60),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
+                  primary: Color.fromARGB(200, 220, 20, 60),
+                ),
                 child: Text(
                   "Update Profile",
                   style: TextStyle(color: Colors.white),

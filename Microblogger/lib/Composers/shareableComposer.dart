@@ -1,4 +1,4 @@
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Backend/server.dart';
@@ -56,7 +56,7 @@ class _ShareableComposerState extends State<ShareableComposer> {
         actions: [
           Container(
             margin: EdgeInsets.all(10.0),
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: () async {
                 //upload
                 if (!widget.isEditing) {
@@ -84,7 +84,9 @@ class _ShareableComposerState extends State<ShareableComposer> {
                 Navigator.pushNamed(context, '/HomePage');
               },
               child: Text((widget.isEditing) ? "Update" : "Publish"),
-              color: Colors.black,
+              style: ElevatedButton.styleFrom(
+                primary: Colors.black,
+              ),
             ),
           )
         ],

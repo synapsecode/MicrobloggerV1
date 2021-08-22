@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../palette.dart';
@@ -13,7 +12,6 @@ class YoutubeElement extends StatefulWidget {
 }
 
 class _YoutubeElementState extends State<YoutubeElement> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   YoutubePlayerController _controller;
   PlayerState _playerState;
   YoutubeMetaData _videoMetaData;

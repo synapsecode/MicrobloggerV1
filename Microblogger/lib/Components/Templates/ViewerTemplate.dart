@@ -1,4 +1,4 @@
-import 'package:MicroBlogger/Backend/server.dart';
+import 'package:microblogger/Backend/server.dart';
 
 import 'postTemplates.dart';
 import 'package:flutter/material.dart';

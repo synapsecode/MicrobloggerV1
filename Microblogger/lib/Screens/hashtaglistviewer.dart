@@ -1,10 +1,10 @@
 import 'dart:ui';
-import 'package:MicroBlogger/Backend/server.dart';
-import 'package:MicroBlogger/Components/Global/globalcomponents.dart';
-import 'package:MicroBlogger/Screens/hashtagpostviewer.dart';
-import 'package:MicroBlogger/globals.dart';
+import 'package:microblogger/Backend/server.dart';
+import 'package:microblogger/Components/Global/globalcomponents.dart';
+import 'package:microblogger/Screens/hashtagpostviewer.dart';
+import 'package:microblogger/globals.dart';
 import 'package:flutter/material.dart';
-import 'package:MicroBlogger/palette.dart';
+import 'package:microblogger/palette.dart';
 
 import '../origin.dart';
 
@@ -15,7 +15,7 @@ class HashPostsViewer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text("Microblogger Hashtags"),
+          title: Text("microblogger Hashtags"),
           backgroundColor: Colors.black87),
       body: HashtagsListBody(),
     );
@@ -43,12 +43,12 @@ class _HashtagsListBodyState extends State<HashtagsListBody> {
     return SingleChildScrollView(
       padding: EdgeInsets.all(10.0),
       child: CachedFutureBuilder(
-        cacheStore: HashtagsListCache,
+        cacheStore: hashtagsListCache,
         future: htagData,
         onUpdate: (AsyncSnapshot snapshot) {
           // print(snapshot.data);
           print("Updated");
-          HashtagsListCache = snapshot.data;
+          hashtagsListCache = snapshot.data;
           return HTBody(snapshot.data);
         },
         onCacheUsed: (cache) {
