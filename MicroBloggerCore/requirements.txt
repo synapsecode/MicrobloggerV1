@@ -6,7 +6,7 @@ charset-normalizer==2.0.4
 click==7.1.2
 cloudinary==1.26.0
 distlib==0.3.2
-Django==3.2.6
+Django==3.2.12
 dlib==19.22.1
 filelock==3.0.12
 Flask==1.1.4
