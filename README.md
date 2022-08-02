@@ -1,7 +1,4 @@
-# The Microblogger Initiative
-OLD VERSION(FULL VIDEO DEMO): https://drive.google.com/file/d/1_uRSyPWDCtNJyQSSpkJ9YXgzYfnE5xFB/view?usp=sharing (7 mins)
-NEW VERSION COMING SOON
-
+# The Microblogger Initiativ
 Microblogger is an Indian Microblogging service and a platform to share your opinions with the entire world! It aims to be a completely open source social media site hosted on
 Github. It aims to be a successful Indian Social Media and Microblogging platform like Twitter. 
 
@@ -17,7 +14,6 @@ Github. It aims to be a successful Indian Social Media and Microblogging platfor
 9. Hashtags (Basic)
 10. Full length Videos
 11. Youtube Snippets
-
 
 ## TechStack
 1. Flutter (Frontend & Mobile Application)

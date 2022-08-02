@@ -35,7 +35,7 @@ dependencies:
   data_connection_checker: ^0.3.4
   youtube_player_flutter: ^7.0.0+7
   chewie: 1.0.0
-  audioplayers: ^0.16.1
+  audioplayers:
   video_player:
   flutter_colorpicker:
 
