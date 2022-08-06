@@ -1,4 +1,4 @@
-# The Microblogger Initiativ
+# The Microblogger Initiative (v1)
 Microblogger is an Indian Microblogging service and a platform to share your opinions with the entire world! It aims to be a completely open source social media site hosted on
 Github. It aims to be a successful Indian Social Media and Microblogging platform like Twitter. 
 
@@ -21,7 +21,11 @@ Github. It aims to be a successful Indian Social Media and Microblogging platfor
 3. Cloudinary (File Hosting)
 4. Flask-SQLAlchemy (Database)
 
-## OpenSource
-The current version of the project is everything that I was able to make. Currently, it exists as a Project to show off my skills in my personal Portfolio. But starting with Version2 I will publish it to the app stores and truly make it an Indian Opensource Social Media Platform!
+[Click here to see the buildlog of Microblogger V1](https://tulip-quality-7a5.notion.site/Microblogger-Builds-0b6f44eece5b419ca57f8a431e03ad2c)
 
 
+## MicroBlogger V2 (Coming Soon)
+The major change in v2 will the the migration of the backend from Flask to ExpressJS on the server side and FlaskSQLAlchemy to CockroachDB & Sequilize on the database side. 
+On the application side of things, we are planning to add Web and macOS Support using Flutter 3.0. 
+Additionally, the backend will be permanantly hosted using services like Vercel this will ensure that microblogger gets a full round of beta testing.
+Additionally, all the features implemented in v1 will be getting updates to make them more efficient and polished!

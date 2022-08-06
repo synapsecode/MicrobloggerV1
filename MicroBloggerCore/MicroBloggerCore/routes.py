@@ -9,10 +9,6 @@ from helperfunctions import parse_hashtags, extract_hashtags
 import io
 import re
 
-#TODO: Unify functions and make it efficient
-
-
-
 @app.route("/")
 def homepage():
 	return "MICROBLOGGER_API"
@@ -496,6 +492,18 @@ def gettimelinebody():
 	return jsonify({
 		'timeline': timeline_body(user, post)
 	})
+
+@app.route('/example/<name>/<name2>', methods=['POST'])
+def example(name, name2):
+	user = User.query.filter_by(username=name).first()
+	name = user.name
+	try:
+		user.name = name2
+	except Exception as e:
+		return e
+	db.session.commit()
+	user = User.query.filter_by(username=name).first()
+	return [name, user.name]
 #------------------------------------------------------GETTERS---------------------------------------------
 
 #-------------------------------------------------POSTACTIONS-----------------------------------------------
@@ -1051,6 +1059,69 @@ def get_hashtag_posts(username, hashtag):
 	})
 
 #---------------------------------------------MISC-------------------------------------------------------
+def calculate_base_points(n, l, c, r, f, nf, user):
+	if(n!=0 and nf!=0 and f!=0):
+		basescore = ( l*((1/n) + (1/nf)) + c*((1/n) + (1/nf)) + r*((1/n) + (1/nf)) + (nf/f))
+		user.basepoints = f"{basescore}"
+		db.session.commit()
+		print(n, l, c, r, f, nf, user, basescore, user.secondarypoints)
+		user.reputation = f"{float(user.basepoints) + float(user.secondarypoints)}"
+		db.session.commit()
+	else:
+		user.basepoints = '0.0'
+		user.reputation = user.secondarypoints
+		db.session.commit()
+
+def addPoint(cmd, user):
+	point = 0
+	if(cmd == 'LIKE' or cmd == 'BOOKMARK'):
+		point = 0.05
+	elif(cmd == 'VOTE' or cmd == 'V_NEWS' or cmd == 'V_PROFILE' or cmd=='OPENT' or cmd=='OPENP' or cmd=='EXPLORE' or cmd=='SEARCHUSER'):
+		point = 0.05
+	elif(cmd == 'SR' or cmd == 'V_SHAREABLE' or cmd=='OPENB'):
+		point = 0.1
+	elif(cmd == 'COMMENT'):
+		point = 0.15
+	elif(cmd == 'SHAREABLE' or cmd=='PERMINUTEUSAGEPOINT'):
+		point = 0.18
+	elif(cmd == 'POLL'):
+		point = 0.2
+	elif(cmd == 'MICROBLOG'):
+		point = 0.55
+	elif(cmd == 'RWC'):
+		point = 0.75
+	elif(cmd == 'DAILY_LOGIN' or cmd=='TIMELINE' or cmd=='FOLLOW' or cmd == 'FOLLOWED'):
+		point = 0.5
+	elif(cmd == 'BLOG'):
+		point = 1
+	elif(cmd == 'CAROUSEL'):
+		point = 1.5
+	elif(cmd == 'LOGOUT'):
+		point = -0.06
+	elif(cmd == 'LOGIN'):
+		point = 0.2
+	elif(cmd == 'REGISTER'):
+		point = 2
+	elif(cmd == 'UNRESHARE'):
+		point = -0.8
+	elif(cmd == 'DELETEPOST' or cmd=='DELETECOMMENT'):
+		point = -1
+	elif(cmd == 'UNFOLLOW'):
+		point = -1.3
+	elif(cmd == 'UNFOLLOWED'):
+		point = -1.3
+	elif(cmd == 'EDITPROFILE' or cmd == 'EDITPOST'):
+		point = 0.25
+	elif(cmd == 'UNLIKE' or cmd == 'UNBOOKMARK'):
+		point = -0.08
+
+	if(not user):
+		return
+	
+	user.secondarypoints = f"{float(user.secondarypoints) + float(point)}"
+	user.reputation = f"{float(user.basepoints) + float(user.secondarypoints)}"
+	db.session.commit()
+
 def getUserData(username, currentuser):
 	user = User.query.filter_by(username=username).first()
 	#Get Reshares
@@ -1120,69 +1191,3 @@ def getPost(post_type, post_id):
 	elif(post_type == 'comment'):
 		post = Comment.query.filter_by(comment_id=post_id).first()
 	return post
-
-# def delete_all_comments_in_post(post_id):
-# 	post = None
-
-def calculate_base_points(n, l, c, r, f, nf, user):
-	if(n!=0 and nf!=0 and f!=0):
-		basescore = ( l*((1/n) + (1/nf)) + c*((1/n) + (1/nf)) + r*((1/n) + (1/nf)) + (nf/f))
-		user.basepoints = f"{basescore}"
-		db.session.commit()
-		print(n, l, c, r, f, nf, user, basescore, user.secondarypoints)
-		user.reputation = f"{float(user.basepoints) + float(user.secondarypoints)}"
-		db.session.commit()
-	else:
-		user.basepoints = '0.0'
-		user.reputation = user.secondarypoints
-		db.session.commit()
-
-def addPoint(cmd, user):
-	point = 0
-	if(cmd == 'LIKE' or cmd == 'BOOKMARK'):
-		point = 0.05
-	elif(cmd == 'VOTE' or cmd == 'V_NEWS' or cmd == 'V_PROFILE' or cmd=='OPENT' or cmd=='OPENP' or cmd=='EXPLORE' or cmd=='SEARCHUSER'):
-		point = 0.05
-	elif(cmd == 'SR' or cmd == 'V_SHAREABLE' or cmd=='OPENB'):
-		point = 0.1
-	elif(cmd == 'COMMENT'):
-		point = 0.15
-	elif(cmd == 'SHAREABLE' or cmd=='PERMINUTEUSAGEPOINT'):
-		point = 0.18
-	elif(cmd == 'POLL'):
-		point = 0.2
-	elif(cmd == 'MICROBLOG'):
-		point = 0.55
-	elif(cmd == 'RWC'):
-		point = 0.75
-	elif(cmd == 'DAILY_LOGIN' or cmd=='TIMELINE' or cmd=='FOLLOW' or cmd == 'FOLLOWED'):
-		point = 0.5
-	elif(cmd == 'BLOG'):
-		point = 1
-	elif(cmd == 'CAROUSEL'):
-		point = 1.5
-	elif(cmd == 'LOGOUT'):
-		point = -0.06
-	elif(cmd == 'LOGIN'):
-		point = +0.2
-	elif(cmd == 'REGISTER'):
-		point = 2
-	elif(cmd == 'UNRESHARE'):
-		point = -0.8
-	elif(cmd == 'DELETEPOST' or cmd=='DELETECOMMENT'):
-		point = -1
-	elif(cmd == 'UNFOLLOW'):
-		point = -1.3
-	elif(cmd == 'UNFOLLOWED'):
-		point = -1.3
-	elif(cmd == 'EDITPROFILE' or cmd == 'EDITPOST'):
-		point = +0.25
-	elif(cmd == 'UNLIKE' or cmd == 'UNBOOKMARK'):
-		point = -0.08
-
-	if(not user):
-		return
-	
-	user.secondarypoints = f"{float(user.secondarypoints) + float(point)}"
-	user.reputation = f"{float(user.basepoints) + float(user.secondarypoints)}"
-	db.session.commit()
