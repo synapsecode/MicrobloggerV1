@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "forcesync": "FORCESYNC=TRUE node index.js",
+    "testrun": "node tester.js",
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "express": "^4.18.1",
+    "nodemon": "^2.0.19",
+    "sequelize": "^6.21.6",
+    "sequelize-cockroachdb": "^6.0.5"
+  }
+}

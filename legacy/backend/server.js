@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const {sequelize} = require('./database');
+const {userRoutes} = require('./routes');
 
 //Declarations
 const app = express()
@@ -11,6 +12,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
 
 //RouteDeclarations
+app.use('/user', userRoutes);
 
 //Routes
 app.get('/', async (req, res) => {
