@@ -1,4 +1,4 @@
-const {UserModel} = require('./database')
+const {UserModel, GenericPostModel} = require('./database')
 
 async function main() {
     const manas = await UserModel.create({
@@ -53,6 +53,11 @@ async function main() {
     console.log('Updating Veeksha Name', await veeksha.update({name: 'Veeksha M Rao'}));
     console.log(await veeksha.read());
 
+    // const x = await GenericPostModel.create({
+    //     uuid: '1000000',
+    //     post_type: 'microblog'
+    // })
+    // console.log(x)
 }
 
 main();

@@ -1,29 +1,13 @@
 module.exports = (sequelize, Sequelize) => {
+    const {import_model} = require('./helpers')(sequelize, Sequelize);
+    
+    //Import models
+    const UserModel = import_model('user_model');
+    const GenericPostModel = import_model('generic_post_model');
 
-    //-------- Types ---------------
-    const PRIMARYKEY = () => {
-        return {
-            type: Sequelize.INTEGER,
-            autoIncrement: true,
-            primaryKey: true,
-            allowNull: false,
-        }
-    };
-    const INT = () => {
-        return {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-        }
-    };
-    const STRING = () => {
-        return {
-            type: Sequelize.STRING,
-            allowNull: false,
-        };
-    };
-    //---------Types-------------
-
-    const UserModel = require('./user_model')(sequelize, { PRIMARYKEY, INT, STRING });
+    //--------- Add Model dependencies to prevent circular imports ---------
+    GenericPostModel.ImportedModels = {UserModel};
+    //-------------------------------------------------------------------------
 
     //------------- < Follow Feature >---------------
     UserModel.schema.belongsToMany(UserModel.schema, {
@@ -41,7 +25,46 @@ module.exports = (sequelize, Sequelize) => {
     console.log('created FollowTable association')
     //------------------------------------------------
 
+    //----------- < Reshare 2 Reshare > ------------
+    GenericPostModel.schema.hasMany(GenericPostModel.schema, {
+        as: 'reshares'
+    });
+    GenericPostModel.schema.belongsTo(GenericPostModel.schema, {
+        as: 'reshared_post'
+    })
+    
+    //----------------------------------------------
+
+    //----------- < PostAuthors Feature > -------------
+    // UserModel.schema.belongsToMany(GenericPostModel.schema, {
+    //     through: 'PostAuthorTable',
+    //     as: 'authors',
+    //     foreignKey: 'author_id',
+    //     otherKey: 'generic_post_id'
+    // })
+    // GenericPostModel.schema.belongsToMany(UserModel.schema, {
+    //     through: 'PostAuthorTable',
+    //     as: 'posts',
+    //     foreignKey: 'generic_post_id',
+    //     otherKey: 'author_id'
+    // })
+    // console.log('created PostAuthorTable association')
+    //-------------------------------------------------
+
+    //------------< GenericPost - PostType bindings >----------------
+    // GenericPostModel.schema.hasOne(MicroblogModel.schema);
+    // MicroblogModel.schema.belongsTo(GenericPostModel.schema);
+    // GenericPostModel.schema.hasOne(BlogModel.schema);
+    // BlogModel.schema.belongsTo(GenericPostModel.schema);
+    // GenericPostModel.schema.hasOne(PollModel.schema);
+    // PollModel.schema.belongsTo(GenericPostModel.schema);
+    // GenericPostModel.schema.hasOne(ReshareModel.schema);
+    // ReshareModel.schema.belongsTo(GenericPostModel.schema);
+    //---------------------------------------------------------------
+
+
     return {
         UserModel,
+        GenericPostModel,
     }
 }
