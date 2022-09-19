@@ -76,7 +76,6 @@ module.exports = (sequelize, { PRIMARYKEY, INT, STRING, JSONTYPE }) => {
             microblog_id: INT('nullable'),
             blog_id: INT('nullable'),
             poll_id: INT('nullable'),
-            quote_target_id: INT('nullable')
         })
 
         constructor(instance){
@@ -84,59 +83,46 @@ module.exports = (sequelize, { PRIMARYKEY, INT, STRING, JSONTYPE }) => {
         }
 
         static create = async (postdata, authors = []) => {
-
             if (authors === []) {
                 console.error('Post Authors not specified')
                 return null;
             }
-
             await GenericPostModel.schema.sync();
-
-            let genesis_data = {
+            let post = await create_subpost(PostSchemas, postdata, postdata.post_type);
+            const gp = await GenericPostModel.schema.create({
                 uuid: postdata.uuid,
                 created_on: Date.now(),
                 post_type: postdata.post_type,
-            };
-
-            //Check for quotes
-            if (postdata.post_type.includes('quote')) {
-                let pts = postdata.post_type.slice(6, -1)?.split(',') ?? [null, null];
-                let [target_schema, quote_schema] = pts.map(x => PostSchemas.getschema(x))
-                target_post = await target_schema.findOne({ where: { uuid: postdata.quoted_uuid } });
-                let post = await create_subpost(PostSchemas, postdata, pts[1]);
-                genesis_data = {
-                    ...genesis_data,
-                    quote_target_id: target_post.id,
-                    ...postassoc(post, pts[1]),
-                }
-            } else {
-                //Other Post types
-                let post = await create_subpost(PostSchemas, postdata, postdata.post_type);
-                genesis_data = {
-                    ...genesis_data,
-                    ...postassoc(post, postdata.post_type),
-                }
-            }
-
-            //create the generic post
-            const gp = await GenericPostModel.schema.create(genesis_data);
-
-            //linking post authors
+                ...postassoc(post, postdata.post_type)
+            });
             await linkauthors(gp, authors);
-
             return new GenericPostModel(gp);
         }
 
 
         read = async () => {
             await GenericPostModel.schema.sync();
-            let quoted_target_id = this.genericpost_reference.quote_target_id;
+
             let quoted_post_data;
-            if (quoted_target_id !== null) {
-                let p = await GenericPostModel.schema.findOne({ where: { id: quoted_target_id } })
-                let quoted_post = await new GenericPostModel(p);
-                quoted_post_data = await quoted_post.read();
+            if(this.genericpost_reference.post_type.includes('reshare')){
+                await Associations.resharetrackertable.sync();
+                const tracked_reshare = await Associations.resharetrackertable.findOne({where: {reshare_owner_id: this.genericpost_reference.id}});
+                const target_post_instance = await GenericPostModel.schema.findOne({where:{id: tracked_reshare.quote_target_id}});
+                quoted_post_data = await (new GenericPostModel(target_post_instance)).read();
+            }else if(this.genericpost_reference.post_type.includes('quote')){
+                await Associations.quotetrackertable.sync();
+                const tracked_quote = await Associations.quotetrackertable.findOne({where: {quote_owner_id: this.genericpost_reference.id}});
+                const target_post_instance = await GenericPostModel.schema.findOne({where:{id: tracked_quote.quote_target_id}});
+                quoted_post_data = await (new GenericPostModel(target_post_instance)).read();
             }
+
+            // let quoted_target_id = this.genericpost_reference.quote_target_id;
+            // let quoted_post_data;
+            // if (quoted_target_id !== null) {
+            //     let p = await GenericPostModel.schema.findOne({ where: { id: quoted_target_id } })
+            //     let quoted_post = await new GenericPostModel(p);
+            //     quoted_post_data = await quoted_post.read();
+            // }
             let schema = PostSchemas.getschema(this.genericpost_reference.post_type);
             let datapost = await schema?.findOne({ where: { uuid: this.genericpost_reference.uuid } });
             return {
@@ -183,6 +169,7 @@ module.exports = (sequelize, { PRIMARYKEY, INT, STRING, JSONTYPE }) => {
             let post_schema = PostSchemas.getschema(post_type);
             await post_schema.destroy({ where: { generic_post_id: this.genericpost_reference.id } })
             //TODO: Destroy Internal Data table too
+            //TODO: handle removal of quote and reshare too
             await GenericPostModel.schema.destroy({ where: { id: this.genericpost_reference.id } })
         }
 
@@ -218,7 +205,6 @@ module.exports = (sequelize, { PRIMARYKEY, INT, STRING, JSONTYPE }) => {
                 uuid: Math.floor(Math.random() * 111111111111),
                 created_on: Date.now(),
                 post_type: `reshare<${this.genericpost_reference.post_type}>`,
-                quote_target_id: this.genericpost_reference.id,
             }
             //Add to reshare tracker association
             await Associations.resharetrackertable.sync();
@@ -233,6 +219,12 @@ module.exports = (sequelize, { PRIMARYKEY, INT, STRING, JSONTYPE }) => {
             //handle multiresharing
             if(r === null){
                 gp = await GenericPostModel.schema.create(genesis_data);
+                //register reshare
+                await Associations.resharetrackertable.create({
+                    reshare_owner_id: gp.id,
+                    quote_target_id: this.genericpost_reference.id,
+                    user_id: user.user_reference.id,
+                })
                 await linkauthors(gp, [user]);
             }else{
                 //get the instance of owner post
@@ -243,28 +235,23 @@ module.exports = (sequelize, { PRIMARYKEY, INT, STRING, JSONTYPE }) => {
 
         add_quote = async (user, postdata) => {
             let typ = `quote<${this.genericpost_reference.post_type},${postdata.post_type}`;
-            let genesis_data = {
+            let post = await create_subpost(PostSchemas, postdata, postdata.post_type);
+            //add to quote tracker association 
+            await Associations.quotetrackertable.sync();
+            await GenericPostModel.schema.sync();
+            let gp = await GenericPostModel.schema.create({
                 uuid: Math.floor(Math.random() * 111111111111),
                 created_on: Date.now(),
                 post_type: typ,
-            };
-            let post = await create_subpost(PostSchemas, postdata, postdata.post_type);
-            genesis_data = {
-                ...genesis_data,
-                quote_target_id: this.genericpost_reference.id,
                 ...postassoc(post, postdata.post_type),
-            }
-
-
-            let pts = postdata.post_type.slice(6, -1)?.split(',') ?? [null, null];
-            let [target_schema, quote_schema] = pts.map(x => PostSchemas.getschema(x))
-            target_post = await target_schema.findOne({ where: { uuid: postdata.quoted_uuid } });
-            // let post = await create_subpost(PostSchemas, postdata, pts[1]);
-            genesis_data = {
-                ...genesis_data,
-                quote_target_id: target_post.id,
-                ...postassoc(post, pts[1]),
-            }
+            });
+            await Associations.resharetrackertable.create({
+                quote_owner_id: gp.id,
+                quote_target_id: this.genericpost_reference.id,
+                user_id: user.user_reference.id,
+            })
+            await linkauthors(gp, [user]);
+            return new GenericPostModel(gp);
         }
 
         //-------------------------
@@ -296,19 +283,24 @@ module.exports = (sequelize, { PRIMARYKEY, INT, STRING, JSONTYPE }) => {
 
         get_reshares = async ({ count_only = false } = {}) => {
             await GenericPostModel.schema.sync();
+            await Associations.resharetrackertable.sync();
+            await Associations.quotetrackertable.sync();
 
-            let quoted_instances = await GenericPostModel.schema.findAll({
-                where: {
-                    quote_target_id: this.genericpost_reference.id,
-                }
-            });
-            let reshare_instances = quoted_instances.filter(x => (x.microblog_id === null && x.blog_id === null && x.poll_id === null));
-            let quote_instances = quoted_instances.filter(x => (x.microblog_id !== null || x.blog_id !== null || x.poll_id !== null));
+            let tracked_reshare_ids = (await Associations.resharetrackertable.findAll({where: {
+                quote_target_id: this.genericpost_reference.id,
+            }})).map(x => x.reshare_owner_id);
+
+            let tracked_quote_ids = (await Associations.quotetrackertable.findAll({where: {
+                quote_target_id: this.genericpost_reference.id,
+            }})).map(x => x.quote_owner_id);
+            
+            let reshare_instances = await Promise.all(tracked_reshare_ids.map(x => GenericPostModel.schema.findOne({where:{id:x}})));
+            let quote_instances = await Promise.all(tracked_quote_ids.map(x => GenericPostModel.schema.findOne({where:{id:x}})));
 
             if (count_only) {
                 return {
                     reshares: reshare_instances.length,
-                    quotes: reshare_instances.length,
+                    quotes: quote_instances.length,
                 }
             }
 
