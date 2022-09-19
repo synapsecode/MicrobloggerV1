@@ -21,6 +21,7 @@ app.get('/', async (req, res) => {
 //Run Application
 if(process.env.FORCESYNC === 'TRUE'){
     (async()=>{
+        await sequelize.drop();
         await sequelize.sync({force: true});
         console.log('Force Sync Completed!')
     })();

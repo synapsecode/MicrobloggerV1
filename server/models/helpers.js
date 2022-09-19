@@ -20,7 +20,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: nullable === 'nullable',
         };
     };
-    const JSON = (nullable = '') => {
+    const JSONTYPE = (nullable = '') => {
         return {
             type: Sequelize.JSON,
             allowNull: nullable === 'nullable',
@@ -29,7 +29,7 @@ module.exports = (sequelize, Sequelize) => {
      //---------Types-------------
 
     const import_model = (str) => {
-        return require(`./${str}`)(sequelize, { PRIMARYKEY, INT, STRING, JSON });
+        return require(`./${str}`)(sequelize, { PRIMARYKEY, INT, STRING, JSONTYPE });
     }
 
    return {import_model};

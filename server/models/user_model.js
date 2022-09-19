@@ -16,6 +16,9 @@ module.exports = (sequelize, { PRIMARYKEY, INT, STRING }) => {
             biolink: STRING()
         });
 
+        constructor(instance){
+            this.user_reference = instance;
+        }
 
         static create = async (data) => {
             await UserModel.schema.sync();
@@ -24,28 +27,10 @@ module.exports = (sequelize, { PRIMARYKEY, INT, STRING }) => {
                 //Create new user if does not exist
                 u = await UserModel.schema.create({ ...data, created_on: Date.now(), });
             }
-            //acts as the constructor
-            let model = new UserModel();
-            model.user_reference = u;
-            u = null;
-            return model;
+            return new UserModel(u);
         }
 
-        static fromUser = async (obj) => {
-            return await UserModel.create({
-                username: obj.username,
-                password: obj.password,
-                name: obj.name,
-                dplink: obj.dplink,
-                coverlink: obj.coverlink,
-                description: obj.description,
-                location: obj.location,
-                biolink: obj.biolink,
-                created_on: obj.created_on
-            });
-        }
-
-        read = async (preview = false) => {
+        read = async ({preview = false} = {}) => {
             let preview_info = {
                 username: this.user_reference.username,
                 name: this.user_reference.name,
@@ -55,8 +40,8 @@ module.exports = (sequelize, { PRIMARYKEY, INT, STRING }) => {
                 return preview_info;
             }
 
-            let followers = await Promise.all((await this.user_reference.getFollowers()).map(x => UserModel.fromUser(x)));
-            let following = await Promise.all((await this.user_reference.getFollowing()).map(x => UserModel.fromUser(x)));
+            let followers = await Promise.all((await this.user_reference.getFollowers()).map(x => new UserModel(x)));
+            let following = await Promise.all((await this.user_reference.getFollowing()).map(x => new UserModel(x)));
 
             preview_info = {
                 ...preview_info,
@@ -65,8 +50,8 @@ module.exports = (sequelize, { PRIMARYKEY, INT, STRING }) => {
                 location: this.user_reference.location,
                 biolink: this.user_reference.biolink,
                 created_on: this.user_reference.created_on,
-                followers: await Promise.all(followers.map(x => x.read(preview = true))),
-                following: await Promise.all(following.map(x => x.read(preview = true))),
+                followers: await Promise.all(followers.map(x => x.read({preview:true}))),
+                following: await Promise.all(following.map(x => x.read({preview:true}))),
             }
             return preview_info
         }
