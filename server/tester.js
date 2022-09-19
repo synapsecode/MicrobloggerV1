@@ -90,15 +90,25 @@ run_genericpost_tests = async ({manas, veeksha, siri, mcbr1}) => {
     //create reshare
     const rs1 = await mcbr1.reshare(siri);
     //create quote
-    // const q1 = await mcbr1.add_quote(siri, {
-    //     post_type: 'microblog',
-    //     text_content: 'LMFAOOOO',
-    // })
+    const q1 = await mcbr1.add_quote(siri, {
+        post_type: 'microblog',
+        text_content: 'LMFAOOOO',
+    })
+    //creating quote of quote
+    const q2 = await q1.add_quote(veeksha, {
+        post_type: 'microblog',
+        text_content: 'Hello Quote of Quote',
+    })
+    //editing quote
+    await q1.update({
+        text_content: 'LMFAOOOO XDXD'
+    })
 
     //Print Results
     console.log('microblog 1 => ', await mcbr1.read())
     console.log('reshare 1 => ', await rs1.read())
-    // console.log('quote 1 => ', await q1.read())
+    console.log('quote 1 => ', await q1.read())
+    console.log('quote 2 => ', await q2.read())
 }
 
 async function main() {
